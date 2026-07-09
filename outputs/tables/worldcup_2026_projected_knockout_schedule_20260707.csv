@@ -1,0 +1,33 @@
+round,match,date,weekday,local_kickoff,location,slot,team_a,team_b,status,result_note,winner,winner_probability
+Round of 32,73,2026-06-28,Sunday,12:00 p.m. UTC-7,"SoFi Stadium, Inglewood, CA",2A vs 2B,South Africa,Canada,actual,Canada 1-0 South Africa,Canada,96.3%
+Round of 32,74,2026-06-29,Monday,4:30 p.m. UTC-4,"Gillette Stadium, Foxborough, MA",1E vs 3D,Germany,Paraguay,actual,1-1; Paraguay 4-3 pens,Paraguay,3.1%
+Round of 32,75,2026-06-29,Monday,7:00 p.m. UTC-6,"Estadio BBVA, Guadalupe, NL",1F vs 2C,Netherlands,Morocco,actual,1-1; Morocco 3-2 pens,Morocco,49.4%
+Round of 32,76,2026-06-29,Monday,12:00 p.m. UTC-5,"NRG Stadium, Houston, TX",1C vs 2F,Brazil,Japan,actual,Brazil 2-1 Japan,Brazil,80.8%
+Round of 32,77,2026-06-30,Tuesday,5:00 p.m. UTC-4,"MetLife Stadium, East Rutherford, NJ",1I vs 3F,France,Sweden,actual,France 3-0 Sweden,France,98.6%
+Round of 32,78,2026-06-30,Tuesday,12:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",2E vs 2I,Cote d'Ivoire,Norway,actual,Norway 2-1 Cote d'Ivoire,Norway,63.2%
+Round of 32,79,2026-06-30,Tuesday,7:00 p.m. UTC-6,"Estadio Azteca, Mexico City, MX",1A vs 3E,Mexico,Ecuador,actual,Mexico 2-0 Ecuador,Mexico,82.0%
+Round of 32,80,2026-07-01,Wednesday,12:00 p.m. UTC-4,"Mercedes-Benz Stadium, Atlanta, GA",1L vs 3K,England,DR Congo,actual,England 2-1 DR Congo,England,99.2%
+Round of 32,81,2026-07-01,Wednesday,5:00 p.m. UTC-7,"Levi's Stadium, Santa Clara, CA",1D vs 3B,USA,Bosnia and Herzegovina,actual,USA 2-0 Bosnia and Herzegovina,USA,99.5%
+Round of 32,82,2026-07-01,Wednesday,1:00 p.m. UTC-7,"Lumen Field, Seattle, WA",1G vs 3I,Belgium,Senegal,actual,Belgium 3-2 Senegal,Belgium,65.8%
+Round of 32,83,2026-07-02,Thursday,7:00 p.m. UTC-4,"BMO Field, Toronto, ON",2K vs 2L,Portugal,Croatia,actual,Portugal 2-1 Croatia,Portugal,64.8%
+Round of 32,84,2026-07-02,Thursday,12:00 p.m. UTC-7,"SoFi Stadium, Inglewood, CA",1H vs 2J,Spain,Austria,actual,Spain 3-0 Austria,Spain,93.5%
+Round of 32,85,2026-07-02,Thursday,8:00 p.m. UTC-7,"BC Place, Vancouver, BC",1B vs 3J,Switzerland,Algeria,actual,Switzerland 2-0 Algeria,Switzerland,72.8%
+Round of 32,86,2026-07-03,Friday,6:00 p.m. UTC-4,"Hard Rock Stadium, Miami Gardens, FL",1J vs 2H,Argentina,Cabo Verde,actual,Argentina 3-2 Cabo Verde (aet),Argentina,99.9%
+Round of 32,87,2026-07-03,Friday,8:30 p.m. UTC-5,"Arrowhead Stadium, Kansas City, MO",1K vs 3L,Colombia,Ghana,actual,Colombia 1-0 Ghana,Colombia,99.8%
+Round of 32,88,2026-07-03,Friday,1:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",2D vs 2G,Australia,Egypt,actual,1-1; Egypt 4-2 pens,Egypt,47.5%
+Round of 16,89,2026-07-04,Saturday,5:00 p.m. UTC-4,"Lincoln Financial Field, Philadelphia, PA",W74 vs W77,Paraguay,France,actual,France 1-0 Paraguay,France,99.0%
+Round of 16,90,2026-07-04,Saturday,12:00 p.m. UTC-5,"NRG Stadium, Houston, TX",W73 vs W75,Canada,Morocco,actual,Morocco 3-0 Canada,Morocco,91.2%
+Round of 16,91,2026-07-05,Sunday,4:00 p.m. UTC-4,"MetLife Stadium, East Rutherford, NJ",W76 vs W78,Brazil,Norway,actual,Norway 2-1 Brazil,Norway,7.5%
+Round of 16,92,2026-07-05,Sunday,6:00 p.m. UTC-6,"Estadio Azteca, Mexico City, MX",W79 vs W80,Mexico,England,actual,England 3-2 Mexico,England,70.5%
+Round of 16,93,2026-07-06,Monday,2:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",W83 vs W84,Portugal,Spain,actual,Spain 1-0 Portugal,Spain,65.5%
+Round of 16,94,2026-07-06,Monday,5:00 p.m. UTC-7,"Lumen Field, Seattle, WA",W81 vs W82,USA,Belgium,actual,Belgium 4-1 USA,Belgium,57.1%
+Round of 16,95,2026-07-07,Tuesday,12:00 p.m. UTC-4,"Mercedes-Benz Stadium, Atlanta, GA",W86 vs W88,Argentina,Egypt,actual,Argentina 3-2 Egypt,Argentina,96.3%
+Round of 16,96,2026-07-07,Tuesday,1:00 p.m. UTC-7,"BC Place, Vancouver, BC",W85 vs W87,Switzerland,Colombia,actual,0-0; Switzerland 4-3 pens,Switzerland,31.4%
+Quarterfinal,97,2026-07-09,Thursday,4:00 p.m. UTC-4,"Gillette Stadium, Foxborough, MA",W89 vs W90,France,Morocco,projected,,France,72.3%
+Quarterfinal,98,2026-07-10,Friday,12:00 p.m. UTC-7,"SoFi Stadium, Inglewood, CA",W93 vs W94,Spain,Belgium,projected,,Spain,75.8%
+Quarterfinal,99,2026-07-11,Saturday,5:00 p.m. UTC-4,"Hard Rock Stadium, Miami Gardens, FL",W91 vs W92,Norway,England,projected,,England,94.6%
+Quarterfinal,100,2026-07-11,Saturday,8:00 p.m. UTC-5,"Arrowhead Stadium, Kansas City, MO",W95 vs W96,Argentina,Switzerland,projected,,Argentina,90.4%
+Semifinal,101,2026-07-14,Tuesday,2:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",W97 vs W98,France,Spain,projected,,France,53.5%
+Semifinal,102,2026-07-15,Wednesday,3:00 p.m. UTC-4,"Mercedes-Benz Stadium, Atlanta, GA",W99 vs W100,England,Argentina,projected,,Argentina,56.7%
+Third-place Match,103,2026-07-18,Saturday,5:00 p.m. UTC-4,"Hard Rock Stadium, Miami Gardens, FL",L101 vs L102,Spain,England,projected,,Spain,54.4%
+Final,104,2026-07-19,Sunday,3:00 p.m. UTC-4,"MetLife Stadium, East Rutherford, NJ",W101 vs W102,France,Argentina,projected,,France,51.2%
