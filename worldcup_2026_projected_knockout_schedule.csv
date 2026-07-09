@@ -1,0 +1,33 @@
+﻿Round,Match,Date,Weekday,Local kickoff,Location,Bracket slot,Team A,Team B,Predicted winner,Predicted winner probability
+Round of 32,73,2026-06-28,Sunday,12:00 p.m. UTC-7,"SoFi Stadium, Inglewood, CA",2A vs 2B,South Africa,Canada,Canada,96.2%
+Round of 32,74,2026-06-29,Monday,4:30 p.m. UTC-4,"Gillette Stadium, Foxborough, MA",1E vs 3D,Germany,Paraguay,Germany,97.0%
+Round of 32,75,2026-06-29,Monday,7:00 p.m. UTC-6,"Estadio BBVA, Guadalupe, NL",1F vs 2C,Netherlands,Morocco,Morocco,52.2%
+Round of 32,76,2026-06-29,Monday,12:00 p.m. UTC-5,"NRG Stadium, Houston, TX",1C vs 2F,Brazil,Japan,Brazil,80.8%
+Round of 32,77,2026-06-30,Tuesday,5:00 p.m. UTC-4,"MetLife Stadium, East Rutherford, NJ",1I vs 3F,France,Sweden,France,98.4%
+Round of 32,78,2026-06-30,Tuesday,12:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",2E vs 2I,Cote d'Ivoire,Norway,Norway,58.4%
+Round of 32,79,2026-06-30,Tuesday,7:00 p.m. UTC-6,"Estadio Azteca, Mexico City, MX",1A vs 3E,Mexico,Ecuador,Mexico,81.0%
+Round of 32,80,2026-07-01,Wednesday,12:00 p.m. UTC-4,"Mercedes-Benz Stadium, Atlanta, GA",1L vs 3I,England,Senegal,England,82.4%
+Round of 32,81,2026-07-01,Wednesday,5:00 p.m. UTC-7,"Levi's Stadium, Santa Clara, CA",1D vs 3B,USA,Bosnia and Herzegovina,USA,99.4%
+Round of 32,82,2026-07-01,Wednesday,1:00 p.m. UTC-7,"Lumen Field, Seattle, WA",1G vs 3J,Belgium,Algeria,Belgium,89.1%
+Round of 32,83,2026-07-02,Thursday,7:00 p.m. UTC-4,"BMO Field, Toronto, ON",2K vs 2L,Portugal,Croatia,Portugal,68.0%
+Round of 32,84,2026-07-02,Thursday,12:00 p.m. UTC-7,"SoFi Stadium, Inglewood, CA",1H vs 2J,Spain,Austria,Spain,93.5%
+Round of 32,85,2026-07-02,Thursday,8:00 p.m. UTC-7,"BC Place, Vancouver, BC",1B vs 3G,Switzerland,Iran,Switzerland,56.6%
+Round of 32,86,2026-07-03,Friday,6:00 p.m. UTC-4,"Hard Rock Stadium, Miami Gardens, FL",1J vs 2H,Argentina,Cabo Verde,Argentina,99.9%
+Round of 32,87,2026-07-03,Friday,8:30 p.m. UTC-5,"Arrowhead Stadium, Kansas City, MO",1K vs 3L,Colombia,Ghana,Colombia,99.8%
+Round of 32,88,2026-07-03,Friday,1:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",2D vs 2G,Australia,Egypt,Australia,52.5%
+Round of 16,89,2026-07-04,Saturday,5:00 p.m. UTC-4,"Lincoln Financial Field, Philadelphia, PA",W74 vs W77,Germany,France,France,73.1%
+Round of 16,90,2026-07-04,Saturday,12:00 p.m. UTC-5,"NRG Stadium, Houston, TX",W73 vs W75,Canada,Morocco,Morocco,92.1%
+Round of 16,91,2026-07-05,Sunday,4:00 p.m. UTC-4,"MetLife Stadium, East Rutherford, NJ",W76 vs W78,Brazil,Norway,Brazil,93.8%
+Round of 16,92,2026-07-05,Sunday,6:00 p.m. UTC-6,"Estadio Azteca, Mexico City, MX",W79 vs W80,Mexico,England,England,74.2%
+Round of 16,93,2026-07-06,Monday,2:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",W83 vs W84,Portugal,Spain,Spain,62.8%
+Round of 16,94,2026-07-06,Monday,5:00 p.m. UTC-7,"Lumen Field, Seattle, WA",W81 vs W82,USA,Belgium,Belgium,63.4%
+Round of 16,95,2026-07-07,Tuesday,12:00 p.m. UTC-4,"Mercedes-Benz Stadium, Atlanta, GA",W86 vs W88,Argentina,Australia,Argentina,96.1%
+Round of 16,96,2026-07-07,Tuesday,1:00 p.m. UTC-7,"BC Place, Vancouver, BC",W85 vs W87,Switzerland,Colombia,Colombia,68.4%
+Quarterfinal,97,2026-07-09,Thursday,4:00 p.m. UTC-4,"Gillette Stadium, Foxborough, MA",W89 vs W90,France,Morocco,France,67.3%
+Quarterfinal,98,2026-07-10,Friday,12:00 p.m. UTC-7,"SoFi Stadium, Inglewood, CA",W93 vs W94,Spain,Belgium,Spain,74.1%
+Quarterfinal,99,2026-07-11,Saturday,5:00 p.m. UTC-4,"Hard Rock Stadium, Miami Gardens, FL",W91 vs W92,Brazil,England,England,56.8%
+Quarterfinal,100,2026-07-11,Saturday,8:00 p.m. UTC-5,"Arrowhead Stadium, Kansas City, MO",W95 vs W96,Argentina,Colombia,Argentina,82.1%
+Semifinal,101,2026-07-14,Tuesday,2:00 p.m. UTC-5,"AT&T Stadium, Arlington, TX",W97 vs W98,France,Spain,France,50.1%
+Semifinal,102,2026-07-15,Wednesday,3:00 p.m. UTC-4,"Mercedes-Benz Stadium, Atlanta, GA",W99 vs W100,England,Argentina,Argentina,59.7%
+Third-place Match,103,2026-07-18,Saturday,5:00 p.m. UTC-4,"Hard Rock Stadium, Miami Gardens, FL",L101 vs L102,Spain,England,Spain,56.6%
+Final,104,2026-07-19,Sunday,3:00 p.m. UTC-4,"MetLife Stadium, East Rutherford, NJ",W101 vs W102,France,Argentina,Argentina,53.1%

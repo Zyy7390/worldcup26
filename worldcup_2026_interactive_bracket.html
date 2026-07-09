@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>World Cup 2026 Interactive Bracket</title>
+  <style>
+    :root {
+      --bg: #091013;
+      --panel: #111b20;
+      --panel-2: #17252b;
+      --ink: #edf4f1;
+      --muted: #9fb0ad;
+      --gold: #d8b45f;
+      --teal: #26c6b8;
+      --red: #e35d5b;
+      --blue: #6da8ff;
+      --line: rgba(255,255,255,.12);
+      --shadow: 0 18px 48px rgba(0,0,0,.34);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(115deg, rgba(216,180,95,.13), transparent 34%),
+        linear-gradient(245deg, rgba(38,198,184,.10), transparent 36%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.032) 0 1px, transparent 1px 116px),
+        var(--bg);
+      min-height: 100vh;
+    }
+    header {
+      padding: 30px clamp(18px, 4vw, 56px) 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9,16,19,.72);
+      backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+    }
+    .eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    h1 {
+      margin: 8px 0 14px;
+      font-size: clamp(30px, 5vw, 58px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+    .lead {
+      max-width: 880px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .metric {
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px 14px;
+      min-height: 76px;
+    }
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .metric strong {
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+    main { padding: 24px clamp(14px, 3vw, 42px) 54px; }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    button, select, input {
+      border: 1px solid var(--line);
+      background: #0f191e;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+    }
+    button {
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    button:hover { transform: translateY(-1px); border-color: rgba(216,180,95,.55); }
+    button.active { background: rgba(216,180,95,.18); border-color: var(--gold); }
+    input { min-width: min(320px, 100%); }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: start;
+    }
+    .bracket {
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+    .rounds {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(230px, 1fr));
+      gap: 12px;
+      min-width: 1180px;
+    }
+    .round-col {
+      background: rgba(17,27,32,.72);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .round-col h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin: 0 0 12px;
+      color: var(--teal);
+    }
+    .match-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      min-height: 150px;
+      position: relative;
+      box-shadow: 0 9px 22px rgba(0,0,0,.20);
+    }
+    .match-card.actual { border-left: 4px solid var(--teal); }
+    .match-card.projected { border-left: 4px solid var(--gold); }
+    .match-card.selected { outline: 2px solid rgba(216,180,95,.75); }
+    .match-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    .teams { font-weight: 800; font-size: 16px; line-height: 1.32; }
+    .pick {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .pick strong { color: var(--gold); }
+    .location {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    aside {
+      position: sticky;
+      top: 180px;
+      background: rgba(17,27,32,.88);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      max-height: calc(100vh - 198px);
+      overflow: auto;
+    }
+    aside h2, section h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+    .detail-line {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 8px 0;
+    }
+    .rating-row {
+      display: grid;
+      grid-template-columns: 1fr 46px;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      width: var(--w);
+      background: linear-gradient(90deg, var(--teal), var(--gold));
+    }
+    .sections {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+      gap: 18px;
+      margin-top: 24px;
+    }
+    section {
+      background: rgba(17,27,32,.78);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 12px 34px rgba(0,0,0,.22);
+    }
+    .rec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+    }
+    .rec-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .rec-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .rec-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 7px 0;
+    }
+    .pill {
+      display: inline-block;
+      border: 1px solid rgba(216,180,95,.42);
+      color: var(--gold);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 22px;
+    }
+    @media (max-width: 980px) {
+      .scoreboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .layout, .sections { grid-template-columns: 1fr; }
+      aside { position: static; max-height: none; }
+      header { position: static; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .match-card { transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+      .match-card:hover { transform: translateY(-2px); border-color: rgba(216,180,95,.55); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">World Cup 2026 Forecast Lab</div>
+    <h1>Interactive Knockout Bracket</h1>
+    <p class="lead">Latest notebook projection with actual R32 results, rendered Google lineup ratings, human tactical priors, ticket-watch recommendations, and a market-prior diagnostic view.</p>
+    <div class="scoreboard">
+      <div class="metric"><span>Projected Champion</span><strong>France</strong></div>
+      <div class="metric"><span>Projected Runner-up</span><strong>Argentina</strong></div>
+      <div class="metric"><span>Google Rows</span><strong>2,334</strong></div>
+      <div class="metric"><span>Scraped Matches</span><strong>74 / 82</strong></div>
+      <div class="metric"><span>Star Matches</span><strong>231</strong></div>
+    </div>
+  </header>
+  <main>
+    <div class="toolbar">
+      <button class="active" data-dataset="live">Live Model</button>
+      <button data-dataset="market">Market Diagnostic</button>
+      <select id="roundFilter" aria-label="Round filter">
+        <option value="All">All rounds</option>
+      </select>
+      <select id="statusFilter" aria-label="Status filter">
+        <option value="All">Actual + projected</option>
+        <option value="actual">Actual only</option>
+        <option value="projected">Projected only</option>
+      </select>
+      <input id="searchBox" placeholder="Search team, city, stadium, match number" aria-label="Search">
+    </div>
+    <div class="layout">
+      <div class="bracket"><div id="rounds" class="rounds"></div></div>
+      <aside id="details"></aside>
+    </div>
+    <div class="sections">
+      <section>
+        <h2>Games To Watch</h2>
+        <div id="recommendations" class="rec-grid"></div>
+      </section>
+      <section>
+        <h2>Knockout Player Form</h2>
+        <div id="topPlayers"></div>
+      </section>
+    </div>
+    <section style="margin-top:18px">
+      <h2>Knockout Team Rating Averages</h2>
+      <div id="teamForm"></div>
+    </section>
+    <footer>
+      Data note: Google ratings are from rendered match-card lineup panels stored locally after the July 2 sweep. Knockout team averages are used as forward signals where available; group-stage ratings are stored for analysis. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
+    </footer>
+  </main>
+  <script>
+    const DATA = {"summaryMap": {"Champion": "France", "Runner-up": "Argentina", "Third place": "Spain", "Fourth place": "England"}, "liveBracket": [{"round": "Round of 32", "match": 73, "date": "2026-06-28", "weekday": "Sunday", "local_kickoff": "12:00 p.m. UTC-7", "location": "SoFi Stadium, Inglewood, CA", "slot": "2A vs 2B", "team_a": "South Africa", "team_b": "Canada", "status": "actual", "result_note": "Canada 1-0 South Africa", "winner": "Canada", "winner_probability": "96.3%"}, {"round": "Round of 32", "match": 74, "date": "2026-06-29", "weekday": "Monday", "local_kickoff": "4:30 p.m. UTC-4", "location": "Gillette Stadium, Foxborough, MA", "slot": "1E vs 3D", "team_a": "Germany", "team_b": "Paraguay", "status": "actual", "result_note": "1-1; Paraguay 4-3 pens", "winner": "Paraguay", "winner_probability": "3.1%"}, {"round": "Round of 32", "match": 75, "date": "2026-06-29", "weekday": "Monday", "local_kickoff": "7:00 p.m. UTC-6", "location": "Estadio BBVA, Guadalupe, NL", "slot": "1F vs 2C", "team_a": "Netherlands", "team_b": "Morocco", "status": "actual", "result_note": "1-1; Morocco 3-2 pens", "winner": "Morocco", "winner_probability": "49.4%"}, {"round": "Round of 32", "match": 76, "date": "2026-06-29", "weekday": "Monday", "local_kickoff": "12:00 p.m. UTC-5", "location": "NRG Stadium, Houston, TX", "slot": "1C vs 2F", "team_a": "Brazil", "team_b": "Japan", "status": "actual", "result_note": "Brazil 2-1 Japan", "winner": "Brazil", "winner_probability": "80.8%"}, {"round": "Round of 32", "match": 77, "date": "2026-06-30", "weekday": "Tuesday", "local_kickoff": "5:00 p.m. UTC-4", "location": "MetLife Stadium, East Rutherford, NJ", "slot": "1I vs 3F", "team_a": "France", "team_b": "Sweden", "status": "actual", "result_note": "France 3-0 Sweden", "winner": "France", "winner_probability": "98.6%"}, {"round": "Round of 32", "match": 78, "date": "2026-06-30", "weekday": "Tuesday", "local_kickoff": "12:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "2E vs 2I", "team_a": "Cote d'Ivoire", "team_b": "Norway", "status": "actual", "result_note": "Norway 2-1 Cote d'Ivoire", "winner": "Norway", "winner_probability": "63.2%"}, {"round": "Round of 32", "match": 79, "date": "2026-06-30", "weekday": "Tuesday", "local_kickoff": "7:00 p.m. UTC-6", "location": "Estadio Azteca, Mexico City, MX", "slot": "1A vs 3E", "team_a": "Mexico", "team_b": "Ecuador", "status": "actual", "result_note": "Mexico 2-0 Ecuador", "winner": "Mexico", "winner_probability": "82.0%"}, {"round": "Round of 32", "match": 80, "date": "2026-07-01", "weekday": "Wednesday", "local_kickoff": "12:00 p.m. UTC-4", "location": "Mercedes-Benz Stadium, Atlanta, GA", "slot": "1L vs 3K", "team_a": "England", "team_b": "DR Congo", "status": "actual", "result_note": "England 2-1 DR Congo", "winner": "England", "winner_probability": "99.2%"}, {"round": "Round of 32", "match": 81, "date": "2026-07-01", "weekday": "Wednesday", "local_kickoff": "5:00 p.m. UTC-7", "location": "Levi's Stadium, Santa Clara, CA", "slot": "1D vs 3B", "team_a": "USA", "team_b": "Bosnia and Herzegovina", "status": "actual", "result_note": "USA 2-0 Bosnia and Herzegovina", "winner": "USA", "winner_probability": "99.5%"}, {"round": "Round of 32", "match": 82, "date": "2026-07-01", "weekday": "Wednesday", "local_kickoff": "1:00 p.m. UTC-7", "location": "Lumen Field, Seattle, WA", "slot": "1G vs 3I", "team_a": "Belgium", "team_b": "Senegal", "status": "actual", "result_note": "Belgium 3-2 Senegal", "winner": "Belgium", "winner_probability": "65.8%"}, {"round": "Round of 32", "match": 83, "date": "2026-07-02", "weekday": "Thursday", "local_kickoff": "7:00 p.m. UTC-4", "location": "BMO Field, Toronto, ON", "slot": "2K vs 2L", "team_a": "Portugal", "team_b": "Croatia", "status": "actual", "result_note": "Portugal 2-1 Croatia", "winner": "Portugal", "winner_probability": "64.8%"}, {"round": "Round of 32", "match": 84, "date": "2026-07-02", "weekday": "Thursday", "local_kickoff": "12:00 p.m. UTC-7", "location": "SoFi Stadium, Inglewood, CA", "slot": "1H vs 2J", "team_a": "Spain", "team_b": "Austria", "status": "actual", "result_note": "Spain 3-0 Austria", "winner": "Spain", "winner_probability": "93.5%"}, {"round": "Round of 32", "match": 85, "date": "2026-07-02", "weekday": "Thursday", "local_kickoff": "8:00 p.m. UTC-7", "location": "BC Place, Vancouver, BC", "slot": "1B vs 3J", "team_a": "Switzerland", "team_b": "Algeria", "status": "actual", "result_note": "Switzerland 2-0 Algeria", "winner": "Switzerland", "winner_probability": "72.8%"}, {"round": "Round of 32", "match": 86, "date": "2026-07-03", "weekday": "Friday", "local_kickoff": "6:00 p.m. UTC-4", "location": "Hard Rock Stadium, Miami Gardens, FL", "slot": "1J vs 2H", "team_a": "Argentina", "team_b": "Cabo Verde", "status": "actual", "result_note": "Argentina 3-2 Cabo Verde (aet)", "winner": "Argentina", "winner_probability": "99.9%"}, {"round": "Round of 32", "match": 87, "date": "2026-07-03", "weekday": "Friday", "local_kickoff": "8:30 p.m. UTC-5", "location": "Arrowhead Stadium, Kansas City, MO", "slot": "1K vs 3L", "team_a": "Colombia", "team_b": "Ghana", "status": "actual", "result_note": "Colombia 1-0 Ghana", "winner": "Colombia", "winner_probability": "99.8%"}, {"round": "Round of 32", "match": 88, "date": "2026-07-03", "weekday": "Friday", "local_kickoff": "1:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "2D vs 2G", "team_a": "Australia", "team_b": "Egypt", "status": "actual", "result_note": "1-1; Egypt 4-2 pens", "winner": "Egypt", "winner_probability": "47.5%"}, {"round": "Round of 16", "match": 89, "date": "2026-07-04", "weekday": "Saturday", "local_kickoff": "5:00 p.m. UTC-4", "location": "Lincoln Financial Field, Philadelphia, PA", "slot": "W74 vs W77", "team_a": "Paraguay", "team_b": "France", "status": "actual", "result_note": "France 1-0 Paraguay", "winner": "France", "winner_probability": "99.0%"}, {"round": "Round of 16", "match": 90, "date": "2026-07-04", "weekday": "Saturday", "local_kickoff": "12:00 p.m. UTC-5", "location": "NRG Stadium, Houston, TX", "slot": "W73 vs W75", "team_a": "Canada", "team_b": "Morocco", "status": "actual", "result_note": "Morocco 3-0 Canada", "winner": "Morocco", "winner_probability": "91.2%"}, {"round": "Round of 16", "match": 91, "date": "2026-07-05", "weekday": "Sunday", "local_kickoff": "4:00 p.m. UTC-4", "location": "MetLife Stadium, East Rutherford, NJ", "slot": "W76 vs W78", "team_a": "Brazil", "team_b": "Norway", "status": "actual", "result_note": "Norway 2-1 Brazil", "winner": "Norway", "winner_probability": "7.5%"}, {"round": "Round of 16", "match": 92, "date": "2026-07-05", "weekday": "Sunday", "local_kickoff": "6:00 p.m. UTC-6", "location": "Estadio Azteca, Mexico City, MX", "slot": "W79 vs W80", "team_a": "Mexico", "team_b": "England", "status": "actual", "result_note": "England 3-2 Mexico", "winner": "England", "winner_probability": "70.5%"}, {"round": "Round of 16", "match": 93, "date": "2026-07-06", "weekday": "Monday", "local_kickoff": "2:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "W83 vs W84", "team_a": "Portugal", "team_b": "Spain", "status": "actual", "result_note": "Spain 1-0 Portugal", "winner": "Spain", "winner_probability": "65.5%"}, {"round": "Round of 16", "match": 94, "date": "2026-07-06", "weekday": "Monday", "local_kickoff": "5:00 p.m. UTC-7", "location": "Lumen Field, Seattle, WA", "slot": "W81 vs W82", "team_a": "USA", "team_b": "Belgium", "status": "actual", "result_note": "Belgium 4-1 USA", "winner": "Belgium", "winner_probability": "57.1%"}, {"round": "Round of 16", "match": 95, "date": "2026-07-07", "weekday": "Tuesday", "local_kickoff": "12:00 p.m. UTC-4", "location": "Mercedes-Benz Stadium, Atlanta, GA", "slot": "W86 vs W88", "team_a": "Argentina", "team_b": "Egypt", "status": "actual", "result_note": "Argentina 3-2 Egypt", "winner": "Argentina", "winner_probability": "96.3%"}, {"round": "Round of 16", "match": 96, "date": "2026-07-07", "weekday": "Tuesday", "local_kickoff": "1:00 p.m. UTC-7", "location": "BC Place, Vancouver, BC", "slot": "W85 vs W87", "team_a": "Switzerland", "team_b": "Colombia", "status": "actual", "result_note": "0-0; Switzerland 4-3 pens", "winner": "Switzerland", "winner_probability": "31.4%"}, {"round": "Quarterfinal", "match": 97, "date": "2026-07-09", "weekday": "Thursday", "local_kickoff": "4:00 p.m. UTC-4", "location": "Gillette Stadium, Foxborough, MA", "slot": "W89 vs W90", "team_a": "France", "team_b": "Morocco", "status": "projected", "result_note": null, "winner": "France", "winner_probability": "72.3%"}, {"round": "Quarterfinal", "match": 98, "date": "2026-07-10", "weekday": "Friday", "local_kickoff": "12:00 p.m. UTC-7", "location": "SoFi Stadium, Inglewood, CA", "slot": "W93 vs W94", "team_a": "Spain", "team_b": "Belgium", "status": "projected", "result_note": null, "winner": "Spain", "winner_probability": "75.8%"}, {"round": "Quarterfinal", "match": 99, "date": "2026-07-11", "weekday": "Saturday", "local_kickoff": "5:00 p.m. UTC-4", "location": "Hard Rock Stadium, Miami Gardens, FL", "slot": "W91 vs W92", "team_a": "Norway", "team_b": "England", "status": "projected", "result_note": null, "winner": "England", "winner_probability": "94.6%"}, {"round": "Quarterfinal", "match": 100, "date": "2026-07-11", "weekday": "Saturday", "local_kickoff": "8:00 p.m. UTC-5", "location": "Arrowhead Stadium, Kansas City, MO", "slot": "W95 vs W96", "team_a": "Argentina", "team_b": "Switzerland", "status": "projected", "result_note": null, "winner": "Argentina", "winner_probability": "90.4%"}, {"round": "Semifinal", "match": 101, "date": "2026-07-14", "weekday": "Tuesday", "local_kickoff": "2:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "W97 vs W98", "team_a": "France", "team_b": "Spain", "status": "projected", "result_note": null, "winner": "France", "winner_probability": "53.5%"}, {"round": "Semifinal", "match": 102, "date": "2026-07-15", "weekday": "Wednesday", "local_kickoff": "3:00 p.m. UTC-4", "location": "Mercedes-Benz Stadium, Atlanta, GA", "slot": "W99 vs W100", "team_a": "England", "team_b": "Argentina", "status": "projected", "result_note": null, "winner": "Argentina", "winner_probability": "56.7%"}, {"round": "Third-place Match", "match": 103, "date": "2026-07-18", "weekday": "Saturday", "local_kickoff": "5:00 p.m. UTC-4", "location": "Hard Rock Stadium, Miami Gardens, FL", "slot": "L101 vs L102", "team_a": "Spain", "team_b": "England", "status": "projected", "result_note": null, "winner": "Spain", "winner_probability": "54.4%"}, {"round": "Final", "match": 104, "date": "2026-07-19", "weekday": "Sunday", "local_kickoff": "3:00 p.m. UTC-4", "location": "MetLife Stadium, East Rutherford, NJ", "slot": "W101 vs W102", "team_a": "France", "team_b": "Argentina", "status": "projected", "result_note": null, "winner": "France", "winner_probability": "51.2%"}], "marketBracket": [{"round": "Round of 32", "match": 73, "date": "2026-06-28", "weekday": "Sunday", "local_kickoff": "12:00 p.m. UTC-7", "location": "SoFi Stadium, Inglewood, CA", "slot": "2A vs 2B", "team_a": "South Africa", "team_b": "Canada", "status": "actual", "result_note": "Canada 1-0 South Africa", "winner": "Canada", "winner_probability": "96.3%"}, {"round": "Round of 32", "match": 74, "date": "2026-06-29", "weekday": "Monday", "local_kickoff": "4:30 p.m. UTC-4", "location": "Gillette Stadium, Foxborough, MA", "slot": "1E vs 3D", "team_a": "Germany", "team_b": "Paraguay", "status": "actual", "result_note": "1-1; Paraguay 4-3 pens", "winner": "Paraguay", "winner_probability": "3.1%"}, {"round": "Round of 32", "match": 75, "date": "2026-06-29", "weekday": "Monday", "local_kickoff": "7:00 p.m. UTC-6", "location": "Estadio BBVA, Guadalupe, NL", "slot": "1F vs 2C", "team_a": "Netherlands", "team_b": "Morocco", "status": "actual", "result_note": "1-1; Morocco 3-2 pens", "winner": "Morocco", "winner_probability": "49.4%"}, {"round": "Round of 32", "match": 76, "date": "2026-06-29", "weekday": "Monday", "local_kickoff": "12:00 p.m. UTC-5", "location": "NRG Stadium, Houston, TX", "slot": "1C vs 2F", "team_a": "Brazil", "team_b": "Japan", "status": "actual", "result_note": "Brazil 2-1 Japan", "winner": "Brazil", "winner_probability": "80.8%"}, {"round": "Round of 32", "match": 77, "date": "2026-06-30", "weekday": "Tuesday", "local_kickoff": "5:00 p.m. UTC-4", "location": "MetLife Stadium, East Rutherford, NJ", "slot": "1I vs 3F", "team_a": "France", "team_b": "Sweden", "status": "actual", "result_note": "France 3-0 Sweden", "winner": "France", "winner_probability": "98.6%"}, {"round": "Round of 32", "match": 78, "date": "2026-06-30", "weekday": "Tuesday", "local_kickoff": "12:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "2E vs 2I", "team_a": "Cote d'Ivoire", "team_b": "Norway", "status": "actual", "result_note": "Norway 2-1 Cote d'Ivoire", "winner": "Norway", "winner_probability": "63.2%"}, {"round": "Round of 32", "match": 79, "date": "2026-06-30", "weekday": "Tuesday", "local_kickoff": "7:00 p.m. UTC-6", "location": "Estadio Azteca, Mexico City, MX", "slot": "1A vs 3E", "team_a": "Mexico", "team_b": "Ecuador", "status": "actual", "result_note": "Mexico 2-0 Ecuador", "winner": "Mexico", "winner_probability": "82.0%"}, {"round": "Round of 32", "match": 80, "date": "2026-07-01", "weekday": "Wednesday", "local_kickoff": "12:00 p.m. UTC-4", "location": "Mercedes-Benz Stadium, Atlanta, GA", "slot": "1L vs 3K", "team_a": "England", "team_b": "DR Congo", "status": "actual", "result_note": "England 2-1 DR Congo", "winner": "England", "winner_probability": "99.2%"}, {"round": "Round of 32", "match": 81, "date": "2026-07-01", "weekday": "Wednesday", "local_kickoff": "5:00 p.m. UTC-7", "location": "Levi's Stadium, Santa Clara, CA", "slot": "1D vs 3B", "team_a": "USA", "team_b": "Bosnia and Herzegovina", "status": "actual", "result_note": "USA 2-0 Bosnia and Herzegovina", "winner": "USA", "winner_probability": "99.5%"}, {"round": "Round of 32", "match": 82, "date": "2026-07-01", "weekday": "Wednesday", "local_kickoff": "1:00 p.m. UTC-7", "location": "Lumen Field, Seattle, WA", "slot": "1G vs 3I", "team_a": "Belgium", "team_b": "Senegal", "status": "actual", "result_note": "Belgium 3-2 Senegal", "winner": "Belgium", "winner_probability": "65.8%"}, {"round": "Round of 32", "match": 83, "date": "2026-07-02", "weekday": "Thursday", "local_kickoff": "7:00 p.m. UTC-4", "location": "BMO Field, Toronto, ON", "slot": "2K vs 2L", "team_a": "Portugal", "team_b": "Croatia", "status": "actual", "result_note": "Portugal 2-1 Croatia", "winner": "Portugal", "winner_probability": "64.8%"}, {"round": "Round of 32", "match": 84, "date": "2026-07-02", "weekday": "Thursday", "local_kickoff": "12:00 p.m. UTC-7", "location": "SoFi Stadium, Inglewood, CA", "slot": "1H vs 2J", "team_a": "Spain", "team_b": "Austria", "status": "actual", "result_note": "Spain 3-0 Austria", "winner": "Spain", "winner_probability": "93.5%"}, {"round": "Round of 32", "match": 85, "date": "2026-07-02", "weekday": "Thursday", "local_kickoff": "8:00 p.m. UTC-7", "location": "BC Place, Vancouver, BC", "slot": "1B vs 3J", "team_a": "Switzerland", "team_b": "Algeria", "status": "actual", "result_note": "Switzerland 2-0 Algeria", "winner": "Switzerland", "winner_probability": "72.8%"}, {"round": "Round of 32", "match": 86, "date": "2026-07-03", "weekday": "Friday", "local_kickoff": "6:00 p.m. UTC-4", "location": "Hard Rock Stadium, Miami Gardens, FL", "slot": "1J vs 2H", "team_a": "Argentina", "team_b": "Cabo Verde", "status": "actual", "result_note": "Argentina 3-2 Cabo Verde (aet)", "winner": "Argentina", "winner_probability": "99.9%"}, {"round": "Round of 32", "match": 87, "date": "2026-07-03", "weekday": "Friday", "local_kickoff": "8:30 p.m. UTC-5", "location": "Arrowhead Stadium, Kansas City, MO", "slot": "1K vs 3L", "team_a": "Colombia", "team_b": "Ghana", "status": "actual", "result_note": "Colombia 1-0 Ghana", "winner": "Colombia", "winner_probability": "99.8%"}, {"round": "Round of 32", "match": 88, "date": "2026-07-03", "weekday": "Friday", "local_kickoff": "1:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "2D vs 2G", "team_a": "Australia", "team_b": "Egypt", "status": "actual", "result_note": "1-1; Egypt 4-2 pens", "winner": "Egypt", "winner_probability": "47.5%"}, {"round": "Round of 16", "match": 89, "date": "2026-07-04", "weekday": "Saturday", "local_kickoff": "5:00 p.m. UTC-4", "location": "Lincoln Financial Field, Philadelphia, PA", "slot": "W74 vs W77", "team_a": "Paraguay", "team_b": "France", "status": "actual", "result_note": "France 1-0 Paraguay", "winner": "France", "winner_probability": "99.0%"}, {"round": "Round of 16", "match": 90, "date": "2026-07-04", "weekday": "Saturday", "local_kickoff": "12:00 p.m. UTC-5", "location": "NRG Stadium, Houston, TX", "slot": "W73 vs W75", "team_a": "Canada", "team_b": "Morocco", "status": "actual", "result_note": "Morocco 3-0 Canada", "winner": "Morocco", "winner_probability": "91.2%"}, {"round": "Round of 16", "match": 91, "date": "2026-07-05", "weekday": "Sunday", "local_kickoff": "4:00 p.m. UTC-4", "location": "MetLife Stadium, East Rutherford, NJ", "slot": "W76 vs W78", "team_a": "Brazil", "team_b": "Norway", "status": "actual", "result_note": "Norway 2-1 Brazil", "winner": "Norway", "winner_probability": "7.5%"}, {"round": "Round of 16", "match": 92, "date": "2026-07-05", "weekday": "Sunday", "local_kickoff": "6:00 p.m. UTC-6", "location": "Estadio Azteca, Mexico City, MX", "slot": "W79 vs W80", "team_a": "Mexico", "team_b": "England", "status": "actual", "result_note": "England 3-2 Mexico", "winner": "England", "winner_probability": "70.5%"}, {"round": "Round of 16", "match": 93, "date": "2026-07-06", "weekday": "Monday", "local_kickoff": "2:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "W83 vs W84", "team_a": "Portugal", "team_b": "Spain", "status": "actual", "result_note": "Spain 1-0 Portugal", "winner": "Spain", "winner_probability": "65.5%"}, {"round": "Round of 16", "match": 94, "date": "2026-07-06", "weekday": "Monday", "local_kickoff": "5:00 p.m. UTC-7", "location": "Lumen Field, Seattle, WA", "slot": "W81 vs W82", "team_a": "USA", "team_b": "Belgium", "status": "actual", "result_note": "Belgium 4-1 USA", "winner": "Belgium", "winner_probability": "57.1%"}, {"round": "Round of 16", "match": 95, "date": "2026-07-07", "weekday": "Tuesday", "local_kickoff": "12:00 p.m. UTC-4", "location": "Mercedes-Benz Stadium, Atlanta, GA", "slot": "W86 vs W88", "team_a": "Argentina", "team_b": "Egypt", "status": "actual", "result_note": "Argentina 3-2 Egypt", "winner": "Argentina", "winner_probability": "96.3%"}, {"round": "Round of 16", "match": 96, "date": "2026-07-07", "weekday": "Tuesday", "local_kickoff": "1:00 p.m. UTC-7", "location": "BC Place, Vancouver, BC", "slot": "W85 vs W87", "team_a": "Switzerland", "team_b": "Colombia", "status": "actual", "result_note": "0-0; Switzerland 4-3 pens", "winner": "Switzerland", "winner_probability": "31.4%"}, {"round": "Quarterfinal", "match": 97, "date": "2026-07-09", "weekday": "Thursday", "local_kickoff": "4:00 p.m. UTC-4", "location": "Gillette Stadium, Foxborough, MA", "slot": "W89 vs W90", "team_a": "France", "team_b": "Morocco", "status": "projected", "result_note": null, "winner": "France", "winner_probability": "72.3%"}, {"round": "Quarterfinal", "match": 98, "date": "2026-07-10", "weekday": "Friday", "local_kickoff": "12:00 p.m. UTC-7", "location": "SoFi Stadium, Inglewood, CA", "slot": "W93 vs W94", "team_a": "Spain", "team_b": "Belgium", "status": "projected", "result_note": null, "winner": "Spain", "winner_probability": "75.8%"}, {"round": "Quarterfinal", "match": 99, "date": "2026-07-11", "weekday": "Saturday", "local_kickoff": "5:00 p.m. UTC-4", "location": "Hard Rock Stadium, Miami Gardens, FL", "slot": "W91 vs W92", "team_a": "Norway", "team_b": "England", "status": "projected", "result_note": null, "winner": "England", "winner_probability": "94.6%"}, {"round": "Quarterfinal", "match": 100, "date": "2026-07-11", "weekday": "Saturday", "local_kickoff": "8:00 p.m. UTC-5", "location": "Arrowhead Stadium, Kansas City, MO", "slot": "W95 vs W96", "team_a": "Argentina", "team_b": "Switzerland", "status": "projected", "result_note": null, "winner": "Argentina", "winner_probability": "90.4%"}, {"round": "Semifinal", "match": 101, "date": "2026-07-14", "weekday": "Tuesday", "local_kickoff": "2:00 p.m. UTC-5", "location": "AT&T Stadium, Arlington, TX", "slot": "W97 vs W98", "team_a": "France", "team_b": "Spain", "status": "projected", "result_note": null, "winner": "France", "winner_probability": "53.5%"}, {"round": "Semifinal", "match": 102, "date": "2026-07-15", "weekday": "Wednesday", "local_kickoff": "3:00 p.m. UTC-4", "location": "Mercedes-Benz Stadium, Atlanta, GA", "slot": "W99 vs W100", "team_a": "England", "team_b": "Argentina", "status": "projected", "result_note": null, "winner": "Argentina", "winner_probability": "56.7%"}, {"round": "Third-place Match", "match": 103, "date": "2026-07-18", "weekday": "Saturday", "local_kickoff": "5:00 p.m. UTC-4", "location": "Hard Rock Stadium, Miami Gardens, FL", "slot": "L101 vs L102", "team_a": "Spain", "team_b": "England", "status": "projected", "result_note": null, "winner": "Spain", "winner_probability": "54.4%"}, {"round": "Final", "match": 104, "date": "2026-07-19", "weekday": "Sunday", "local_kickoff": "3:00 p.m. UTC-4", "location": "MetLife Stadium, East Rutherford, NJ", "slot": "W101 vs W102", "team_a": "France", "team_b": "Argentina", "status": "projected", "result_note": null, "winner": "France", "winner_probability": "51.2%"}], "recommendations": [{"rank": 1, "match": 100, "round": "Quarterfinal", "date": "2026-07-11", "weekday": "Saturday", "local_time": "20:00", "city": "Kansas City, MO", "stadium": "Arrowhead Stadium / Kansas City Stadium", "possible_matchup": "Argentina vs Switzerland", "priority_team": "Argentina", "good_seat_price_estimate_usd": "$4,500-$7,500 target range for good sideline seats; premium midfield may exceed this", "projected_weather": "Hot/humid summer evening, roughly low 80s F at kickoff with thunderstorm risk.", "reason": "Best upcoming Argentina value if they remain alive: quarterfinal stakes, weekend date, and still more reachable than semifinal/final.", "matchup_score": 4.9, "price_fit_score": 4.3, "weekday_score": 5.0, "weather_score": 2.8, "recommendation_score": 4.56}, {"rank": 2, "match": 102, "round": "Semifinal", "date": "2026-07-15", "weekday": "Wednesday", "local_time": "15:00", "city": "Atlanta, GA", "stadium": "Mercedes-Benz Stadium / Atlanta Stadium", "possible_matchup": "England vs Argentina", "priority_team": "Argentina", "good_seat_price_estimate_usd": "$6,000-$8,000 target for good seats; true lower-midfield could exceed budget", "projected_weather": "Hot/humid outside; retractable roof helps. Afternoon kickoff makes roof/indoor comfort valuable.", "reason": "Highest-priority semifinal because it can include Argentina and possibly Norway/England from the other quarterfinal.", "matchup_score": 5.0, "price_fit_score": 3.9, "weekday_score": 2.0, "weather_score": 4.3, "recommendation_score": 4.44}, {"rank": 3, "match": 99, "round": "Quarterfinal", "date": "2026-07-11", "weekday": "Saturday", "local_time": "17:00", "city": "Miami Gardens, FL", "stadium": "Hard Rock Stadium", "possible_matchup": "Norway vs England", "priority_team": "Norway", "good_seat_price_estimate_usd": "$4,000-$7,500 target range; Haaland/England demand can push central lower seats higher", "projected_weather": "Hot, humid, thunderstorm/rainy-season risk; late afternoon kickoff helps only a little.", "reason": "Top Norway-priority match now: Haaland/Odegaard/Nusa transition threat against England's improved collaborative attack.", "matchup_score": 4.8, "price_fit_score": 4.0, "weekday_score": 5.0, "weather_score": 2.5, "recommendation_score": 4.43}, {"rank": 4, "match": 104, "round": "Final", "date": "2026-07-19", "weekday": "Sunday", "local_time": "15:00", "city": "East Rutherford, NJ", "stadium": "MetLife Stadium / New York New Jersey Stadium", "possible_matchup": "France vs Argentina", "priority_team": "Argentina, France", "good_seat_price_estimate_usd": "$5,785-$7,380 public Cat. 3/Cat. 2 benchmark; true prime midfield reported near/above $10,990", "projected_weather": "Warm/humid July afternoon, around mid-80s F; open-air stadium, possible thunderstorm risk.", "reason": "The best football event if budget is flexible. Within $3k-$8k is plausible only away from the very best midfield/lower seats.", "matchup_score": 5.0, "price_fit_score": 2.8, "weekday_score": 5.0, "weather_score": 2.7, "recommendation_score": 4.31}, {"rank": 5, "match": 101, "round": "Semifinal", "date": "2026-07-14", "weekday": "Tuesday", "local_time": "14:00", "city": "Arlington, TX", "stadium": "AT&T Stadium / Dallas Stadium", "possible_matchup": "France vs Spain", "priority_team": "France, Spain", "good_seat_price_estimate_usd": "$6,000-$8,000 target range for good seats; premium lower-midfield may exceed budget", "projected_weather": "Very hot outside, often mid-to-upper 90s F in July; retractable roof/indoor environment is a major plus.", "reason": "Best non-Argentina elite match if the model path holds: France/Spain-level quality in a climate-controlled venue.", "matchup_score": 4.9, "price_fit_score": 3.7, "weekday_score": 2.0, "weather_score": 4.1, "recommendation_score": 4.16}, {"rank": 6, "match": 98, "round": "Quarterfinal", "date": "2026-07-10", "weekday": "Friday", "local_time": "12:00", "city": "Inglewood, CA", "stadium": "SoFi Stadium", "possible_matchup": "Spain vs Belgium", "priority_team": "Spain", "good_seat_price_estimate_usd": "$4,500-$7,000 target range for good seats", "projected_weather": "Mild/dry, likely comfortable; roof canopy helps. Noon start is less punishing than Texas/Miami.", "reason": "Best Spain-focused value: quarterfinal stakes, comfortable venue, and likely inside the preferred good-seat band.", "matchup_score": 4.5, "price_fit_score": 4.2, "weekday_score": 4.0, "weather_score": 4.9, "recommendation_score": 4.11}, {"rank": 7, "match": 97, "round": "Quarterfinal", "date": "2026-07-09", "weekday": "Thursday", "local_time": "16:00", "city": "Foxborough, MA", "stadium": "Gillette Stadium", "possible_matchup": "France vs Morocco", "priority_team": "France", "good_seat_price_estimate_usd": "$4,000-$7,000 target range for good seats", "projected_weather": "Warm, humid New England summer; average July high near low 80s F; open-air stadium.", "reason": "France priority plus a strong Morocco test. Excellent sporting value before semifinal/final pricing becomes painful.", "matchup_score": 4.4, "price_fit_score": 4.0, "weekday_score": 2.7, "weather_score": 3.3, "recommendation_score": 4.0}, {"rank": 8, "match": 103, "round": "Third-place Match", "date": "2026-07-18", "weekday": "Saturday", "local_time": "17:00", "city": "Miami Gardens, FL", "stadium": "Hard Rock Stadium", "possible_matchup": "Spain vs England", "priority_team": "Spain", "good_seat_price_estimate_usd": "$3,000-$6,000 target range; usually more attainable than the final", "projected_weather": "Hot, humid, thunderstorm/rainy-season risk; evening kickoff helps somewhat.", "reason": "Often the best value for seeing two elite teams with less final-level price pressure, especially on a Saturday.", "matchup_score": 3.8, "price_fit_score": 4.4, "weekday_score": 5.0, "weather_score": 2.6, "recommendation_score": 3.75}], "ratings": {"ratingsByMatch": {"73": [{"team": "Canada", "player": "S. Eust\u00e1quio", "rating": 8.7, "match": "South Africa 0-1 Canada"}, {"team": "South Africa", "player": "R. Williams", "rating": 7.8, "match": "South Africa 0-1 Canada"}, {"team": "South Africa", "player": "K. Mudau", "rating": 7.5, "match": "South Africa 0-1 Canada"}, {"team": "Canada", "player": "M. Cr\u00e9peau", "rating": 6.5, "match": "South Africa 0-1 Canada"}, {"team": "South Africa", "player": "Y. Sithole", "rating": 6.3, "match": "South Africa 0-1 Canada"}, {"team": "South Africa", "player": "O. Appollis", "rating": 6.3, "match": "South Africa 0-1 Canada"}, {"team": "Canada", "player": "Luc de Fougerolles", "rating": 6.2, "match": "South Africa 0-1 Canada"}, {"team": "South Africa", "player": "A. Modiba", "rating": 6.0, "match": "South Africa 0-1 Canada"}, {"team": "Canada", "player": "A. Johnston", "rating": 6.0, "match": "South Africa 0-1 Canada"}, {"team": "South Africa", "player": "I. Okon", "rating": 6.0, "match": "South Africa 0-1 Canada"}, {"team": "Canada", "player": "D. Cornelius", "rating": 5.8, "match": "South Africa 0-1 Canada"}, {"team": "Canada", "player": "T. Buchanan", "rating": 5.8, "match": "South Africa 0-1 Canada"}], "74": [{"team": "Paraguay", "player": "D. Bobadilla", "rating": 6.5, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "Maur\u00edcio", "rating": 6.4, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "J. C\u00e1ceres", "rating": 6.4, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "J. Canale", "rating": 6.4, "match": "Germany 1-1 Paraguay"}, {"team": "Germany", "player": "F. Wirtz", "rating": 6.4, "match": "Germany 1-1 Paraguay"}, {"team": "Germany", "player": "M. Neuer", "rating": 6.3, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "J. Enciso", "rating": 6.3, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "A. Cubas", "rating": 6.3, "match": "Germany 1-1 Paraguay"}, {"team": "Germany", "player": "J. Kimmich", "rating": 6.2, "match": "Germany 1-1 Paraguay"}, {"team": "Germany", "player": "K. Havertz", "rating": 6.2, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "O. Gill", "rating": 6.1, "match": "Germany 1-1 Paraguay"}, {"team": "Paraguay", "player": "J. Alonso", "rating": 6.0, "match": "Germany 1-1 Paraguay"}], "75": [{"team": "Netherlands", "player": "B. Verbruggen", "rating": 7.6, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "N. Mazraoui", "rating": 7.5, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "I. Diop", "rating": 7.1, "match": "Netherlands 1-1 Morocco"}, {"team": "Netherlands", "player": "C. Gakpo", "rating": 6.7, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "A. Hakimi", "rating": 6.7, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "C. Riad", "rating": 6.6, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "A. Ounahi", "rating": 6.5, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "N. El Aynaoui", "rating": 6.5, "match": "Netherlands 1-1 Morocco"}, {"team": "Netherlands", "player": "V. van Dijk", "rating": 6.5, "match": "Netherlands 1-1 Morocco"}, {"team": "Netherlands", "player": "Teun Koopmeiners", "rating": 6.4, "match": "Netherlands 1-1 Morocco"}, {"team": "Morocco", "player": "Soufiane Rahimi", "rating": 6.4, "match": "Netherlands 1-1 Morocco"}, {"team": "Netherlands", "player": "M. van de Ven", "rating": 6.3, "match": "Netherlands 1-1 Morocco"}], "76": [{"team": "Brazil", "player": "Casemiro", "rating": 7.4, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "Marquinhos", "rating": 6.9, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "V. J\u00fanior", "rating": 6.7, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "Gabriel Martinelli", "rating": 6.6, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "Rayan", "rating": 6.6, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "G. Magalh\u00e3es", "rating": 6.4, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "B. Guimar\u00e3es", "rating": 6.4, "match": "Brazil 2-1 Japan"}, {"team": "Brazil", "player": "D. Santos", "rating": 6.0, "match": "Brazil 2-1 Japan"}, {"team": "Japan", "player": "Z. Suzuki", "rating": 5.9, "match": "Brazil 2-1 Japan"}, {"team": "Japan", "player": "K. Sano", "rating": 5.9, "match": "Brazil 2-1 Japan"}, {"team": "Japan", "player": "D. Maeda", "rating": 5.8, "match": "Brazil 2-1 Japan"}, {"team": "Japan", "player": "J. It\u014d", "rating": 5.6, "match": "Brazil 2-1 Japan"}], "77": [{"team": "France", "player": "K. Mbapp\u00e9", "rating": 9.2, "match": "France 3-0 Sweden"}, {"team": "France", "player": "B. Barcola", "rating": 7.1, "match": "France 3-0 Sweden"}, {"team": "France", "player": "M. Olise", "rating": 7.0, "match": "France 3-0 Sweden"}, {"team": "France", "player": "A. Tchouam\u00e9ni", "rating": 6.9, "match": "France 3-0 Sweden"}, {"team": "France", "player": "O. Demb\u00e9l\u00e9", "rating": 6.5, "match": "France 3-0 Sweden"}, {"team": "France", "player": "M. Maignan", "rating": 6.5, "match": "France 3-0 Sweden"}, {"team": "France", "player": "A. Rabiot", "rating": 6.4, "match": "France 3-0 Sweden"}, {"team": "France", "player": "D\u00e9sir\u00e9 Dou\u00e9", "rating": 6.4, "match": "France 3-0 Sweden"}, {"team": "France", "player": "L. Digne", "rating": 6.3, "match": "France 3-0 Sweden"}, {"team": "France", "player": "W. Saliba", "rating": 6.2, "match": "France 3-0 Sweden"}, {"team": "France", "player": "D. Upamecano", "rating": 6.0, "match": "France 3-0 Sweden"}, {"team": "Sweden", "player": "V. Gy\u00f6keres", "rating": 6.0, "match": "France 3-0 Sweden"}], "78": [{"team": "Cote d'Ivoire", "player": "Amad Diallo", "rating": 7.6, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Norway", "player": "P. Berg", "rating": 7.3, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Cote d'Ivoire", "player": "G. Dou\u00e9", "rating": 7.1, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Norway", "player": "E. Haaland", "rating": 7.0, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Norway", "player": "\u00d8. Nyland", "rating": 6.8, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Norway", "player": "T. Heggem", "rating": 6.7, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Cote d'Ivoire", "player": "C. Inao Oula\u00ef", "rating": 6.7, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Cote d'Ivoire", "player": "Y. Diomand\u00e9", "rating": 6.5, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Norway", "player": "K. Ajer", "rating": 6.5, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Cote d'Ivoire", "player": "N. P\u00e9p\u00e9", "rating": 6.4, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Cote d'Ivoire", "player": "G. Konan", "rating": 6.4, "match": "Cote d'Ivoire 1-2 Norway"}, {"team": "Norway", "player": "A. Nusa", "rating": 6.3, "match": "Cote d'Ivoire 1-2 Norway"}], "79": [{"team": "Mexico", "player": "R. Rangel", "rating": 7.8, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "J. Qui\u00f1ones", "rating": 7.5, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "C. Montes", "rating": 7.1, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "R. Alvarado", "rating": 7.1, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "J. V\u00e1squez", "rating": 7.0, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "L. Romo", "rating": 6.9, "match": "Mexico 2-0 Ecuador"}, {"team": "Ecuador", "player": "J. Yeboah", "rating": 6.9, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "G. Mora", "rating": 6.8, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "R. Jim\u00e9nez", "rating": 6.7, "match": "Mexico 2-0 Ecuador"}, {"team": "Ecuador", "player": "W. Pacho", "rating": 6.4, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "\u00c9. Lira", "rating": 6.4, "match": "Mexico 2-0 Ecuador"}, {"team": "Mexico", "player": "J. S\u00e1nchez", "rating": 6.3, "match": "Mexico 2-0 Ecuador"}], "80": [{"team": "England", "player": "H. Kane", "rating": 7.6, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "D. Rice", "rating": 6.4, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "E. Anderson", "rating": 6.3, "match": "England 2-1 DR Congo"}, {"team": "DR Congo", "player": "L. Mpasi", "rating": 6.1, "match": "England 2-1 DR Congo"}, {"team": "DR Congo", "player": "C. Mbemba", "rating": 6.0, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "M. Gu\u00e9hi", "rating": 6.0, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "Anthony Gordon", "rating": 6.0, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "N. Madueke", "rating": 6.0, "match": "England 2-1 DR Congo"}, {"team": "DR Congo", "player": "B. Cipenga", "rating": 5.8, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "J. Bellingham", "rating": 5.6, "match": "England 2-1 DR Congo"}, {"team": "England", "player": "Eberechi Eze", "rating": 5.6, "match": "England 2-1 DR Congo"}, {"team": "DR Congo", "player": "Y. Wissa", "rating": 5.5, "match": "England 2-1 DR Congo"}], "81": [{"team": "USA", "player": "M. Tillman", "rating": 7.7, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "T. Ream", "rating": 7.5, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "A. Freeman", "rating": 7.0, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "C. Richards", "rating": 7.0, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "A. Robinson", "rating": 7.0, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "M. Freese", "rating": 6.9, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "T. Adams", "rating": 6.9, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "W. McKennie", "rating": 6.8, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "Bosnia and Herzegovina", "player": "T. Muharemovi\u0107", "rating": 6.6, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "C. Pulisic", "rating": 6.4, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "F. Balogun", "rating": 6.4, "match": "USA 2-0 Bosnia and Herzegovina"}, {"team": "USA", "player": "Sebastian Berhalter", "rating": 6.4, "match": "USA 2-0 Bosnia and Herzegovina"}], "82": [{"team": "Belgium", "player": "Y. Tielemans", "rating": 7.6, "match": "Belgium 3-2 Senegal"}, {"team": "Senegal", "player": "I. Sarr", "rating": 7.0, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "T. Castagne", "rating": 7.0, "match": "Belgium 3-2 Senegal"}, {"team": "Senegal", "player": "H. Diarra", "rating": 7.0, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "L. Trossard", "rating": 6.8, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "Romelu Lukaku", "rating": 6.7, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "Thomas Meunier", "rating": 6.6, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "A. Theate", "rating": 6.3, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "J. Doku", "rating": 6.1, "match": "Belgium 3-2 Senegal"}, {"team": "Senegal", "player": "P. Ciss", "rating": 6.0, "match": "Belgium 3-2 Senegal"}, {"team": "Senegal", "player": "S. Man\u00e9", "rating": 6.0, "match": "Belgium 3-2 Senegal"}, {"team": "Belgium", "player": "B. Mechele", "rating": 6.0, "match": "Belgium 3-2 Senegal"}]}, "teamAveragesByMatch": {"73": [{"team": "South Africa", "avg_rating": 5.74, "players_rated": 15}, {"team": "Canada", "avg_rating": 5.653, "players_rated": 15}], "74": [{"team": "Paraguay", "avg_rating": 5.776, "players_rated": 17}, {"team": "Germany", "avg_rating": 5.612, "players_rated": 17}], "75": [{"team": "Morocco", "avg_rating": 6.219, "players_rated": 16}, {"team": "Netherlands", "avg_rating": 6.1, "players_rated": 17}], "76": [{"team": "Brazil", "avg_rating": 5.894, "players_rated": 15}, {"team": "Japan", "avg_rating": 5.22, "players_rated": 15}], "77": [{"team": "France", "avg_rating": 6.5, "players_rated": 16}, {"team": "Sweden", "avg_rating": 5.056, "players_rated": 16}], "78": [{"team": "Cote d'Ivoire", "avg_rating": 6.16, "players_rated": 15}, {"team": "Norway", "avg_rating": 6.013, "players_rated": 15}], "79": [{"team": "Mexico", "avg_rating": 6.631, "players_rated": 16}, {"team": "Ecuador", "avg_rating": 5.856, "players_rated": 16}], "80": [{"team": "England", "avg_rating": 5.631, "players_rated": 16}, {"team": "DR Congo", "avg_rating": 5.18, "players_rated": 15}], "81": [{"team": "USA", "avg_rating": 6.633, "players_rated": 15}, {"team": "Bosnia and Herzegovina", "avg_rating": 5.647, "players_rated": 15}], "82": [{"team": "Belgium", "avg_rating": 6.012, "players_rated": 17}, {"team": "Senegal", "avg_rating": 5.582, "players_rated": 17}]}, "topR32Players": [{"match_no": 77.0, "match": "France 3-0 Sweden", "team": "France", "player": "K. Mbapp\u00e9", "rating": 9.2}, {"match_no": 73.0, "match": "South Africa 0-1 Canada", "team": "Canada", "player": "S. Eust\u00e1quio", "rating": 8.7}, {"match_no": 73.0, "match": "South Africa 0-1 Canada", "team": "South Africa", "player": "R. Williams", "rating": 7.8}, {"match_no": 79.0, "match": "Mexico 2-0 Ecuador", "team": "Mexico", "player": "R. Rangel", "rating": 7.8}, {"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "USA", "player": "M. Tillman", "rating": 7.7}, {"match_no": 78.0, "match": "Cote d'Ivoire 1-2 Norway", "team": "Cote d'Ivoire", "player": "Amad Diallo", "rating": 7.6}, {"match_no": 75.0, "match": "Netherlands 1-1 Morocco", "team": "Netherlands", "player": "B. Verbruggen", "rating": 7.6}, {"match_no": 80.0, "match": "England 2-1 DR Congo", "team": "England", "player": "H. Kane", "rating": 7.6}, {"match_no": 82.0, "match": "Belgium 3-2 Senegal", "team": "Belgium", "player": "Y. Tielemans", "rating": 7.6}, {"match_no": 73.0, "match": "South Africa 0-1 Canada", "team": "South Africa", "player": "K. Mudau", "rating": 7.5}, {"match_no": 75.0, "match": "Netherlands 1-1 Morocco", "team": "Morocco", "player": "N. Mazraoui", "rating": 7.5}, {"match_no": 79.0, "match": "Mexico 2-0 Ecuador", "team": "Mexico", "player": "J. Qui\u00f1ones", "rating": 7.5}, {"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "USA", "player": "T. Ream", "rating": 7.5}, {"match_no": 76.0, "match": "Brazil 2-1 Japan", "team": "Brazil", "player": "Casemiro", "rating": 7.4}, {"match_no": 78.0, "match": "Cote d'Ivoire 1-2 Norway", "team": "Norway", "player": "P. Berg", "rating": 7.3}, {"match_no": 79.0, "match": "Mexico 2-0 Ecuador", "team": "Mexico", "player": "R. Alvarado", "rating": 7.1}, {"match_no": 77.0, "match": "France 3-0 Sweden", "team": "France", "player": "B. Barcola", "rating": 7.1}, {"match_no": 79.0, "match": "Mexico 2-0 Ecuador", "team": "Mexico", "player": "C. Montes", "rating": 7.1}, {"match_no": 75.0, "match": "Netherlands 1-1 Morocco", "team": "Morocco", "player": "I. Diop", "rating": 7.1}, {"match_no": 78.0, "match": "Cote d'Ivoire 1-2 Norway", "team": "Cote d'Ivoire", "player": "G. Dou\u00e9", "rating": 7.1}, {"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "USA", "player": "C. Richards", "rating": 7.0}, {"match_no": 82.0, "match": "Belgium 3-2 Senegal", "team": "Belgium", "player": "T. Castagne", "rating": 7.0}, {"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "USA", "player": "A. Freeman", "rating": 7.0}, {"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "USA", "player": "A. Robinson", "rating": 7.0}], "r32TeamForm": [{"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "USA", "avg_rating": 6.633, "players_rated": 15}, {"match_no": 79.0, "match": "Mexico 2-0 Ecuador", "team": "Mexico", "avg_rating": 6.631, "players_rated": 16}, {"match_no": 77.0, "match": "France 3-0 Sweden", "team": "France", "avg_rating": 6.5, "players_rated": 16}, {"match_no": 75.0, "match": "Netherlands 1-1 Morocco", "team": "Morocco", "avg_rating": 6.219, "players_rated": 16}, {"match_no": 78.0, "match": "Cote d'Ivoire 1-2 Norway", "team": "Cote d'Ivoire", "avg_rating": 6.16, "players_rated": 15}, {"match_no": 75.0, "match": "Netherlands 1-1 Morocco", "team": "Netherlands", "avg_rating": 6.1, "players_rated": 17}, {"match_no": 78.0, "match": "Cote d'Ivoire 1-2 Norway", "team": "Norway", "avg_rating": 6.013, "players_rated": 15}, {"match_no": 82.0, "match": "Belgium 3-2 Senegal", "team": "Belgium", "avg_rating": 6.012, "players_rated": 17}, {"match_no": 76.0, "match": "Brazil 2-1 Japan", "team": "Brazil", "avg_rating": 5.894, "players_rated": 15}, {"match_no": 79.0, "match": "Mexico 2-0 Ecuador", "team": "Ecuador", "avg_rating": 5.856, "players_rated": 16}, {"match_no": 74.0, "match": "Germany 1-1 Paraguay", "team": "Paraguay", "avg_rating": 5.776, "players_rated": 17}, {"match_no": 73.0, "match": "South Africa 0-1 Canada", "team": "South Africa", "avg_rating": 5.74, "players_rated": 15}, {"match_no": 73.0, "match": "South Africa 0-1 Canada", "team": "Canada", "avg_rating": 5.653, "players_rated": 15}, {"match_no": 81.0, "match": "USA 2-0 Bosnia and Herzegovina", "team": "Bosnia and Herzegovina", "avg_rating": 5.647, "players_rated": 15}, {"match_no": 80.0, "match": "England 2-1 DR Congo", "team": "England", "avg_rating": 5.631, "players_rated": 16}, {"match_no": 74.0, "match": "Germany 1-1 Paraguay", "team": "Germany", "avg_rating": 5.612, "players_rated": 17}, {"match_no": 82.0, "match": "Belgium 3-2 Senegal", "team": "Senegal", "avg_rating": 5.582, "players_rated": 17}, {"match_no": 76.0, "match": "Brazil 2-1 Japan", "team": "Japan", "avg_rating": 5.22, "players_rated": 15}, {"match_no": 80.0, "match": "England 2-1 DR Congo", "team": "DR Congo", "avg_rating": 5.18, "players_rated": 15}, {"match_no": 77.0, "match": "France 3-0 Sweden", "team": "Sweden", "avg_rating": 5.056, "players_rated": 16}], "coverage": [{"stage": "Group Stage", "status": "no_more_about", "matches": 8, "player_rows": 0}, {"stage": "Group Stage", "status": "ok", "matches": 64, "player_rows": 2017}, {"stage": "Round of 32", "status": "ok", "matches": 10, "player_rows": 317}], "allRows": 2334, "scrapedMatches": 74, "starRows": 231, "starSummary": [{"team": "Argentina", "player": "Lionel Messi", "avg_rating": 8.55, "matches": 2}, {"team": "France", "player": "Kylian Mbappe", "avg_rating": 8.125, "matches": 4}, {"team": "Norway", "player": "Erling Haaland", "avg_rating": 7.933, "matches": 3}, {"team": "Brazil", "player": "Vinicius Junior", "avg_rating": 7.4, "matches": 4}, {"team": "France", "player": "Ousmane Dembele", "avg_rating": 7.275, "matches": 4}, {"team": "Argentina", "player": "Lautaro Martinez", "avg_rating": 7.2, "matches": 2}, {"team": "Netherlands", "player": "Cody Gakpo", "avg_rating": 7.1, "matches": 3}, {"team": "Algeria", "player": "Riyad Mahrez", "avg_rating": 7.067, "matches": 3}, {"team": "Spain", "player": "Pedri", "avg_rating": 6.867, "matches": 3}, {"team": "Switzerland", "player": "Manuel Akanji", "avg_rating": 6.85, "matches": 2}, {"team": "USA", "player": "Antonee Robinson", "avg_rating": 6.767, "matches": 3}, {"team": "USA", "player": "Christian Pulisic", "avg_rating": 6.767, "matches": 3}, {"team": "Morocco", "player": "Achraf Hakimi", "avg_rating": 6.725, "matches": 4}, {"team": "England", "player": "Harry Kane", "avg_rating": 6.7, "matches": 3}, {"team": "France", "player": "Michael Olise", "avg_rating": 6.7, "matches": 4}, {"team": "Netherlands", "player": "Virgil van Dijk", "avg_rating": 6.667, "matches": 3}, {"team": "Egypt", "player": "Mohamed Salah", "avg_rating": 6.667, "matches": 3}, {"team": "Switzerland", "player": "Breel Embolo", "avg_rating": 6.65, "matches": 2}, {"team": "Spain", "player": "Rodri", "avg_rating": 6.6, "matches": 3}, {"team": "Austria", "player": "Marcel Sabitzer", "avg_rating": 6.6, "matches": 2}, {"team": "Brazil", "player": "Alisson", "avg_rating": 6.6, "matches": 4}, {"team": "Portugal", "player": "Cristiano Ronaldo", "avg_rating": 6.467, "matches": 3}, {"team": "England", "player": "Jude Bellingham", "avg_rating": 6.467, "matches": 3}, {"team": "USA", "player": "Weston McKennie", "avg_rating": 6.45, "matches": 4}, {"team": "Ecuador", "player": "Willian Pacho", "avg_rating": 6.45, "matches": 4}, {"team": "Croatia", "player": "Luka Modric", "avg_rating": 6.45, "matches": 2}, {"team": "Argentina", "player": "Julian Alvarez", "avg_rating": 6.4, "matches": 2}, {"team": "Ecuador", "player": "Moises Caicedo", "avg_rating": 6.4, "matches": 4}, {"team": "Colombia", "player": "James Rodriguez", "avg_rating": 6.4, "matches": 3}, {"team": "Turkiye", "player": "Hakan Calhanoglu", "avg_rating": 6.35, "matches": 2}]}};
+    const roundOrder = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal", "Third-place Match", "Final"];
+    const bracketRounds = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal", "Final"];
+    const state = { dataset: "live", round: "All", status: "All", search: "", selected: null };
+
+    const pctNumber = value => Number(String(value || "0").replace("%", "")) || 0;
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+    const currentRows = () => state.dataset === "market" ? DATA.marketBracket : DATA.liveBracket;
+
+    function initControls() {
+      const roundFilter = document.querySelector("#roundFilter");
+      roundOrder.forEach(round => {
+        const opt = document.createElement("option");
+        opt.value = round;
+        opt.textContent = round;
+        roundFilter.appendChild(opt);
+      });
+      document.querySelectorAll("[data-dataset]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.dataset = btn.dataset.dataset;
+          document.querySelectorAll("[data-dataset]").forEach(b => b.classList.toggle("active", b === btn));
+          renderAll();
+        });
+      });
+      roundFilter.addEventListener("change", e => { state.round = e.target.value; renderAll(); });
+      document.querySelector("#statusFilter").addEventListener("change", e => { state.status = e.target.value; renderAll(); });
+      document.querySelector("#searchBox").addEventListener("input", e => { state.search = e.target.value.trim().toLowerCase(); renderAll(); });
+    }
+
+    function filteredRows() {
+      return currentRows().filter(row => {
+        if (state.round !== "All" && row.round !== state.round) return false;
+        if (state.status !== "All" && row.status !== state.status) return false;
+        if (state.search) {
+          const haystack = [row.match, row.round, row.team_a, row.team_b, row.winner, row.location, row.date, row.weekday].join(" ").toLowerCase();
+          if (!haystack.includes(state.search)) return false;
+        }
+        return true;
+      });
+    }
+
+    function matchCard(row) {
+      const status = row.status || "projected";
+      const prob = pctNumber(row.winner_probability);
+      const selected = Number(state.selected) === Number(row.match) ? " selected" : "";
+      const note = row.result_note ? `<div class="location">${escapeHtml(row.result_note)}</div>` : "";
+      return `<article class="match-card ${status}${selected}" data-match="${row.match}">
+        <div class="match-top"><span>M${row.match} · ${escapeHtml(row.weekday || "")}</span><span>${escapeHtml(status)}</span></div>
+        <div class="teams">${escapeHtml(row.team_a)}<br>vs<br>${escapeHtml(row.team_b)}</div>
+        <div class="pick"><span>Pick: <strong>${escapeHtml(row.winner)}</strong></span><span>${prob.toFixed(1)}%</span></div>
+        <div class="bar"><i style="--w:${Math.max(4, Math.min(100, prob))}%"></i></div>
+        <div class="location">${escapeHtml(row.date)} · ${escapeHtml(row.local_kickoff || "")}<br>${escapeHtml(row.location || "")}</div>
+        ${note}
+      </article>`;
+    }
+
+    function renderBracket() {
+      const rows = filteredRows();
+      const host = document.querySelector("#rounds");
+      host.innerHTML = bracketRounds.map(round => {
+        const cards = rows.filter(r => r.round === round).sort((a, b) => Number(a.match) - Number(b.match));
+        return `<section class="round-col"><h2>${escapeHtml(round)}</h2>${cards.length ? cards.map(matchCard).join("") : `<div class="detail-line">No matches shown by current filters.</div>`}</section>`;
+      }).join("");
+      host.querySelectorAll(".match-card").forEach(card => {
+        card.addEventListener("click", () => {
+          state.selected = Number(card.dataset.match);
+          renderAll(false);
+        });
+      });
+      if (!state.selected && rows.length) state.selected = Number(rows[0].match);
+    }
+
+    function renderDetails() {
+      const rows = currentRows();
+      const row = rows.find(r => Number(r.match) === Number(state.selected)) || rows[0];
+      const ratings = DATA.ratings.ratingsByMatch[String(row?.match)] || [];
+      const teamAvgs = DATA.ratings.teamAveragesByMatch[String(row?.match)] || [];
+      const ratingHtml = ratings.length ? ratings.map(r => `
+        <div class="rating-row">
+          <div><strong>${escapeHtml(r.player)}</strong><div class="detail-line">${escapeHtml(r.team)} · ${escapeHtml(r.match)}</div></div>
+          <div>${Number(r.rating).toFixed(1)}</div>
+        </div>`).join("") : `<div class="detail-line">No Google lineup rating rows for this match yet.</div>`;
+      const avgHtml = teamAvgs.length ? teamAvgs.map(r => `
+        <div class="rating-row">
+          <div><strong>${escapeHtml(r.team)}</strong><div class="bar"><i style="--w:${Math.max(1, Math.min(100, Number(r.avg_rating) * 10))}%"></i></div></div>
+          <div>${Number(r.avg_rating).toFixed(2)}</div>
+        </div>`).join("") : "";
+      document.querySelector("#details").innerHTML = `<h2>M${escapeHtml(row?.match)} Details</h2>
+        <div class="detail-line">${escapeHtml(row?.round)} · ${escapeHtml(row?.date)} · ${escapeHtml(row?.weekday)} · ${escapeHtml(row?.local_kickoff || "")}</div>
+        <div class="teams">${escapeHtml(row?.team_a)} vs ${escapeHtml(row?.team_b)}</div>
+        <div class="detail-line">Location: ${escapeHtml(row?.location || "")}</div>
+        <div class="detail-line">Winner: <strong>${escapeHtml(row?.winner)}</strong> (${escapeHtml(row?.winner_probability)}) · ${escapeHtml(row?.status || "")}</div>
+        ${row?.result_note ? `<div class="detail-line">Result: ${escapeHtml(row.result_note)}</div>` : ""}
+        <h2 style="margin-top:18px">Team Averages</h2>${avgHtml || `<div class="detail-line">Projected match; ratings will appear after the match is played and scraped.</div>`}
+        <h2 style="margin-top:18px">Top Rated Players</h2>${ratingHtml}`;
+    }
+
+    function renderRecommendations() {
+      const host = document.querySelector("#recommendations");
+      const recs = DATA.recommendations.slice(0, 6);
+      host.innerHTML = recs.map(r => `<article class="rec-card">
+        <span class="pill">Rank ${r.rank}</span><span class="pill">M${r.match}</span><span class="pill">${escapeHtml(r.weekday)}</span>
+        <h3>${escapeHtml(r.possible_matchup)}</h3>
+        <p><strong>${escapeHtml(r.round)}</strong> · ${escapeHtml(r.city)} · ${escapeHtml(r.stadium)}</p>
+        <p>${escapeHtml(r.good_seat_price_estimate_usd)}</p>
+        <p>${escapeHtml(r.reason)}</p>
+      </article>`).join("");
+    }
+
+    function renderTopPlayers() {
+      const host = document.querySelector("#topPlayers");
+      host.innerHTML = DATA.ratings.topR32Players.slice(0, 14).map(r => `
+        <div class="rating-row">
+          <div><strong>${escapeHtml(r.player)}</strong><div class="detail-line">M${Number(r.match_no).toFixed(0)} · ${escapeHtml(r.team)} · ${escapeHtml(r.match)}</div></div>
+          <div>${Number(r.rating).toFixed(1)}</div>
+        </div>`).join("");
+    }
+
+    function renderTeamForm() {
+      const host = document.querySelector("#teamForm");
+      host.innerHTML = DATA.ratings.r32TeamForm.slice(0, 26).map(r => {
+        const width = Math.max(5, Math.min(100, Number(r.avg_rating) * 10));
+        return `<div class="rating-row">
+          <div><strong>${escapeHtml(r.team)}</strong><div class="detail-line">M${Number(r.match_no).toFixed(0)} · ${escapeHtml(r.match)} · ${r.players_rated} players</div><div class="bar"><i style="--w:${width}%"></i></div></div>
+          <div>${Number(r.avg_rating).toFixed(2)}</div>
+        </div>`;
+      }).join("");
+    }
+
+    function renderAll(keepSelection = true) {
+      if (!keepSelection) state.selected = state.selected;
+      renderBracket();
+      renderDetails();
+      renderRecommendations();
+      renderTopPlayers();
+      renderTeamForm();
+    }
+
+    initControls();
+    renderAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Jupyter and local execution state
+.ipynb_checkpoints/
+.jupyter-config/
+.jupyter-data/
+.jupyter-runtime/
+.ipython/
+.home/
+.mplconfig/
+
+# Codex/app local state
+.agents/
+.codex/
+
+# Local scratch/test markers
+.google_scrape_test.txt
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.log
