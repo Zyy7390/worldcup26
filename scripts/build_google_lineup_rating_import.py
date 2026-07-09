@@ -5,10 +5,11 @@ import unicodedata
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parent
-RAW_PATH = ROOT / "google_lineup_player_ratings_raw.csv"
-OUT_PATH = ROOT / "google_lineup_player_ratings.csv"
-UNMATCHED_PATH = ROOT / "google_lineup_player_ratings_unmatched.csv"
+ROOT = Path(__file__).resolve().parents[1]
+GOOGLE_DATA_DIR = ROOT / "data" / "google"
+RAW_PATH = GOOGLE_DATA_DIR / "google_lineup_player_ratings_raw.csv"
+OUT_PATH = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
+UNMATCHED_PATH = GOOGLE_DATA_DIR / "google_lineup_player_ratings_unmatched.csv"
 
 
 STAR_PLAYERS = [

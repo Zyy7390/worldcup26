@@ -5,10 +5,10 @@
 An evolving, auditable tournament forecast that blends results, player form,
 human tactical reads, market priors, ticket planning, and bracket visualization.
 
-[![Notebook](https://img.shields.io/badge/Jupyter-analysis-F37626?logo=jupyter&logoColor=white)](worldcup_2026_prediction_bracket.ipynb)
-[![Interactive bracket](https://img.shields.io/badge/interactive-bracket-26c6b8)](worldcup_2026_interactive_bracket.html)
-[![Latest tables](https://img.shields.io/badge/latest-tables-6da8ff)](worldcup_2026_updated_tables_20260707.xlsx)
-[![PowerPoint](https://img.shields.io/badge/slides-PowerPoint-b7472a)](worldcup_2026_prediction_bracket_deck.pptx)
+[![Notebook](https://img.shields.io/badge/Jupyter-analysis-F37626?logo=jupyter&logoColor=white)](notebooks/worldcup_2026_prediction_bracket.ipynb)
+[![Interactive bracket](https://img.shields.io/badge/interactive-bracket-26c6b8)](outputs/worldcup_2026_interactive_bracket.html)
+[![Latest tables](https://img.shields.io/badge/latest-tables-6da8ff)](outputs/tables/worldcup_2026_updated_tables_20260707.xlsx)
+[![PowerPoint](https://img.shields.io/badge/slides-PowerPoint-b7472a)](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx)
 
 If GitHub Pages is enabled from the repo root, open the app at:
 
@@ -27,18 +27,18 @@ Last model refresh: **July 7, 2026, about 7:13 p.m. ET**
 | Third place | Spain |
 | Fourth place | England |
 
-![Projected knockout bracket](worldcup26_ppt_assets/knockout_bracket.png)
+![Projected knockout bracket](assets/ppt/knockout_bracket.png)
 
 ## Explore The Work
 
 | Artifact | What it is for |
 |---|---|
-| [Prediction notebook](worldcup_2026_prediction_bracket.ipynb) | Full analysis, formulas, model assumptions, plots, and executed results. |
-| [Interactive bracket](worldcup_2026_interactive_bracket.html) | Filterable bracket view with match details, recommendations, ratings, and market diagnostic views. |
-| [Updated tables workbook](worldcup_2026_updated_tables_20260707.xlsx) | Shareable Excel workbook with live bracket, market-integrated bracket, recommendations, and summary. |
-| [Projected knockout CSV](worldcup_2026_projected_knockout_schedule_20260707.csv) | Machine-readable latest live bracket. |
-| [Recommendations CSV](worldcup_2026_match_recommendations_20260707.csv) | Ticket-focused match shortlist with matchup, price, date, weekday, and weather factors. |
-| [Presentation deck](worldcup_2026_prediction_bracket_deck.pptx) | A concise visual slide deck for sharing the bracket and story. |
+| [Prediction notebook](notebooks/worldcup_2026_prediction_bracket.ipynb) | Full analysis, formulas, model assumptions, plots, and executed results. |
+| [Interactive bracket](outputs/worldcup_2026_interactive_bracket.html) | Filterable bracket view with match details, recommendations, ratings, and market diagnostic views. |
+| [Updated tables workbook](outputs/tables/worldcup_2026_updated_tables_20260707.xlsx) | Shareable Excel workbook with live bracket, market-integrated bracket, recommendations, and summary. |
+| [Projected knockout CSV](outputs/tables/worldcup_2026_projected_knockout_schedule_20260707.csv) | Machine-readable latest live bracket. |
+| [Recommendations CSV](outputs/tables/worldcup_2026_match_recommendations_20260707.csv) | Ticket-focused match shortlist with matchup, price, date, weekday, and weather factors. |
+| [Presentation deck](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx) | A concise visual slide deck for sharing the bracket and story. |
 
 ## Projected Last Eight
 
@@ -64,6 +64,15 @@ flowchart LR
   SF101 --> Third["M103 Third Place<br/>Spain 54.4% over England"]
   SF102 --> Third
 ```
+
+## Player Value vs Performance
+
+The notebook compares World Cup post-match ratings against Transfermarkt market
+value. The chart below uses the saved Google lineup rating extract where
+available and highlights star players from teams still alive in the quarterfinal
+field.
+
+![Player rating vs Transfermarkt value](assets/readme/player_value_vs_transfermarkt.png)
 
 ## Games To Watch
 
@@ -101,15 +110,35 @@ correct the model without taking over the forecast.
 
 </details>
 
-<details>
-<summary><strong>Latest human analytics incorporated</strong></summary>
+<details open>
+<summary><strong>Human analytics ledger</strong></summary>
 
-- France were upgraded after Paraguay for title-level tenacity and attacking talent.
-- Argentina kept a high resilience score, but received a penalty for Messi overreliance and reduced supporting-player dynamism.
-- England were upgraded for collaboration, attacking talent, and 10-man defensive resilience against Mexico.
-- Spain stayed structurally strong, but received a finishing and chance-creation caution.
-- Switzerland were upgraded defensively after Colombia, while open-play attack remains the concern.
-- Norway were upgraded for the Haaland, Odegaard, and Nusa transition path after beating Brazil.
+These are the historical analyst reads captured during the project and folded
+into either player-form signals, team tactical deltas, or matchup-specific
+priors.
+
+| Theme | Human read | Model treatment |
+|---|---|---|
+| Korea vs Canada | Canada's Qatar win mattered, but Korea's lineup quality still deserved respect even with Son Heung-min aging. | Korea was treated as a narrow 50-60% style favorite in that matchup prior. |
+| Morocco vs Japan | Morocco's AFCON/2022 pedigree was strong, but Japan's teamwork and results made them dangerous. | Morocco edge compressed to roughly 60-70%, not a blowout. |
+| Portugal vs Croatia | Portugal had elite names but poor team play; Ronaldo's low mobility, offside-line positioning, and chance selection were major drags. | Croatia-leaning analyst prior and Portugal tactical penalty. |
+| Morocco vs Norway | Morocco were clearly stronger overall, but Norway's Haaland counterattacking path could punish tiny chances. | Morocco favored around 70-80%; Norway upset path kept alive. |
+| Mexico vs England | England's talent/pedigree were superior, but Mexico's collective running, passing, dribbling, and ball progression looked much better than the base model credited. | England remained favored, but Mexico's tactical upgrade compressed the gap before England advanced. |
+| Portugal vs Spain | Spain's structure and control looked materially better than Portugal's chance creation. | Spain received a strong head-to-head prior over Portugal. |
+| Argentina vs Belgium | Belgium looked diminished from its peak; Lukaku struggled as a starter, and draws against Egypt/Iran reduced confidence. | Argentina received a very strong matchup prior over Belgium. |
+| Cristiano Ronaldo aging curve | Ronaldo's post-match rating understated the problem: weak chance conversion, limited facilitation, little pressing, and low back-and-forth impact. | Ronaldo signals were discounted and Portugal team-play was penalized. |
+| Portugal vs Uzbekistan revision | Portugal showed better cohesion and Ronaldo participation against Uzbekistan, but 90 minutes for Ronaldo still looked suboptimal and glory-driven. | Portugal's team signal improved slightly, but Ronaldo/role concerns remained capped. |
+| Harry Kane clutch signal | Kane showed comprehensive striker play and superstar late-match deciding power. | England's late-game ceiling and Kane player-form signal were upgraded. |
+| Mexico collective quality | Mexico looked almost Argentina-like in team movement and progression despite lacking a single global superstar. | Mexico received a team-cohesion tactical upgrade. |
+| Portugal post-Uzbekistan caution | Portugal still did not create enough repeatable chances; Ronaldo's brace looked more like opponent error/luck than proof of high-level current impact. | Portugal retained a negative tactical delta. |
+| Belgium psychology | Belgium lacked title-winning ferocity; the Senegal win looked lucky/even, and Lukaku seemed better as a bench option. | Belgium's title profile was downgraded despite later USA conversion. |
+| USA quality | USA looked tenacious, physical, technical, and coordinated, better than player market value implied. | USA received a collective-quality upgrade before elimination. |
+| France vs Paraguay | France showed next-level tenacity and attacking talent even in a narrow knockout win. | France received a title-ceiling tactical upgrade. |
+| Argentina vs Cape Verde/Egypt | Argentina showed tenacity, but Messi overreliance and lower supporting-player running/creativity were worrying. | Argentina kept resilience credit but received a Messi-dependence penalty. |
+| England vs Mexico | England showed collaboration, attacking talent, and strong 10-man defensive resilience. | England tactical delta increased after the R16. |
+| Spain latest form | Spain remained structurally good, but Lamine Yamal and midfield chance creation were muted; Oyarzabal was not a traditional No. 9 finisher. | Spain kept control credit but received a finishing/chance-creation caution. |
+| Switzerland vs Colombia | Switzerland's defense looked excellent, but open-play offense remained limited. | Switzerland received defensive credit and attacking ceiling caution. |
+| Norway vs Brazil | Norway could catch elite opponents off guard; if Odegaard/Nusa can find Haaland, the chances are extremely dangerous. | Norway received a transition-threat upgrade, offset by possession/build-up limitations. |
 
 </details>
 
@@ -134,34 +163,47 @@ matches.
 </details>
 
 <details>
-<summary><strong>Reproduce the latest notebook run</strong></summary>
+<summary><strong>Repository layout</strong></summary>
 
-The project has been run with the Windows Anaconda Python environment:
-
-```powershell
-C:\Users\19980\anaconda3\python.exe
+```text
+assets/
+  ppt/       bracket and deck images
+  readme/    README showcase images
+data/
+  google/    scraped and normalized lineup ratings
+  markets/   Polymarket and Kalshi snapshots
+notebooks/   executed analysis notebook
+outputs/
+  tables/    CSV/XLSX summaries
+  presentations/
+scripts/     generators, extractors, repair utilities
 ```
 
-From PowerShell:
+</details>
+
+<details>
+<summary><strong>Reproduce the latest notebook run</strong></summary>
+
+Use the same Python environment that has `pandas`, `matplotlib`, `nbformat`, and
+`jupyter` installed. From the repository root:
 
 ```powershell
-cd D:\worldcup26
+python scripts/update_worldcup26_notebook_live.py
 
-& 'C:\Users\19980\anaconda3\python.exe' update_worldcup26_notebook_live.py
+$env:USERPROFILE = Join-Path (Get-Location) ".home"
+$env:HOME = Join-Path (Get-Location) ".home"
+$env:JUPYTER_CONFIG_DIR = Join-Path (Get-Location) ".jupyter-config"
+$env:JUPYTER_DATA_DIR = Join-Path (Get-Location) ".jupyter-data"
+$env:JUPYTER_RUNTIME_DIR = Join-Path (Get-Location) ".jupyter-runtime"
+$env:IPYTHONDIR = Join-Path (Get-Location) ".ipython"
+$env:WORLDCUP26_SKIP_WIDGETS = "1"
 
-$env:USERPROFILE='D:\worldcup26\.home'
-$env:HOME='D:\worldcup26\.home'
-$env:JUPYTER_CONFIG_DIR='D:\worldcup26\.jupyter-config'
-$env:JUPYTER_DATA_DIR='D:\worldcup26\.jupyter-data'
-$env:JUPYTER_RUNTIME_DIR='D:\worldcup26\.jupyter-runtime'
-$env:IPYTHONDIR='D:\worldcup26\.ipython'
-$env:WORLDCUP26_SKIP_WIDGETS='1'
-
-& 'C:\Users\19980\anaconda3\python.exe' -m jupyter nbconvert `
-  --to notebook --execute --inplace worldcup_2026_prediction_bracket.ipynb `
+python -m jupyter nbconvert `
+  --to notebook --execute --inplace notebooks/worldcup_2026_prediction_bracket.ipynb `
   --ExecutePreprocessor.timeout=900
 
-& 'C:\Users\19980\anaconda3\python.exe' make_worldcup26_interactive_html.py
+python scripts/make_worldcup26_interactive_html.py
+python scripts/make_readme_assets.py
 ```
 
 </details>
@@ -172,7 +214,6 @@ $env:WORLDCUP26_SKIP_WIDGETS='1'
 Use one commit per tournament update so model accuracy can be audited later:
 
 ```powershell
-cd D:\worldcup26
 git status
 git add .
 git commit -m "Update model after latest World Cup matches"
@@ -183,7 +224,7 @@ For comparison over time:
 
 ```powershell
 git log --oneline
-git diff HEAD~1 -- worldcup_2026_projected_knockout_schedule_20260707.csv
+git diff HEAD~1 -- outputs/tables/worldcup_2026_projected_knockout_schedule_20260707.csv
 ```
 
 </details>
@@ -194,4 +235,3 @@ The goal is not to pretend a model can remove uncertainty from football. The
 goal is to make every belief visible: what came from the data, what came from
 market prices, what came from match watching, and how those beliefs changed as
 the tournament unfolded.
-
