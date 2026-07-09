@@ -3,10 +3,11 @@ from pathlib import Path
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
+GOOGLE_DATA_DIR = ROOT / "data" / "google"
 RATING_FILES = [
-    ROOT / "google_worldcup_all_player_ratings.csv",
-    ROOT / "google_lineup_player_ratings_raw.csv",
+    GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv",
+    GOOGLE_DATA_DIR / "google_lineup_player_ratings_raw.csv",
 ]
 
 

@@ -12,7 +12,7 @@ root:
 
     python -m pip install playwright
     python -m playwright install chromium
-    python google_lineup_rating_extractor.py
+    python scripts/google_lineup_rating_extractor.py
 
 The Anaconda environment used for the notebook did not include Playwright at the
 time this was written, so the July 2 extraction was run through Codex's rendered
@@ -26,8 +26,9 @@ import sys
 from urllib.parse import quote_plus
 
 
-ROOT = Path(__file__).resolve().parent
-RAW_OUT = ROOT / "google_lineup_player_ratings_raw.csv"
+ROOT = Path(__file__).resolve().parents[1]
+GOOGLE_DATA_DIR = ROOT / "data" / "google"
+RAW_OUT = GOOGLE_DATA_DIR / "google_lineup_player_ratings_raw.csv"
 
 COMPLETED_R32_MATCHES = [
     {"team_a": "South Africa", "team_b": "Canada", "label": "South Africa 0-1 Canada"},

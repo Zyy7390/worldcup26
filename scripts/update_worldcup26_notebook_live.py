@@ -4,9 +4,9 @@ import shutil
 import nbformat as nbf
 
 
-ROOT = Path(r"D:\worldcup26")
-NOTEBOOK = ROOT / "worldcup_2026_prediction_bracket.ipynb"
-BACKUP = ROOT / "worldcup_2026_prediction_bracket.pre_live_update_20260617.ipynb"
+ROOT = Path(__file__).resolve().parents[1]
+NOTEBOOK = ROOT / "notebooks" / "worldcup_2026_prediction_bracket.ipynb"
+BACKUP = ROOT / "notebooks" / "archive" / "worldcup_2026_prediction_bracket.pre_live_update_20260617.ipynb"
 START_MARKER = "<!-- LIVE_UPDATE_20260617_START -->"
 END_MARKER = "<!-- LIVE_UPDATE_20260617_END -->"
 
@@ -98,6 +98,13 @@ import pandas as pd
 
 pd.set_option("display.max_rows", 140)
 pd.set_option("display.max_colwidth", 140)
+
+PROJECT_ROOT = Path.cwd()
+if not (PROJECT_ROOT / "data").exists() and (PROJECT_ROOT.parent / "data").exists():
+    PROJECT_ROOT = PROJECT_ROOT.parent
+DATA_DIR = PROJECT_ROOT / "data"
+GOOGLE_DATA_DIR = DATA_DIR / "google"
+MARKET_DATA_DIR = DATA_DIR / "markets"
 
 def logistic(x):
     return 1 / (1 + math.exp(-x))
@@ -610,7 +617,7 @@ player_form_signals = pd.DataFrame(
     columns=["match", "team", "player", "rating_proxy", "importance_weight", "source_type", "note"],
 )
 
-google_all_rating_path = Path("google_worldcup_all_player_ratings.csv")
+google_all_rating_path = GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv"
 google_all_ratings_for_model = pd.DataFrame()
 google_knockout_team_signals = pd.DataFrame()
 if google_all_rating_path.exists():
@@ -799,7 +806,7 @@ current_knockout_survivors = {
     "France", "Morocco", "Norway", "England",
     "Spain", "Belgium", "Argentina", "Switzerland",
 }
-polymarket_outright_path = Path("market_fetch_polymarket_fifa_worldcup_20260707.json")
+polymarket_outright_path = MARKET_DATA_DIR / "market_fetch_polymarket_fifa_worldcup_20260707.json"
 outright_market_priors = pd.DataFrame(columns=[
     "team", "market_title_prob", "normalized_survivor_prob",
     "liquidity", "volume", "question", "source",
@@ -1600,7 +1607,7 @@ star_player_match_ratings = pd.DataFrame(
 # If you can copy/export ratings from Google's lineup cards, save them as google_lineup_player_ratings.csv
 # beside this notebook with the columns below; the notebook will append them as exact player ratings.
 google_lineup_rating_columns = ["player", "team", "match", "rating", "minutes_played", "rating_source", "note"]
-google_lineup_rating_path = Path("google_lineup_player_ratings.csv")
+google_lineup_rating_path = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
 google_lineup_rating_template = pd.DataFrame([
     {
         "player": "Harry Kane",
@@ -1625,7 +1632,8 @@ if google_lineup_rating_path.exists():
             pd.concat([star_player_match_ratings, google_lineup_ratings], ignore_index=True)
             .drop_duplicates(["player", "team", "match", "rating_source"], keep="last")
         )
-        print(f"Imported {len(google_lineup_ratings)} Google lineup rating rows from {google_lineup_rating_path}.")
+        display_path = google_lineup_rating_path.relative_to(PROJECT_ROOT)
+        print(f"Imported {len(google_lineup_ratings)} Google lineup rating rows from {display_path}.")
 else:
     print("No google_lineup_player_ratings.csv file found. Use this template if you want to import Google lineup ratings manually:")
     display(google_lineup_rating_template)

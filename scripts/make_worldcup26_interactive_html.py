@@ -10,9 +10,11 @@ import nbformat
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parent
-NOTEBOOK = ROOT / "worldcup_2026_prediction_bracket.ipynb"
-OUT = ROOT / "worldcup_2026_interactive_bracket.html"
+ROOT = Path(__file__).resolve().parents[1]
+NOTEBOOK = ROOT / "notebooks" / "worldcup_2026_prediction_bracket.ipynb"
+GOOGLE_DATA_DIR = ROOT / "data" / "google"
+OUTPUT_DIR = ROOT / "outputs"
+OUT = OUTPUT_DIR / "worldcup_2026_interactive_bracket.html"
 
 
 def clean_frame(df: pd.DataFrame) -> pd.DataFrame:
@@ -87,9 +89,9 @@ def load_notebook_tables():
 
 
 def load_rating_data():
-    all_path = ROOT / "google_worldcup_all_player_ratings.csv"
-    summary_path = ROOT / "google_lineup_rating_extraction_summary.csv"
-    star_path = ROOT / "google_lineup_player_ratings.csv"
+    all_path = GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv"
+    summary_path = GOOGLE_DATA_DIR / "google_lineup_rating_extraction_summary.csv"
+    star_path = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
 
     ratings = pd.read_csv(all_path) if all_path.exists() else pd.DataFrame()
     extraction_summary = pd.read_csv(summary_path) if summary_path.exists() else pd.DataFrame()
@@ -641,6 +643,7 @@ def render_html(data: dict) -> str:
 
 
 def main():
+    OUTPUT_DIR.mkdir(exist_ok=True)
     live_table, market_table, recommendations, summary = load_notebook_tables()
     summary_map = dict(zip(summary.get("result", []), summary.get("team", [])))
     data = {

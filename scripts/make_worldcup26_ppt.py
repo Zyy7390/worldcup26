@@ -9,10 +9,11 @@ import numpy as np
 import pandas as pd
 
 
-ROOT = Path(r"D:\worldcup26")
-ASSET_DIR = ROOT / "worldcup26_ppt_assets"
+ROOT = Path(__file__).resolve().parents[1]
+ASSET_DIR = ROOT / "assets" / "ppt"
 ASSET_DIR.mkdir(exist_ok=True)
-PPTX_PATH = ROOT / "worldcup_2026_prediction_bracket_deck.pptx"
+PPTX_PATH = ROOT / "outputs" / "presentations" / "worldcup_2026_prediction_bracket_deck.pptx"
+PPTX_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def build_prediction():
