@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from pathlib import Path
+import ast
 import html
 import io
 import json
 import math
+import re
 
 import nbformat
 import pandas as pd
@@ -15,6 +17,7 @@ NOTEBOOK = ROOT / "notebooks" / "worldcup_2026_prediction_bracket.ipynb"
 GOOGLE_DATA_DIR = ROOT / "data" / "google"
 OUTPUT_DIR = ROOT / "outputs"
 OUT = OUTPUT_DIR / "worldcup_2026_interactive_bracket.html"
+MODEL_SOURCE = ROOT / "scripts" / "update_worldcup26_notebook_live.py"
 
 
 def clean_frame(df: pd.DataFrame) -> pd.DataFrame:
@@ -166,6 +169,59 @@ def load_rating_data():
     }
 
 
+def load_player_value_data() -> list[dict]:
+    if not MODEL_SOURCE.exists():
+        return []
+    source = MODEL_SOURCE.read_text(encoding="utf-8")
+    match = re.search(
+        r"transfermarkt_values_data\s*=\s*\[(.*?)\]\s*star_player_values",
+        source,
+        flags=re.S,
+    )
+    if not match:
+        return []
+    values = ast.literal_eval("[" + match.group(1) + "]")
+    value_df = pd.DataFrame(values, columns=["team", "player", "transfermarkt_value_eur_m"])
+
+    ratings_path = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
+    if not ratings_path.exists():
+        return []
+    ratings = pd.read_csv(ratings_path)
+    required = {"team", "player", "match", "rating", "minutes_played"}
+    if not required.issubset(ratings.columns):
+        return []
+    ratings["rating"] = pd.to_numeric(ratings["rating"], errors="coerce")
+    ratings["minutes_played"] = pd.to_numeric(ratings["minutes_played"], errors="coerce")
+    ratings = ratings[ratings["rating"].notna()].copy()
+
+    rows = []
+    for (team, player), sub in ratings.groupby(["team", "player"], dropna=False):
+        has_minutes = sub["minutes_played"].notna().all() and sub["minutes_played"].sum() > 0
+        if has_minutes:
+            world_cup_rating = (sub["rating"] * sub["minutes_played"]).sum() / sub["minutes_played"].sum()
+            rating_method = "minutes-weighted"
+        else:
+            world_cup_rating = sub["rating"].mean()
+            rating_method = "simple average"
+        rows.append({
+            "team": team,
+            "player": player,
+            "world_cup_rating": world_cup_rating,
+            "rated_matches": sub["match"].nunique(),
+            "rating_method": rating_method,
+        })
+
+    performance = pd.DataFrame(rows)
+    merged = value_df.merge(performance, on=["team", "player"], how="inner")
+    if merged.empty:
+        return []
+    merged["value_tier"] = merged["transfermarkt_value_eur_m"].ge(75).map({True: "high value", False: "lower value"})
+    merged["performance_tier"] = merged["world_cup_rating"].ge(7.0).map({True: "high performance", False: "lower performance"})
+    return dataframe_to_records(
+        merged.sort_values(["team", "transfermarkt_value_eur_m"], ascending=[True, False]).round(3)
+    )
+
+
 def render_html(data: dict) -> str:
     payload = json.dumps(data, ensure_ascii=True)
     champion = html.escape(data.get("summaryMap", {}).get("Champion", "TBD"))
@@ -261,6 +317,30 @@ def render_html(data: dict) -> str:
       gap: 10px;
       margin-bottom: 18px;
     }}
+    .toolbar .group {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+    }}
+    .toggle {{
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+    }}
+    .zoom-label {{
+      color: var(--muted);
+      font-size: 13px;
+      min-width: 46px;
+      text-align: center;
+    }}
     button, select, input {{
       border: 1px solid var(--line);
       background: #0f191e;
@@ -284,13 +364,17 @@ def render_html(data: dict) -> str:
     }}
     .bracket {{
       overflow-x: auto;
+      overflow-y: hidden;
       padding-bottom: 12px;
+      border-radius: 8px;
     }}
     .rounds {{
       display: grid;
       grid-template-columns: repeat(5, minmax(230px, 1fr));
       gap: 12px;
       min-width: 1180px;
+      transform-origin: top left;
+      transition: transform .18s ease;
     }}
     .round-col {{
       background: rgba(17,27,32,.72);
@@ -318,6 +402,25 @@ def render_html(data: dict) -> str:
     .match-card.actual {{ border-left: 4px solid var(--teal); }}
     .match-card.projected {{ border-left: 4px solid var(--gold); }}
     .match-card.selected {{ outline: 2px solid rgba(216,180,95,.75); }}
+    .match-card.team-hit {{
+      border-color: rgba(38,198,184,.78);
+      background: linear-gradient(180deg, rgba(38,198,184,.16), rgba(255,255,255,.035));
+    }}
+    .match-card.dimmed {{
+      opacity: .28;
+      filter: grayscale(.55);
+    }}
+    .team-token {{
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 7px;
+      margin: 1px 0;
+    }}
+    .team-token.highlight {{
+      background: rgba(38,198,184,.18);
+      color: #dffdf8;
+      box-shadow: inset 0 0 0 1px rgba(38,198,184,.55);
+    }}
     .match-top {{
       display: flex;
       justify-content: space-between;
@@ -429,6 +532,76 @@ def render_html(data: dict) -> str:
       margin-right: 5px;
       margin-bottom: 5px;
     }}
+    .wide-section {{
+      margin-top: 18px;
+    }}
+    .section-head {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }}
+    .chart-tools {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }}
+    .chart-wrap {{
+      width: 100%;
+      min-height: 460px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+      overflow: hidden;
+    }}
+    .value-svg {{
+      width: 100%;
+      height: min(64vw, 560px);
+      min-height: 440px;
+      display: block;
+    }}
+    .axis text {{
+      fill: var(--muted);
+      font-size: 11px;
+    }}
+    .axis line, .axis path {{
+      stroke: rgba(255,255,255,.20);
+    }}
+    .threshold-line {{
+      stroke: var(--gold);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 6;
+      opacity: .9;
+    }}
+    .player-dot {{
+      cursor: pointer;
+      transition: opacity .16s ease, r .16s ease, stroke-width .16s ease;
+    }}
+    .player-dot.dimmed {{
+      opacity: .16;
+    }}
+    .player-dot.active {{
+      stroke: var(--gold);
+      stroke-width: 3;
+    }}
+    .player-label {{
+      fill: var(--ink);
+      font-size: 11px;
+      paint-order: stroke;
+      stroke: rgba(9,16,19,.88);
+      stroke-width: 3px;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }}
+    .chart-note {{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 10px;
+    }}
     footer {{
       color: var(--muted);
       font-size: 12px;
@@ -462,16 +635,33 @@ def render_html(data: dict) -> str:
   </header>
   <main>
     <div class="toolbar">
-      <button class="active" data-dataset="live">Live Model</button>
-      <button data-dataset="market">Market Diagnostic</button>
-      <select id="roundFilter" aria-label="Round filter">
-        <option value="All">All rounds</option>
-      </select>
-      <select id="statusFilter" aria-label="Status filter">
-        <option value="All">Actual + projected</option>
-        <option value="actual">Actual only</option>
-        <option value="projected">Projected only</option>
-      </select>
+      <div class="group">
+        <button class="active" data-dataset="live">Live Model</button>
+        <button data-dataset="market">Market Diagnostic</button>
+      </div>
+      <div class="group">
+        <select id="roundFilter" aria-label="Round filter">
+          <option value="All">All rounds</option>
+        </select>
+        <select id="statusFilter" aria-label="Status filter">
+          <option value="All">Actual + projected</option>
+          <option value="actual">Actual only</option>
+          <option value="projected">Projected only</option>
+        </select>
+      </div>
+      <div class="group">
+        <select id="teamHighlight" aria-label="Highlight country">
+          <option value="">Highlight country</option>
+        </select>
+        <label class="toggle"><input id="focusToggle" type="checkbox"> Focus</label>
+        <button id="clearHighlight" type="button">Clear</button>
+      </div>
+      <div class="group">
+        <button id="bracketZoomOut" type="button">-</button>
+        <span id="bracketZoomLabel" class="zoom-label">100%</span>
+        <button id="bracketZoomIn" type="button">+</button>
+        <button id="bracketZoomReset" type="button">Reset</button>
+      </div>
       <input id="searchBox" placeholder="Search team, city, stadium, match number" aria-label="Search">
     </div>
     <div class="layout">
@@ -492,6 +682,19 @@ def render_html(data: dict) -> str:
       <h2>Knockout Team Rating Averages</h2>
       <div id="teamForm"></div>
     </section>
+    <section class="wide-section">
+      <div class="section-head">
+        <h2>Player Value vs Transfermarkt Value</h2>
+        <div class="chart-tools">
+          <button id="valueZoomOut" type="button">Zoom out</button>
+          <span id="valueZoomLabel" class="zoom-label">100%</span>
+          <button id="valueZoomIn" type="button">Zoom in</button>
+          <button id="valueZoomReset" type="button">Reset</button>
+        </div>
+      </div>
+      <div id="valueChart" class="chart-wrap"></div>
+      <div id="valueDetails" class="chart-note"></div>
+    </section>
     <footer>
       Data note: Google ratings are from rendered match-card lineup panels stored locally after the July 2 sweep. Knockout team averages are used as forward signals where available; group-stage ratings are stored for analysis. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
     </footer>
@@ -500,11 +703,58 @@ def render_html(data: dict) -> str:
     const DATA = {payload};
     const roundOrder = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal", "Third-place Match", "Final"];
     const bracketRounds = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal", "Final"];
-    const state = {{ dataset: "live", round: "All", status: "All", search: "", selected: null }};
+    const state = {{
+      dataset: "live",
+      round: "All",
+      status: "All",
+      search: "",
+      selected: null,
+      highlightTeam: "",
+      focusTeam: false,
+      bracketZoom: 1,
+      valueZoom: 1,
+      selectedPlayer: null
+    }};
 
     const pctNumber = value => Number(String(value || "0").replace("%", "")) || 0;
     const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({{"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;","'":"&#39;"}}[ch]));
     const currentRows = () => state.dataset === "market" ? DATA.marketBracket : DATA.liveBracket;
+    const valueRows = () => DATA.playerValue || [];
+
+    function teamInRow(row, team) {{
+      if (!team) return false;
+      const target = String(team).toLowerCase();
+      return [row.team_a, row.team_b, row.winner].some(value => String(value ?? "").toLowerCase() === target);
+    }}
+
+    function teamToken(name) {{
+      const isHit = state.highlightTeam && String(name ?? "").toLowerCase() === state.highlightTeam.toLowerCase();
+      return `<span class="team-token${{isHit ? " highlight" : ""}}">${{escapeHtml(name)}}</span>`;
+    }}
+
+    function collectTeams() {{
+      const teams = new Set();
+      [...DATA.liveBracket, ...DATA.marketBracket].forEach(row => {{
+        [row.team_a, row.team_b, row.winner].forEach(team => {{
+          if (team) teams.add(String(team));
+        }});
+      }});
+      valueRows().forEach(row => {{
+        if (row.team) teams.add(String(row.team));
+      }});
+      return [...teams].sort((a, b) => a.localeCompare(b));
+    }}
+
+    function setHighlight(team) {{
+      state.highlightTeam = team || "";
+      const select = document.querySelector("#teamHighlight");
+      if (select && select.value !== state.highlightTeam) select.value = state.highlightTeam;
+    }}
+
+    function setZoom(field, value) {{
+      state[field] = Math.max(0.75, Math.min(2.25, Number(value.toFixed(2))));
+      renderAll(false);
+    }}
 
     function initControls() {{
       const roundFilter = document.querySelector("#roundFilter");
@@ -513,6 +763,13 @@ def render_html(data: dict) -> str:
         opt.value = round;
         opt.textContent = round;
         roundFilter.appendChild(opt);
+      }});
+      const teamHighlight = document.querySelector("#teamHighlight");
+      collectTeams().forEach(team => {{
+        const opt = document.createElement("option");
+        opt.value = team;
+        opt.textContent = team;
+        teamHighlight.appendChild(opt);
       }});
       document.querySelectorAll("[data-dataset]").forEach(btn => {{
         btn.addEventListener("click", () => {{
@@ -524,6 +781,28 @@ def render_html(data: dict) -> str:
       roundFilter.addEventListener("change", e => {{ state.round = e.target.value; renderAll(); }});
       document.querySelector("#statusFilter").addEventListener("change", e => {{ state.status = e.target.value; renderAll(); }});
       document.querySelector("#searchBox").addEventListener("input", e => {{ state.search = e.target.value.trim().toLowerCase(); renderAll(); }});
+      teamHighlight.addEventListener("change", e => {{
+        setHighlight(e.target.value);
+        state.selectedPlayer = null;
+        renderAll(false);
+      }});
+      document.querySelector("#focusToggle").addEventListener("change", e => {{
+        state.focusTeam = e.target.checked;
+        renderAll(false);
+      }});
+      document.querySelector("#clearHighlight").addEventListener("click", () => {{
+        setHighlight("");
+        state.focusTeam = false;
+        state.selectedPlayer = null;
+        document.querySelector("#focusToggle").checked = false;
+        renderAll(false);
+      }});
+      document.querySelector("#bracketZoomOut").addEventListener("click", () => setZoom("bracketZoom", state.bracketZoom - 0.1));
+      document.querySelector("#bracketZoomIn").addEventListener("click", () => setZoom("bracketZoom", state.bracketZoom + 0.1));
+      document.querySelector("#bracketZoomReset").addEventListener("click", () => setZoom("bracketZoom", 1));
+      document.querySelector("#valueZoomOut").addEventListener("click", () => setZoom("valueZoom", state.valueZoom - 0.15));
+      document.querySelector("#valueZoomIn").addEventListener("click", () => setZoom("valueZoom", state.valueZoom + 0.15));
+      document.querySelector("#valueZoomReset").addEventListener("click", () => setZoom("valueZoom", 1));
     }}
 
     function filteredRows() {{
@@ -542,10 +821,12 @@ def render_html(data: dict) -> str:
       const status = row.status || "projected";
       const prob = pctNumber(row.winner_probability);
       const selected = Number(state.selected) === Number(row.match) ? " selected" : "";
+      const hit = state.highlightTeam && teamInRow(row, state.highlightTeam) ? " team-hit" : "";
+      const dimmed = state.highlightTeam && state.focusTeam && !teamInRow(row, state.highlightTeam) ? " dimmed" : "";
       const note = row.result_note ? `<div class="location">${{escapeHtml(row.result_note)}}</div>` : "";
-      return `<article class="match-card ${{status}}${{selected}}" data-match="${{row.match}}">
+      return `<article class="match-card ${{status}}${{selected}}${{hit}}${{dimmed}}" data-match="${{row.match}}">
         <div class="match-top"><span>M${{row.match}} · ${{escapeHtml(row.weekday || "")}}</span><span>${{escapeHtml(status)}}</span></div>
-        <div class="teams">${{escapeHtml(row.team_a)}}<br>vs<br>${{escapeHtml(row.team_b)}}</div>
+        <div class="teams">${{teamToken(row.team_a)}}<br>vs<br>${{teamToken(row.team_b)}}</div>
         <div class="pick"><span>Pick: <strong>${{escapeHtml(row.winner)}}</strong></span><span>${{prob.toFixed(1)}}%</span></div>
         <div class="bar"><i style="--w:${{Math.max(4, Math.min(100, prob))}}%"></i></div>
         <div class="location">${{escapeHtml(row.date)}} · ${{escapeHtml(row.local_kickoff || "")}}<br>${{escapeHtml(row.location || "")}}</div>
@@ -556,6 +837,9 @@ def render_html(data: dict) -> str:
     function renderBracket() {{
       const rows = filteredRows();
       const host = document.querySelector("#rounds");
+      host.style.transform = `scale(${{state.bracketZoom}})`;
+      host.style.width = `${{Math.round(100 / state.bracketZoom)}}%`;
+      document.querySelector("#bracketZoomLabel").textContent = `${{Math.round(state.bracketZoom * 100)}}%`;
       host.innerHTML = bracketRounds.map(round => {{
         const cards = rows.filter(r => r.round === round).sort((a, b) => Number(a.match) - Number(b.match));
         return `<section class="round-col"><h2>${{escapeHtml(round)}}</h2>${{cards.length ? cards.map(matchCard).join("") : `<div class="detail-line">No matches shown by current filters.</div>`}}</section>`;
@@ -626,6 +910,95 @@ def render_html(data: dict) -> str:
       }}).join("");
     }}
 
+    function playerColor(row) {{
+      const highValue = Number(row.transfermarkt_value_eur_m) >= 75;
+      const highRating = Number(row.world_cup_rating) >= 7;
+      if (state.highlightTeam && row.team === state.highlightTeam) return "#d8b45f";
+      if (highValue && highRating) return "#26c6b8";
+      if (highValue) return "#6da8ff";
+      if (highRating) return "#e35d5b";
+      return "#9fb0ad";
+    }}
+
+    function renderValueChart() {{
+      const host = document.querySelector("#valueChart");
+      const details = document.querySelector("#valueDetails");
+      const rows = valueRows().filter(row => Number.isFinite(Number(row.transfermarkt_value_eur_m)) && Number.isFinite(Number(row.world_cup_rating)));
+      document.querySelector("#valueZoomLabel").textContent = `${{Math.round(state.valueZoom * 100)}}%`;
+      if (!rows.length) {{
+        host.innerHTML = `<div class="detail-line" style="padding:18px">No player-value rows found. Regenerate the notebook after rating extraction to populate this chart.</div>`;
+        details.textContent = "";
+        return;
+      }}
+
+      const width = 1120;
+      const height = 560;
+      const margin = {{ top: 34, right: 46, bottom: 72, left: 74 }};
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+      const maxValue = Math.max(100, ...rows.map(row => Number(row.transfermarkt_value_eur_m))) * 1.08;
+      const minRating = Math.max(5, Math.floor((Math.min(...rows.map(row => Number(row.world_cup_rating))) - 0.25) * 2) / 2);
+      const maxRating = Math.min(9, Math.ceil((Math.max(...rows.map(row => Number(row.world_cup_rating))) + 0.25) * 2) / 2);
+      const x = value => margin.left + (Number(value) / maxValue) * plotW;
+      const y = value => margin.top + ((maxRating - Number(value)) / (maxRating - minRating)) * plotH;
+      const xTicks = [0, 25, 50, 75, 100, 125, 150, 175, 200].filter(value => value <= maxValue);
+      const yTicks = [];
+      for (let tick = minRating; tick <= maxRating + 0.001; tick += 0.5) yTicks.push(Number(tick.toFixed(1)));
+      const selectedKey = state.selectedPlayer;
+
+      const grid = [
+        ...xTicks.map(value => `<g class="axis"><line x1="${{x(value)}}" x2="${{x(value)}}" y1="${{margin.top}}" y2="${{height - margin.bottom}}" opacity=".35"></line><text x="${{x(value)}}" y="${{height - margin.bottom + 24}}" text-anchor="middle">${{value}}</text></g>`),
+        ...yTicks.map(value => `<g class="axis"><line x1="${{margin.left}}" x2="${{width - margin.right}}" y1="${{y(value)}}" y2="${{y(value)}}" opacity=".35"></line><text x="${{margin.left - 12}}" y="${{y(value) + 4}}" text-anchor="end">${{value.toFixed(1)}}</text></g>`)
+      ].join("");
+      const labels = rows.filter(row => {{
+        const key = `${{row.team}}|${{row.player}}`;
+        return key === selectedKey || row.team === state.highlightTeam || Number(row.transfermarkt_value_eur_m) >= 120 || Number(row.world_cup_rating) >= 7.55;
+      }}).map(row => `<text class="player-label" x="${{x(row.transfermarkt_value_eur_m) + 8}}" y="${{y(row.world_cup_rating) - 8}}">${{escapeHtml(row.player)}}</text>`).join("");
+      const points = rows.map((row, index) => {{
+        const key = `${{row.team}}|${{row.player}}`;
+        const active = key === selectedKey || row.team === state.highlightTeam;
+        const dimmed = state.highlightTeam && state.focusTeam && row.team !== state.highlightTeam;
+        const radius = active ? 7 : 5;
+        return `<circle class="player-dot${{dimmed ? " dimmed" : ""}}${{active ? " active" : ""}}" data-index="${{index}}" cx="${{x(row.transfermarkt_value_eur_m)}}" cy="${{y(row.world_cup_rating)}}" r="${{radius}}" fill="${{playerColor(row)}}"><title>${{escapeHtml(row.player)}} &middot; ${{escapeHtml(row.team)}} &middot; EUR ${{Number(row.transfermarkt_value_eur_m).toFixed(0)}}m &middot; ${{Number(row.world_cup_rating).toFixed(2)}}</title></circle>`;
+      }}).join("");
+
+      host.innerHTML = `<svg class="value-svg" style="width:${{Math.round(state.valueZoom * 100)}}%; min-width:100%" viewBox="0 0 ${{width}} ${{height}}" role="img" aria-label="Player rating versus Transfermarkt value scatter plot">
+        <rect x="0" y="0" width="${{width}}" height="${{height}}" fill="transparent"></rect>
+        <text x="${{margin.left}}" y="22" fill="#edf4f1" font-size="15" font-weight="700">World Cup rating vs market value</text>
+        <text x="${{width - margin.right}}" y="22" fill="#9fb0ad" font-size="12" text-anchor="end">Click a dot to highlight its country across the page</text>
+        ${{grid}}
+        <line class="threshold-line" x1="${{x(75)}}" x2="${{x(75)}}" y1="${{margin.top}}" y2="${{height - margin.bottom}}"></line>
+        <line class="threshold-line" x1="${{margin.left}}" x2="${{width - margin.right}}" y1="${{y(7)}}" y2="${{y(7)}}"></line>
+        <text x="${{x(75) + 8}}" y="${{margin.top + 16}}" fill="#d8b45f" font-size="12">EUR 75m</text>
+        <text x="${{width - margin.right - 8}}" y="${{y(7) - 8}}" fill="#d8b45f" font-size="12" text-anchor="end">7.0 rating</text>
+        ${{points}}
+        ${{labels}}
+        <text x="${{width / 2}}" y="${{height - 22}}" fill="#9fb0ad" font-size="13" text-anchor="middle">Transfermarkt value, EUR millions</text>
+        <text x="18" y="${{height / 2}}" fill="#9fb0ad" font-size="13" text-anchor="middle" transform="rotate(-90 18 ${{height / 2}})">Google lineup post-match rating</text>
+      </svg>`;
+
+      host.querySelectorAll(".player-dot").forEach(dot => {{
+        dot.addEventListener("click", () => {{
+          const row = rows[Number(dot.dataset.index)];
+          state.selectedPlayer = `${{row.team}}|${{row.player}}`;
+          setHighlight(row.team);
+          renderAll(false);
+        }});
+      }});
+
+      const selected = rows.find(row => `${{row.team}}|${{row.player}}` === state.selectedPlayer);
+      if (selected) {{
+        details.innerHTML = `<strong>${{escapeHtml(selected.player)}}</strong>, ${{escapeHtml(selected.team)}}: EUR ${{Number(selected.transfermarkt_value_eur_m).toFixed(0)}}m, World Cup rating ${{Number(selected.world_cup_rating).toFixed(2)}} across ${{selected.rated_matches}} rated match(es), ${{escapeHtml(selected.rating_method)}}.`;
+      }} else if (state.highlightTeam) {{
+        const teamRows = rows.filter(row => row.team === state.highlightTeam);
+        const avgRating = teamRows.reduce((sum, row) => sum + Number(row.world_cup_rating), 0) / Math.max(1, teamRows.length);
+        const totalValue = teamRows.reduce((sum, row) => sum + Number(row.transfermarkt_value_eur_m), 0);
+        details.innerHTML = `<strong>${{escapeHtml(state.highlightTeam)}}</strong>: ${{teamRows.length}} tracked star player(s), EUR ${{totalValue.toFixed(0)}}m combined snapshot value, ${{avgRating.toFixed(2)}} average World Cup rating.`;
+      }} else {{
+        details.innerHTML = `Thresholds: high market value is EUR 75m or above; high performance is 7.0 or above. Use the country selector or click a dot to link the chart back to the bracket.`;
+      }}
+    }}
+
     function renderAll(keepSelection = true) {{
       if (!keepSelection) state.selected = state.selected;
       renderBracket();
@@ -633,6 +1006,7 @@ def render_html(data: dict) -> str:
       renderRecommendations();
       renderTopPlayers();
       renderTeamForm();
+      renderValueChart();
     }}
 
     initControls();
@@ -652,6 +1026,7 @@ def main():
         "marketBracket": dataframe_to_records(market_table),
         "recommendations": dataframe_to_records(recommendations),
         "ratings": load_rating_data(),
+        "playerValue": load_player_value_data(),
     }
     OUT.write_text(render_html(data), encoding="utf-8")
     print(OUT)

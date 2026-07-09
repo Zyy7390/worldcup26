@@ -34,11 +34,12 @@ Last model refresh: **July 7, 2026, about 7:13 p.m. ET**
 | Artifact | What it is for |
 |---|---|
 | [Prediction notebook](notebooks/worldcup_2026_prediction_bracket.ipynb) | Full analysis, formulas, model assumptions, plots, and executed results. |
-| [Interactive bracket](outputs/worldcup_2026_interactive_bracket.html) | Filterable bracket view with match details, recommendations, ratings, and market diagnostic views. |
+| [Interactive bracket](outputs/worldcup_2026_interactive_bracket.html) | Filterable bracket view with match details, country highlighting, zoom controls, recommendations, ratings, and market diagnostic views. |
 | [Updated tables workbook](outputs/tables/worldcup_2026_updated_tables_20260707.xlsx) | Shareable Excel workbook with live bracket, market-integrated bracket, recommendations, and summary. |
 | [Projected knockout CSV](outputs/tables/worldcup_2026_projected_knockout_schedule_20260707.csv) | Machine-readable latest live bracket. |
 | [Recommendations CSV](outputs/tables/worldcup_2026_match_recommendations_20260707.csv) | Ticket-focused match shortlist with matchup, price, date, weekday, and weather factors. |
 | [Presentation deck](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx) | A concise visual slide deck for sharing the bracket and story. |
+| [Notebook archive](notebooks/archive/worldcup_2026_prediction_bracket.pre_live_update_20260617.ipynb) | Sanitized pre-live-update notebook snapshot available in the current project files. |
 
 ## Projected Last Eight
 
@@ -73,6 +74,11 @@ available and highlights star players from teams still alive in the quarterfinal
 field.
 
 ![Player rating vs Transfermarkt value](assets/readme/player_value_vs_transfermarkt.png)
+
+The interactive bracket app also includes this value/performance chart as a
+clickable SVG: select a country to highlight it across the bracket and chart,
+click a player dot to focus that country, and use zoom controls for closer
+inspection.
 
 ## Games To Watch
 
