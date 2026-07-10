@@ -6,6 +6,7 @@ import html
 import io
 import json
 import re
+import unicodedata
 
 import nbformat
 import pandas as pd
@@ -516,9 +517,16 @@ def load_rating_data(live_table: pd.DataFrame):
     }
 
 
-def load_player_value_data() -> list[dict]:
+def normalize_person_name(value: object) -> str:
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    text = re.sub(r"[^a-z0-9]+", " ", text.lower())
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def load_transfermarkt_value_frame() -> pd.DataFrame:
     if not MODEL_SOURCE.exists():
-        return []
+        return pd.DataFrame()
     source = MODEL_SOURCE.read_text(encoding="utf-8")
     match = re.search(
         r"transfermarkt_values_data\s*=\s*\[(.*?)\]\s*star_player_values",
@@ -526,48 +534,152 @@ def load_player_value_data() -> list[dict]:
         flags=re.S,
     )
     if not match:
-        return []
+        return pd.DataFrame()
     values = ast.literal_eval("[" + match.group(1) + "]")
-    value_df = pd.DataFrame(values, columns=["team", "player", "transfermarkt_value_eur_m"])
+    return pd.DataFrame(values, columns=["team", "player", "transfermarkt_value_eur_m"])
 
-    ratings_path = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
-    if not ratings_path.exists():
-        return []
-    ratings = pd.read_csv(ratings_path)
-    required = {"team", "player", "match", "rating", "minutes_played"}
-    if not required.issubset(ratings.columns):
-        return []
-    ratings["rating"] = pd.to_numeric(ratings["rating"], errors="coerce")
-    ratings["minutes_played"] = pd.to_numeric(ratings["minutes_played"], errors="coerce")
-    ratings = ratings[ratings["rating"].notna()].copy()
+
+def build_player_match_info(match_backbone: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    if match_backbone is None or match_backbone.empty:
+        return pd.DataFrame()
+    for _, row in match_backbone.iterrows():
+        for team, opponent, goals_for, goals_against in [
+            (row["team_a"], row["team_b"], row["goals_a"], row["goals_b"]),
+            (row["team_b"], row["team_a"], row["goals_b"], row["goals_a"]),
+        ]:
+            rows.append({
+                "match_id": str(row["match_id"]),
+                "team": team,
+                "opponent": opponent,
+                "match": row["match"],
+                "stage": row["stage"],
+                "date": row["date"],
+                "match_no": row.get("match_no"),
+                "score": f"{int(goals_for)}-{int(goals_against)}"
+                if pd.notna(goals_for) and pd.notna(goals_against)
+                else "",
+            })
+    return pd.DataFrame(rows)
+
+
+def load_player_value_data(match_backbone: pd.DataFrame) -> tuple[list[dict], dict]:
+    value_df = load_transfermarkt_value_frame()
+    sofa_path = SOFASCORE_DATA_DIR / "sofascore_player_ratings.csv"
+    if value_df.empty or not sofa_path.exists():
+        return [], {}
+
+    ratings = pd.read_csv(sofa_path)
+    required = {"match_id", "team", "player", "rating", "minutes_played", "goals", "assists"}
+    if ratings.empty or not required.issubset(ratings.columns):
+        return [], {}
+
+    value_df["player_key"] = value_df["player"].map(normalize_person_name)
+    ratings["player_key"] = ratings["player"].map(normalize_person_name)
+    ratings["match_id"] = ratings["match_id"].astype(str)
+    numeric_columns = [
+        "rating",
+        "minutes_played",
+        "goals",
+        "assists",
+        "expected_goals",
+        "expected_assists",
+        "shots_on_target",
+        "tackles",
+        "saves",
+    ]
+    for column in numeric_columns:
+        if column in ratings.columns:
+            ratings[column] = pd.to_numeric(ratings[column], errors="coerce")
+        else:
+            ratings[column] = None
+
+    tracked = ratings.merge(
+        value_df.rename(columns={"player": "value_player"}),
+        on=["team", "player_key"],
+        how="inner",
+    )
+    if tracked.empty:
+        return [], {}
+
+    match_info = build_player_match_info(match_backbone)
+    if not match_info.empty:
+        tracked = tracked.merge(match_info, on=["match_id", "team"], how="left", suffixes=("", "_info"))
+    if "match" not in tracked.columns:
+        tracked["match"] = tracked["match_id"]
 
     rows = []
-    for (team, player), sub in ratings.groupby(["team", "player"], dropna=False):
-        has_minutes = sub["minutes_played"].notna().all() and sub["minutes_played"].sum() > 0
-        if has_minutes:
-            world_cup_rating = (sub["rating"] * sub["minutes_played"]).sum() / sub["minutes_played"].sum()
+    details = {}
+    for (team, player), sub in tracked.groupby(["team", "value_player"], dropna=False):
+        rated = sub[sub["rating"].notna()].copy()
+        weighted = rated[rated["minutes_played"].fillna(0).gt(0)]
+        if not weighted.empty and weighted["minutes_played"].sum() > 0:
+            world_cup_rating = (weighted["rating"] * weighted["minutes_played"]).sum() / weighted["minutes_played"].sum()
             rating_method = "minutes-weighted"
-        else:
-            world_cup_rating = sub["rating"].mean()
+        elif not rated.empty:
+            world_cup_rating = rated["rating"].mean()
             rating_method = "simple average"
-        rows.append({
+        else:
+            world_cup_rating = None
+            rating_method = "simple average"
+
+        match_rows = []
+        ordered = sub.sort_values(["date", "match_no", "match_id"], na_position="last")
+        for _, match_row in ordered.iterrows():
+            match_rows.append({
+                "match_id": match_row.get("match_id"),
+                "match_no": match_row.get("match_no"),
+                "stage": match_row.get("stage"),
+                "date": match_row.get("date"),
+                "match": match_row.get("match") or match_row.get("match_id"),
+                "opponent": match_row.get("opponent"),
+                "score": match_row.get("score"),
+                "player": match_row.get("player"),
+                "minutes_played": match_row.get("minutes_played"),
+                "rating": match_row.get("rating"),
+                "goals": match_row.get("goals"),
+                "assists": match_row.get("assists"),
+                "expected_goals": match_row.get("expected_goals"),
+                "expected_assists": match_row.get("expected_assists"),
+                "shots_on_target": match_row.get("shots_on_target"),
+                "tackles": match_row.get("tackles"),
+                "saves": match_row.get("saves"),
+            })
+
+        summary = {
             "team": team,
             "player": player,
             "world_cup_rating": world_cup_rating,
-            "rated_matches": sub["match"].nunique(),
+            "rated_matches": int(rated["match_id"].nunique()),
+            "appearances": int(sub.loc[sub["minutes_played"].fillna(0).gt(0) | sub["rating"].notna(), "match_id"].nunique()),
             "rating_method": rating_method,
-        })
+            "total_minutes": sub["minutes_played"].fillna(0).sum(),
+            "goals": sub["goals"].fillna(0).sum(),
+            "assists": sub["assists"].fillna(0).sum(),
+            "expected_goals": sub["expected_goals"].fillna(0).sum(),
+            "expected_assists": sub["expected_assists"].fillna(0).sum(),
+            "transfermarkt_value_eur_m": sub["transfermarkt_value_eur_m"].iloc[0],
+            "sofascore_player": sub["player"].dropna().iloc[0] if sub["player"].notna().any() else player,
+        }
+        summary["club"] = MAJOR_CLUB_BY_PLAYER.get(player, "Other / untagged")
+        summary["value_tier"] = "high value" if summary["transfermarkt_value_eur_m"] >= 75 else "lower value"
+        summary["performance_tier"] = "high performance" if world_cup_rating is not None and world_cup_rating >= 7.0 else "lower performance"
+        summary["detail_key"] = f"{team}|{player}"
+        rows.append(summary)
+        details[summary["detail_key"]] = {**summary, "matches": match_rows}
 
     performance = pd.DataFrame(rows)
-    merged = value_df.merge(performance, on=["team", "player"], how="inner")
-    if merged.empty:
-        return []
-    merged["club"] = merged["player"].map(MAJOR_CLUB_BY_PLAYER).fillna("Other / untagged")
-    merged["value_tier"] = merged["transfermarkt_value_eur_m"].ge(75).map({True: "high value", False: "lower value"})
-    merged["performance_tier"] = merged["world_cup_rating"].ge(7.0).map({True: "high performance", False: "lower performance"})
-    return dataframe_to_records(
-        merged.sort_values(["team", "transfermarkt_value_eur_m"], ascending=[True, False]).round(3)
+    performance = performance[performance["world_cup_rating"].notna()].copy()
+    if performance.empty:
+        return [], {}
+    performance["club"] = performance["player"].map(MAJOR_CLUB_BY_PLAYER).fillna("Other / untagged")
+    performance["value_tier"] = performance["transfermarkt_value_eur_m"].ge(75).map({True: "high value", False: "lower value"})
+    performance["performance_tier"] = performance["world_cup_rating"].ge(7.0).map({True: "high performance", False: "lower performance"})
+
+    rows_out = dataframe_to_records(
+        performance.sort_values(["team", "transfermarkt_value_eur_m"], ascending=[True, False]).round(3)
     )
+    return rows_out, json_safe(details)
 
 
 def load_team_performance_data(live_table: pd.DataFrame) -> dict:
@@ -1193,6 +1305,48 @@ def render_html(data: dict) -> str:
       font-size: 18px;
       margin-top: 2px;
     }}
+    .player-profile {{
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+      gap: 16px;
+      align-items: start;
+    }}
+    .player-summary h3 {{
+      margin: 0 0 8px;
+      font-size: 24px;
+    }}
+    .table-wrap {{
+      overflow-x: auto;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      background: rgba(255,255,255,.025);
+    }}
+    .data-table {{
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+      font-size: 13px;
+    }}
+    .data-table th,
+    .data-table td {{
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      text-align: left;
+      vertical-align: top;
+    }}
+    .data-table th {{
+      color: var(--gold);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: rgba(255,255,255,.035);
+    }}
+    .data-table td {{
+      color: var(--ink);
+    }}
+    .data-table .muted-cell {{
+      color: var(--muted);
+    }}
     .match-list {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1232,6 +1386,7 @@ def render_html(data: dict) -> str:
     @media (max-width: 980px) {{
       .scoreboard {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
       .layout, .sections {{ grid-template-columns: 1fr; }}
+      .player-profile {{ grid-template-columns: 1fr; }}
       aside {{ position: static; max-height: none; }}
       header {{ position: static; }}
     }}
@@ -1245,19 +1400,20 @@ def render_html(data: dict) -> str:
   <header>
     <div class="eyebrow">World Cup 2026 Forecast Lab</div>
     <h1>Interactive Knockout Bracket</h1>
-    <p class="lead">Latest notebook projection with actual R32 results, rendered Google lineup ratings, human tactical priors, ticket-watch recommendations, and a market-prior diagnostic view.</p>
+    <p class="lead">Latest notebook projection with actual knockout results, direct SofaScore player ratings and match stats, human tactical priors, ticket-watch recommendations, and a market-prior diagnostic view.</p>
     <div class="scoreboard">
       <div class="metric"><span>Projected Champion</span><strong>{champion}</strong></div>
       <div class="metric"><span>Projected Runner-up</span><strong>{runner_up}</strong></div>
-      <div class="metric"><span>Google Rows</span><strong>{data["ratings"]["allRows"]:,}</strong></div>
-      <div class="metric"><span>Scraped Matches</span><strong>{data["ratings"]["scrapedMatches"]} / 82</strong></div>
-      <div class="metric"><span>Star Matches</span><strong>{data["ratings"]["starRows"]}</strong></div>
+      <div class="metric"><span>Direct Rating Rows</span><strong>{data["ratings"]["allRows"]:,}</strong></div>
+      <div class="metric"><span>Rated Matches</span><strong>{data["ratings"]["scrapedMatches"]} / 96</strong></div>
+      <div class="metric"><span>Value Players</span><strong>{len(data["playerValue"])}</strong></div>
     </div>
   </header>
   <main>
     <nav class="app-tabs" aria-label="Analysis tabs">
       <button class="tab-button active" data-tab="forecast">Forecast</button>
       <button class="tab-button" data-tab="value">Player Value</button>
+      <button class="tab-button" data-tab="player">Player Detail</button>
       <button class="tab-button" data-tab="team">Team Performance</button>
     </nav>
 
@@ -1331,6 +1487,18 @@ def render_html(data: dict) -> str:
       </section>
     </div>
 
+    <div id="playerTab" class="tab-panel">
+      <section class="wide-section">
+        <div class="section-head">
+          <h2>Player Detail</h2>
+          <div class="chart-tools">
+            <button id="playerBackToChart" type="button">Back to value chart</button>
+          </div>
+        </div>
+        <div id="playerDetail"></div>
+      </section>
+    </div>
+
     <div id="teamTab" class="tab-panel">
       <section class="wide-section">
         <div class="section-head">
@@ -1347,7 +1515,7 @@ def render_html(data: dict) -> str:
       </section>
     </div>
     <footer>
-      Data note: Google ratings are from rendered match-card lineup panels stored locally. Knockout team averages are used as forward signals where available; group-stage ratings are stored for analysis. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
+      Data note: direct player ratings, minutes, goals, assists, xG, shots on target, saves, tackles, and shot maps are fetched from SofaScore where mapped. Google lineup extracts remain as a fallback/audit trail. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
     </footer>
   </main>
   <script>
@@ -1426,14 +1594,22 @@ def render_html(data: dict) -> str:
       renderAll(false);
     }}
 
+    function setActiveTab(tabName) {{
+      state.activeTab = tabName;
+      document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab.dataset.tab === tabName));
+      document.querySelectorAll(".tab-panel").forEach(panel => {{
+        panel.classList.toggle("active", panel.id === `${{tabName}}Tab`);
+      }});
+    }}
+
+    function playerKey(row) {{
+      return row?.detail_key || `${{row?.team}}|${{row?.player}}`;
+    }}
+
     function initControls() {{
       document.querySelectorAll("[data-tab]").forEach(btn => {{
         btn.addEventListener("click", () => {{
-          state.activeTab = btn.dataset.tab;
-          document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === btn));
-          document.querySelectorAll(".tab-panel").forEach(panel => {{
-            panel.classList.toggle("active", panel.id === `${{state.activeTab}}Tab`);
-          }});
+          setActiveTab(btn.dataset.tab);
         }});
       }});
       const roundFilter = document.querySelector("#roundFilter");
@@ -1502,6 +1678,10 @@ def render_html(data: dict) -> str:
         state.valueClub = "";
         state.selectedPlayer = null;
         syncValueControls();
+        renderAll(false);
+      }});
+      document.querySelector("#playerBackToChart").addEventListener("click", () => {{
+        setActiveTab("value");
         renderAll(false);
       }});
       teamPerformanceSelect.addEventListener("change", e => {{
@@ -1712,11 +1892,11 @@ def render_html(data: dict) -> str:
         ...yTicks.map(value => `<g class="axis"><line x1="${{margin.left}}" x2="${{width - margin.right}}" y1="${{y(value)}}" y2="${{y(value)}}" opacity=".35"></line><text x="${{margin.left - 12}}" y="${{y(value) + 4}}" text-anchor="end">${{value.toFixed(1)}}</text></g>`)
       ].join("");
       const labels = rows.filter(row => {{
-        const key = `${{row.team}}|${{row.player}}`;
+        const key = playerKey(row);
         return key === selectedKey || valueFocusMatches(row) || Number(row.transfermarkt_value_eur_m) >= 120 || Number(row.world_cup_rating) >= 7.55;
       }}).map(row => `<text class="player-label" x="${{x(row.transfermarkt_value_eur_m) + 8}}" y="${{y(row.world_cup_rating) - 8}}">${{escapeHtml(row.player)}}</text>`).join("");
       const points = rows.map((row, index) => {{
-        const key = `${{row.team}}|${{row.player}}`;
+        const key = playerKey(row);
         const active = key === selectedKey || valueFocusMatches(row);
         const hasFocus = state.valueCountry || state.valueClub || (state.highlightTeam && state.focusTeam);
         const dimmed = hasFocus && !active;
@@ -1727,7 +1907,7 @@ def render_html(data: dict) -> str:
       host.innerHTML = `<svg class="value-svg" style="width:${{Math.round(state.valueZoom * 100)}}%; min-width:100%" viewBox="0 0 ${{width}} ${{height}}" role="img" aria-label="Player rating versus Transfermarkt value scatter plot">
         <rect x="0" y="0" width="${{width}}" height="${{height}}" fill="transparent"></rect>
         <text x="${{margin.left}}" y="22" fill="#edf4f1" font-size="15" font-weight="700">World Cup rating vs market value</text>
-        <text x="${{width - margin.right}}" y="22" fill="#9fb0ad" font-size="12" text-anchor="end">Click a dot to highlight its country across the page</text>
+        <text x="${{width - margin.right}}" y="22" fill="#9fb0ad" font-size="12" text-anchor="end">Click a dot to open its tournament match log</text>
         ${{grid}}
         <line class="threshold-line" x1="${{x(75)}}" x2="${{x(75)}}" y1="${{margin.top}}" y2="${{height - margin.bottom}}"></line>
         <line class="threshold-line" x1="${{margin.left}}" x2="${{width - margin.right}}" y1="${{y(7)}}" y2="${{y(7)}}"></line>
@@ -1736,21 +1916,22 @@ def render_html(data: dict) -> str:
         ${{points}}
         ${{labels}}
         <text x="${{width / 2}}" y="${{height - 22}}" fill="#9fb0ad" font-size="13" text-anchor="middle">Transfermarkt value, EUR millions</text>
-        <text x="18" y="${{height / 2}}" fill="#9fb0ad" font-size="13" text-anchor="middle" transform="rotate(-90 18 ${{height / 2}})">Google lineup post-match rating</text>
+        <text x="18" y="${{height / 2}}" fill="#9fb0ad" font-size="13" text-anchor="middle" transform="rotate(-90 18 ${{height / 2}})">Direct post-match rating</text>
       </svg>`;
 
       host.querySelectorAll(".player-dot").forEach(dot => {{
         dot.addEventListener("click", () => {{
           const row = rows[Number(dot.dataset.index)];
-          state.selectedPlayer = `${{row.team}}|${{row.player}}`;
+          state.selectedPlayer = playerKey(row);
           state.valueCountry = row.team;
           setHighlight(row.team);
           syncValueControls();
+          setActiveTab("player");
           renderAll(false);
         }});
       }});
 
-      const selected = rows.find(row => `${{row.team}}|${{row.player}}` === state.selectedPlayer);
+      const selected = rows.find(row => playerKey(row) === state.selectedPlayer);
       if (selected) {{
         details.innerHTML = `<strong>${{escapeHtml(selected.player)}}</strong>, ${{escapeHtml(selected.team)}} / ${{escapeHtml(selected.club || "No major-club tag")}}: EUR ${{Number(selected.transfermarkt_value_eur_m).toFixed(0)}}m, World Cup rating ${{Number(selected.world_cup_rating).toFixed(2)}} across ${{selected.rated_matches}} rated match(es), ${{escapeHtml(selected.rating_method)}}.`;
       }} else if (state.valueClub) {{
@@ -1765,8 +1946,68 @@ def render_html(data: dict) -> str:
         const totalValue = teamRows.reduce((sum, row) => sum + Number(row.transfermarkt_value_eur_m), 0);
         details.innerHTML = `<strong>${{escapeHtml(teamName)}}</strong>: ${{teamRows.length}} tracked star player(s), EUR ${{totalValue.toFixed(0)}}m combined snapshot value, ${{avgRating.toFixed(2)}} average World Cup rating.`;
       }} else {{
-        details.innerHTML = `Thresholds: high market value is EUR 75m or above; high performance is 7.0 or above. Use country or major-club selectors, or click a dot to link the chart back to the bracket.`;
+        details.innerHTML = `Thresholds: high market value is EUR 75m or above; high performance is 7.0 or above. Use country or major-club selectors, or click a dot to open a player match log.`;
       }}
+    }}
+
+    function renderPlayerDetail() {{
+      const host = document.querySelector("#playerDetail");
+      if (!host) return;
+      const detail = (DATA.playerDetails || {{}})[state.selectedPlayer];
+      if (!detail) {{
+        host.innerHTML = `<div class="detail-line">Select a player dot in the Player Value tab to open a tournament match log.</div>`;
+        return;
+      }}
+      const matches = detail.matches || [];
+      const totalGoals = Number(detail.goals || 0);
+      const totalAssists = Number(detail.assists || 0);
+      const totalMinutes = Number(detail.total_minutes || 0);
+      const rows = matches.map(row => {{
+        const matchLabel = row.match_no ? `M${{Number(row.match_no).toFixed(0)}}` : escapeHtml(row.match_id || "");
+        return `<tr>
+          <td><strong>${{escapeHtml(matchLabel)}}</strong><div class="muted-cell">${{escapeHtml(row.date || "")}}</div></td>
+          <td>${{escapeHtml(row.stage || "")}}</td>
+          <td>${{escapeHtml(row.match || "")}}</td>
+          <td>${{escapeHtml(row.opponent || "")}}<div class="muted-cell">${{escapeHtml(row.score || "")}}</div></td>
+          <td>${{formatNullable(row.minutes_played, 0)}}</td>
+          <td><strong>${{formatNullable(row.rating, 1)}}</strong></td>
+          <td>${{formatNullable(row.goals || 0, 0)}}</td>
+          <td>${{formatNullable(row.assists || 0, 0)}}</td>
+          <td>${{formatNullable(row.expected_goals, 2)}}</td>
+          <td>${{formatNullable(row.expected_assists, 2)}}</td>
+        </tr>`;
+      }}).join("");
+      host.innerHTML = `<div class="player-profile">
+        <div class="player-summary">
+          <h3>${{escapeHtml(detail.player)}}</h3>
+          <div class="detail-line">${{escapeHtml(detail.team)}} / ${{escapeHtml(detail.club || "Other / untagged")}} / SofaScore player: ${{escapeHtml(detail.sofascore_player || detail.player)}}</div>
+          <div class="stat-grid">
+            <div class="stat">Overall rating<strong>${{formatNullable(detail.world_cup_rating, 2)}}</strong></div>
+            <div class="stat">Rated matches<strong>${{detail.rated_matches || 0}}</strong></div>
+            <div class="stat">Appearances<strong>${{detail.appearances || 0}}</strong></div>
+            <div class="stat">Minutes<strong>${{formatNullable(totalMinutes, 0)}}</strong></div>
+            <div class="stat">Goals<strong>${{formatNullable(totalGoals, 0)}}</strong></div>
+            <div class="stat">Assists<strong>${{formatNullable(totalAssists, 0)}}</strong></div>
+            <div class="stat">xG<strong>${{formatNullable(detail.expected_goals, 2)}}</strong></div>
+            <div class="stat">xA<strong>${{formatNullable(detail.expected_assists, 2)}}</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="stat-grid">
+            <div class="stat">Transfermarkt value<strong>EUR ${{formatNullable(detail.transfermarkt_value_eur_m, 0)}}m</strong></div>
+            <div class="stat">Rating method<strong>${{escapeHtml(detail.rating_method || "")}}</strong></div>
+            <div class="stat">Performance tier<strong>${{escapeHtml(detail.performance_tier || "")}}</strong></div>
+            <div class="stat">Value tier<strong>${{escapeHtml(detail.value_tier || "")}}</strong></div>
+          </div>
+          <div class="detail-line">Rows come from SofaScore lineup payloads matched to the local World Cup result backbone. Blank ratings remain n/a instead of being proxied.</div>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table class="data-table">
+          <thead><tr><th>Match</th><th>Round</th><th>Fixture</th><th>Opponent</th><th>Min</th><th>Rating</th><th>G</th><th>A</th><th>xG</th><th>xA</th></tr></thead>
+          <tbody>${{rows || `<tr><td colspan="10" class="muted-cell">No match rows found for this player.</td></tr>`}}</tbody>
+        </table>
+      </div>`;
     }}
 
     function renderTeamPerformance() {{
@@ -1852,6 +2093,7 @@ def render_html(data: dict) -> str:
       renderTopPlayers();
       renderTeamForm();
       renderValueChart();
+      renderPlayerDetail();
       renderTeamPerformance();
     }}
 
@@ -1866,13 +2108,16 @@ def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
     live_table, market_table, recommendations, summary = load_notebook_tables()
     summary_map = dict(zip(summary.get("result", []), summary.get("team", [])))
+    match_backbone = build_actual_match_backbone(live_table)
+    player_value, player_details = load_player_value_data(match_backbone)
     data = {
         "summaryMap": summary_map,
         "liveBracket": dataframe_to_records(live_table),
         "marketBracket": dataframe_to_records(market_table),
         "recommendations": dataframe_to_records(recommendations),
         "ratings": load_rating_data(live_table),
-        "playerValue": load_player_value_data(),
+        "playerValue": player_value,
+        "playerDetails": player_details,
         "teamPerformance": load_team_performance_data(live_table),
     }
     OUT.write_text(render_html(data), encoding="utf-8")
