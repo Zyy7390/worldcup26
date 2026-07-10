@@ -100,6 +100,51 @@ def normalize_match_name(value: object) -> str:
     return re.sub(r"\s+", " ", str(value or "").strip()).lower()
 
 
+def result_match_signature(value: object) -> str:
+    text = re.sub(r"\([^)]*\)", "", str(value or "").split(";")[0]).strip()
+    match = re.search(r"(.+?)\s+(\d+)\s*[-\u2013]\s*(\d+)\s+(.+)", text)
+    if not match:
+        return ""
+    left = normalize_match_name(match.group(1))
+    right = normalize_match_name(match.group(4))
+    goals_left = int(match.group(2))
+    goals_right = int(match.group(3))
+    if left <= right:
+        return f"{left}|{goals_left}-{goals_right}|{right}"
+    return f"{right}|{goals_right}-{goals_left}|{left}"
+
+
+def result_lookup_keys(value: object) -> list[str]:
+    keys = [f"name:{normalize_match_name(value)}"]
+    signature = result_match_signature(value)
+    if signature:
+        keys.append(f"score:{signature}")
+    return keys
+
+
+def load_player_form_signals() -> pd.DataFrame:
+    if not MODEL_SOURCE.exists():
+        return pd.DataFrame()
+    source = MODEL_SOURCE.read_text(encoding="utf-8")
+    match = re.search(
+        r"player_form_signals_data\s*=\s*\[(.*?)\]\s*player_form_signals\s*=",
+        source,
+        flags=re.S,
+    )
+    if not match:
+        return pd.DataFrame()
+    rows = ast.literal_eval("[" + match.group(1) + "]")
+    signals = pd.DataFrame(
+        rows,
+        columns=["match", "team", "player", "rating_proxy", "importance_weight", "source_type", "note"],
+    )
+    signals["rating_proxy"] = pd.to_numeric(signals["rating_proxy"], errors="coerce")
+    signals["importance_weight"] = pd.to_numeric(signals["importance_weight"], errors="coerce").fillna(0)
+    signals["match_key"] = signals["match"].map(normalize_match_name)
+    signals["match_signature"] = signals["match"].map(result_match_signature)
+    return signals[signals["rating_proxy"].notna()].copy()
+
+
 def load_group_result_backbone() -> pd.DataFrame:
     if not MODEL_SOURCE.exists():
         return pd.DataFrame()
@@ -239,7 +284,7 @@ def load_notebook_tables():
     return live_table, market_table.sort_values("match"), recommendations, summary
 
 
-def load_rating_data():
+def load_rating_data(live_table: pd.DataFrame):
     all_path = GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv"
     summary_path = GOOGLE_DATA_DIR / "google_lineup_rating_extraction_summary.csv"
     star_path = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
@@ -250,6 +295,8 @@ def load_rating_data():
 
     ratings_by_match = {}
     team_avgs_by_match = {}
+    form_signals_by_match = {}
+    form_team_avgs_by_match = {}
     top_knockout_players = []
     knockout_team_form = []
     if not ratings.empty:
@@ -285,6 +332,58 @@ def load_rating_data():
             .round(3)
         )
 
+    form_signals = load_player_form_signals()
+    if not form_signals.empty:
+        backbone = build_actual_match_backbone(live_table)
+        if not backbone.empty:
+            match_lookup = backbone[pd.notna(backbone["match_no"])].copy()
+            match_lookup["match_key"] = match_lookup["match"].map(normalize_match_name)
+            match_lookup["match_signature"] = match_lookup["match"].map(result_match_signature)
+            signals_with_id = form_signals.reset_index().rename(columns={"index": "_signal_id"})
+            by_name = signals_with_id.merge(
+                match_lookup[["match_key", "match_no"]],
+                on="match_key",
+                how="inner",
+            )
+            matched_signal_ids = set(by_name["_signal_id"])
+            remaining = signals_with_id[~signals_with_id["_signal_id"].isin(matched_signal_ids)]
+            by_score = pd.DataFrame()
+            if not remaining.empty:
+                by_score = remaining[remaining["match_signature"].ne("")].merge(
+                    match_lookup[["match_signature", "match_no"]][match_lookup["match_signature"].ne("")],
+                    on="match_signature",
+                    how="inner",
+                )
+            form_for_ko = pd.concat([by_name, by_score], ignore_index=True)
+            for match_no, group in form_for_ko.groupby("match_no"):
+                match_key = str(int(match_no))
+                rows = (
+                    group.sort_values(["rating_proxy", "importance_weight"], ascending=False)
+                    [["team", "player", "rating_proxy", "source_type", "note", "match"]]
+                    .head(12)
+                    .rename(columns={"rating_proxy": "rating", "source_type": "source"})
+                    .round(2)
+                )
+                form_signals_by_match[match_key] = dataframe_to_records(rows)
+
+                team_rows = []
+                for team, team_group in group.groupby("team"):
+                    weights = team_group["importance_weight"].fillna(0)
+                    if weights.sum() > 0:
+                        avg_rating = (team_group["rating_proxy"] * weights).sum() / weights.sum()
+                    else:
+                        avg_rating = team_group["rating_proxy"].mean()
+                    team_rows.append({
+                        "team": team,
+                        "avg_rating": round(float(avg_rating), 3),
+                        "signals": int(len(team_group)),
+                    })
+                form_team_avgs_by_match[match_key] = sorted(
+                    team_rows,
+                    key=lambda item: item["avg_rating"],
+                    reverse=True,
+                )
+
     coverage = []
     if not extraction_summary.empty:
         coverage = dataframe_to_records(
@@ -307,6 +406,8 @@ def load_rating_data():
     return {
         "ratingsByMatch": ratings_by_match,
         "teamAveragesByMatch": team_avgs_by_match,
+        "formSignalsByMatch": form_signals_by_match,
+        "formTeamAveragesByMatch": form_team_avgs_by_match,
         "topR32Players": top_knockout_players,
         "r32TeamForm": knockout_team_form,
         "coverage": coverage,
@@ -418,6 +519,34 @@ def load_team_performance_data(live_table: pd.DataFrame) -> dict:
                 .round(3)
             )
 
+    form_signals = load_player_form_signals()
+    proxy_by_team_match: dict[tuple[str, str], list[dict]] = {}
+    proxy_metrics: dict[tuple[str, str], dict] = {}
+    if not form_signals.empty:
+        def add_proxy_rows(lookup_key: str, team: str, group: pd.DataFrame) -> None:
+            ordered = group.sort_values(["rating_proxy", "importance_weight"], ascending=False)
+            proxy_by_team_match[(lookup_key, team)] = dataframe_to_records(
+                ordered[["player", "rating_proxy", "source_type", "note"]]
+                .rename(columns={"rating_proxy": "rating", "source_type": "source"})
+                .head(5)
+                .round(2)
+            )
+            weights = group["importance_weight"].fillna(0)
+            if weights.sum() > 0:
+                proxy_avg = (group["rating_proxy"] * weights).sum() / weights.sum()
+            else:
+                proxy_avg = group["rating_proxy"].mean()
+            proxy_metrics[(lookup_key, team)] = {
+                "proxy_avg_rating": round(float(proxy_avg), 3),
+                "proxy_signals": int(len(group)),
+            }
+
+        for (match_key, team), group in form_signals.groupby(["match_key", "team"]):
+            add_proxy_rows(f"name:{match_key}", team, group)
+        signature_signals = form_signals[form_signals["match_signature"].ne("")]
+        for (match_signature, team), group in signature_signals.groupby(["match_signature", "team"]):
+            add_proxy_rows(f"score:{match_signature}", team, group)
+
     match_rows = []
     for _, row in match_backbone.iterrows():
         for team, opponent, goals_for, goals_against in [
@@ -426,8 +555,21 @@ def load_team_performance_data(live_table: pd.DataFrame) -> dict:
         ]:
             match_key = normalize_match_name(row["match"])
             metrics = team_rating_metrics.get((match_key, team), {})
+            lookup_keys = result_lookup_keys(row["match"])
+            proxy = next(
+                (proxy_metrics[(lookup_key, team)] for lookup_key in lookup_keys if (lookup_key, team) in proxy_metrics),
+                {},
+            )
             top_players = top_by_team_match.get((match_key, team), [])
             star_players = stars_by_team_match.get((match_key, team), [])
+            proxy_players = next(
+                (
+                    proxy_by_team_match[(lookup_key, team)]
+                    for lookup_key in lookup_keys
+                    if (lookup_key, team) in proxy_by_team_match
+                ),
+                [],
+            )
             goals_for_clean = int(goals_for) if pd.notna(goals_for) else None
             goals_against_clean = int(goals_against) if pd.notna(goals_against) else None
             match_rows.append({
@@ -449,11 +591,15 @@ def load_team_performance_data(live_table: pd.DataFrame) -> dict:
                 else "",
                 "team_avg_rating": metrics.get("team_avg_rating"),
                 "players_rated": metrics.get("players_rated"),
+                "proxy_avg_rating": proxy.get("proxy_avg_rating"),
+                "proxy_signals": proxy.get("proxy_signals", 0),
                 "shots_on_target_for": None,
                 "shots_on_target_against": None,
                 "top_players": top_players,
                 "star_players": star_players,
+                "proxy_players": proxy_players,
                 "has_player_ratings": bool(top_players or star_players),
+                "has_form_signals": bool(proxy_players),
             })
 
     match_team = pd.DataFrame(match_rows)
@@ -465,6 +611,8 @@ def load_team_performance_data(live_table: pd.DataFrame) -> dict:
             goals_against=("goals_against", "sum"),
             avg_team_rating=("team_avg_rating", "mean"),
             rated_matches=("has_player_ratings", "sum"),
+            signal_matches=("has_form_signals", "sum"),
+            avg_signal_rating=("proxy_avg_rating", "mean"),
             players_rated=("players_rated", lambda values: int(pd.Series(values).dropna().sum())),
         )
         .round(3)
@@ -1325,24 +1473,39 @@ def render_html(data: dict) -> str:
       const row = rows.find(r => Number(r.match) === Number(state.selected)) || rows[0];
       const ratings = DATA.ratings.ratingsByMatch[String(row?.match)] || [];
       const teamAvgs = DATA.ratings.teamAveragesByMatch[String(row?.match)] || [];
+      const formSignals = DATA.ratings.formSignalsByMatch[String(row?.match)] || [];
+      const formTeamAvgs = DATA.ratings.formTeamAveragesByMatch[String(row?.match)] || [];
+      const noAvgMessage = row?.status === "actual"
+        ? "Actual match; Google lineup rating rows have not been fetched or matched yet. Showing model form signals where available."
+        : "Projected match; ratings will appear after the match is played and scraped.";
       const ratingHtml = ratings.length ? ratings.map(r => `
         <div class="rating-row">
           <div><strong>${{escapeHtml(r.player)}}</strong><div class="detail-line">${{escapeHtml(r.team)}} · ${{escapeHtml(r.match)}}</div></div>
           <div>${{Number(r.rating).toFixed(1)}}</div>
-        </div>`).join("") : `<div class="detail-line">No Google lineup rating rows for this match yet.</div>`;
+        </div>`).join("") : formSignals.length ? formSignals.map(r => `
+        <div class="rating-row">
+          <div><strong>${{escapeHtml(r.player)}}</strong><div class="detail-line">${{escapeHtml(r.team)}} Â· ${{escapeHtml(r.source)}} Â· ${{escapeHtml(r.note || "")}}</div></div>
+          <div>${{Number(r.rating).toFixed(1)}}</div>
+        </div>`).join("") : `<div class="detail-line">No Google lineup or model form rating rows for this match yet.</div>`;
       const avgHtml = teamAvgs.length ? teamAvgs.map(r => `
         <div class="rating-row">
           <div><strong>${{escapeHtml(r.team)}}</strong><div class="bar"><i style="--w:${{Math.max(1, Math.min(100, Number(r.avg_rating) * 10))}}%"></i></div></div>
           <div>${{Number(r.avg_rating).toFixed(2)}}</div>
+        </div>`).join("") : formTeamAvgs.length ? formTeamAvgs.map(r => `
+        <div class="rating-row">
+          <div><strong>${{escapeHtml(r.team)}}</strong><div class="detail-line">${{r.signals || 0}} model signal(s)</div><div class="bar"><i style="--w:${{Math.max(1, Math.min(100, Number(r.avg_rating) * 10))}}%"></i></div></div>
+          <div>${{Number(r.avg_rating).toFixed(2)}}</div>
         </div>`).join("") : "";
+      const avgTitle = teamAvgs.length ? "Team Averages" : formTeamAvgs.length ? "Team Form Signals" : "Team Averages";
+      const ratingsTitle = ratings.length ? "Top Rated Players" : formSignals.length ? "Model Form Signals" : "Top Rated Players";
       document.querySelector("#details").innerHTML = `<h2>M${{escapeHtml(row?.match)}} Details</h2>
         <div class="detail-line">${{escapeHtml(row?.round)}} · ${{escapeHtml(row?.date)}} · ${{escapeHtml(row?.weekday)}} · ${{escapeHtml(row?.local_kickoff || "")}}</div>
         <div class="teams">${{escapeHtml(row?.team_a)}} vs ${{escapeHtml(row?.team_b)}}</div>
         <div class="detail-line">Location: ${{escapeHtml(row?.location || "")}}</div>
         <div class="detail-line">Winner: <strong>${{escapeHtml(row?.winner)}}</strong> (${{escapeHtml(row?.winner_probability)}}) · ${{escapeHtml(row?.status || "")}}</div>
         ${{row?.result_note ? `<div class="detail-line">Result: ${{escapeHtml(row.result_note)}}</div>` : ""}}
-        <h2 style="margin-top:18px">Team Averages</h2>${{avgHtml || `<div class="detail-line">Projected match; ratings will appear after the match is played and scraped.</div>`}}
-        <h2 style="margin-top:18px">Top Rated Players</h2>${{ratingHtml}}`;
+        <h2 style="margin-top:18px">${{avgTitle}}</h2>${{avgHtml || `<div class="detail-line">${{noAvgMessage}}</div>`}}
+        <h2 style="margin-top:18px">${{ratingsTitle}}</h2>${{ratingHtml}}`;
     }}
 
     function renderRecommendations() {{
@@ -1392,7 +1555,10 @@ def render_html(data: dict) -> str:
 
     function renderPlayerMiniList(players, fallbackLabel) {{
       if (!players || !players.length) return `<div class="detail-line">${{fallbackLabel}}</div>`;
-      return `<ul class="mini-list">${{players.map(player => `<li><span>${{escapeHtml(player.player)}}</span><strong>${{formatNullable(player.rating, 1)}}</strong></li>`).join("")}}</ul>`;
+      return `<ul class="mini-list">${{players.map(player => {{
+        const source = player.source ? ` · ${{escapeHtml(player.source)}}` : "";
+        return `<li><span>${{escapeHtml(player.player)}}${{source}}</span><strong>${{formatNullable(player.rating, 1)}}</strong></li>`;
+      }}).join("")}}</ul>`;
     }}
 
     function playerColor(row) {{
@@ -1518,9 +1684,9 @@ def render_html(data: dict) -> str:
             <div class="stat">Matches<strong>${{row.matches}}</strong></div>
             <div class="stat">Goals<strong>${{row.goals_for}}-${{row.goals_against}}</strong></div>
             <div class="stat">Goal diff<strong>${{Number(row.goal_diff) > 0 ? "+" : ""}}${{row.goal_diff}}</strong></div>
-            <div class="stat">Team avg<strong>${{formatNullable(row.avg_team_rating, 2)}}</strong></div>
-            <div class="stat">Star avg<strong>${{formatNullable(row.star_avg_rating, 2)}}</strong></div>
-            <div class="stat">Rated matches<strong>${{row.rated_matches || 0}}/${{row.matches}}</strong></div>
+            <div class="stat">Google avg<strong>${{formatNullable(row.avg_team_rating, 2)}}</strong></div>
+            <div class="stat">Signal avg<strong>${{formatNullable(row.avg_signal_rating, 2)}}</strong></div>
+            <div class="stat">Signals<strong>${{row.signal_matches || 0}}/${{row.matches}}</strong></div>
           </div>
         </article>`).join("");
       grid.querySelectorAll(".team-summary-card[data-team]").forEach(card => {{
@@ -1542,21 +1708,31 @@ def render_html(data: dict) -> str:
       const teamMatches = perf.matches.filter(row => row.team === selectedTeam);
       details.innerHTML = `<div class="section-head"><h2>${{escapeHtml(selectedTeam)}} Match Log</h2><span class="pill">${{teamMatches.length}} match(es)</span></div>
         <div class="match-list">${{teamMatches.map(row => {{
-          const players = row.star_players?.length ? row.star_players : row.top_players;
-          const label = row.star_players?.length ? "Star player ratings" : "Top lineup ratings";
+          const players = row.star_players?.length
+            ? row.star_players
+            : row.top_players?.length
+              ? row.top_players
+              : row.proxy_players;
+          const label = row.star_players?.length
+            ? "Star player ratings"
+            : row.top_players?.length
+              ? "Top Google lineup ratings"
+              : row.proxy_players?.length
+                ? "Model form signals"
+                : "Player ratings";
           return `<article class="team-match-card">
             <span class="pill">${{escapeHtml(row.stage)}}</span>${{row.match_no ? `<span class="pill">M${{row.match_no}}</span>` : ""}}
             <h3>${{escapeHtml(row.team)}} ${{escapeHtml(row.score)}} vs ${{escapeHtml(row.opponent)}}</h3>
             <div class="detail-line">${{escapeHtml(row.date)}}${{row.weekday ? ` &middot; ${{escapeHtml(row.weekday)}}` : ""}}${{row.location ? ` &middot; ${{escapeHtml(row.location)}}` : ""}}</div>
             <div class="detail-line">${{escapeHtml(row.match)}}</div>
             <div class="stat-grid">
-              <div class="stat">Team rating<strong>${{formatNullable(row.team_avg_rating, 2)}}</strong></div>
-              <div class="stat">Players rated<strong>${{row.players_rated ?? "n/a"}}</strong></div>
+              <div class="stat">Google rating<strong>${{formatNullable(row.team_avg_rating, 2)}}</strong></div>
+              <div class="stat">Google players<strong>${{row.players_rated ?? "n/a"}}</strong></div>
+              <div class="stat">Form signal<strong>${{formatNullable(row.proxy_avg_rating, 2)}}</strong></div>
               <div class="stat">Goals<strong>${{row.goals_for ?? "n/a"}}</strong></div>
-              <div class="stat">Shots on target<strong>n/a</strong></div>
             </div>
             <div class="detail-line">${{label}}</div>
-            ${{renderPlayerMiniList(players, "No player rating rows for this match.")}}
+            ${{renderPlayerMiniList(players, "No Google lineup or model form rows for this match.")}}
           </article>`;
         }}).join("")}}</div>`;
     }}
@@ -1588,7 +1764,7 @@ def main():
         "liveBracket": dataframe_to_records(live_table),
         "marketBracket": dataframe_to_records(market_table),
         "recommendations": dataframe_to_records(recommendations),
-        "ratings": load_rating_data(),
+        "ratings": load_rating_data(live_table),
         "playerValue": load_player_value_data(),
         "teamPerformance": load_team_performance_data(live_table),
     }
