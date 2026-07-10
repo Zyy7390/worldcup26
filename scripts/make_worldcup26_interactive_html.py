@@ -20,6 +20,49 @@ OUT = OUTPUT_DIR / "worldcup_2026_interactive_bracket.html"
 MODEL_SOURCE = ROOT / "scripts" / "update_worldcup26_notebook_live.py"
 
 
+MAJOR_CLUB_BY_PLAYER = {
+    "Kylian Mbappe": "Real Madrid",
+    "Jude Bellingham": "Real Madrid",
+    "Vinicius Junior": "Real Madrid",
+    "Rodrygo": "Real Madrid",
+    "Federico Valverde": "Real Madrid",
+    "Brahim Diaz": "Real Madrid",
+    "Lamine Yamal": "Barcelona",
+    "Pedri": "Barcelona",
+    "Erling Haaland": "Manchester City",
+    "Rodri": "Manchester City",
+    "Jeremy Doku": "Manchester City",
+    "Josko Gvardiol": "Manchester City",
+    "Bukayo Saka": "Arsenal",
+    "Martin Odegaard": "Arsenal",
+    "Harry Kane": "Bayern Munich",
+    "Jamal Musiala": "Bayern Munich",
+    "Michael Olise": "Bayern Munich",
+    "Ousmane Dembele": "Paris Saint-Germain",
+    "Achraf Hakimi": "Paris Saint-Germain",
+    "Lionel Messi": "Inter Miami",
+    "Lautaro Martinez": "Inter Milan",
+    "Hakan Calhanoglu": "Inter Milan",
+    "Mohamed Salah": "Liverpool",
+    "Virgil van Dijk": "Liverpool",
+    "Cody Gakpo": "Liverpool",
+    "Luis Diaz": "Liverpool",
+    "Darwin Nunez": "Liverpool",
+    "Julian Alvarez": "Atletico Madrid",
+    "Alexander Sorloth": "Atletico Madrid",
+    "Moises Caicedo": "Chelsea",
+    "Nicolas Jackson": "Chelsea",
+    "Christian Pulisic": "AC Milan",
+    "Bruno Fernandes": "Manchester United",
+    "Cristiano Ronaldo": "Al Nassr",
+    "Florian Wirtz": "Bayer Leverkusen",
+    "Granit Xhaka": "Bayer Leverkusen",
+    "Patrik Schick": "Bayer Leverkusen",
+    "Jonathan David": "Lille",
+    "Alphonso Davies": "Bayern Munich",
+}
+
+
 def clean_frame(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df = df.loc[:, ~df.columns.astype(str).str.startswith("Unnamed")]
@@ -215,11 +258,133 @@ def load_player_value_data() -> list[dict]:
     merged = value_df.merge(performance, on=["team", "player"], how="inner")
     if merged.empty:
         return []
+    merged["club"] = merged["player"].map(MAJOR_CLUB_BY_PLAYER).fillna("Other / untagged")
     merged["value_tier"] = merged["transfermarkt_value_eur_m"].ge(75).map({True: "high value", False: "lower value"})
     merged["performance_tier"] = merged["world_cup_rating"].ge(7.0).map({True: "high performance", False: "lower performance"})
     return dataframe_to_records(
         merged.sort_values(["team", "transfermarkt_value_eur_m"], ascending=[True, False]).round(3)
     )
+
+
+def load_team_performance_data() -> dict:
+    ratings_path = GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv"
+    star_path = GOOGLE_DATA_DIR / "google_lineup_player_ratings.csv"
+    if not ratings_path.exists():
+        return {"summary": [], "matches": [], "note": "No Google lineup rating extract found."}
+
+    ratings = pd.read_csv(ratings_path)
+    if ratings.empty:
+        return {"summary": [], "matches": [], "note": "Google lineup rating extract is empty."}
+    ratings["rating"] = pd.to_numeric(ratings["rating"], errors="coerce")
+    ratings["goals_a"] = pd.to_numeric(ratings["goals_a"], errors="coerce")
+    ratings["goals_b"] = pd.to_numeric(ratings["goals_b"], errors="coerce")
+    ratings["match_no_sort"] = pd.to_numeric(ratings.get("match_no"), errors="coerce").fillna(0)
+
+    match_team = ratings.drop_duplicates(["match_id", "team"]).copy()
+    match_team["goals_for"] = match_team.apply(
+        lambda row: row["goals_a"] if row["team"] == row["team_a"] else row["goals_b"],
+        axis=1,
+    )
+    match_team["goals_against"] = match_team.apply(
+        lambda row: row["goals_b"] if row["team"] == row["team_a"] else row["goals_a"],
+        axis=1,
+    )
+    match_team["opponent"] = match_team.apply(
+        lambda row: row["team_b"] if row["team"] == row["team_a"] else row["team_a"],
+        axis=1,
+    )
+
+    team_match_avg = (
+        ratings.groupby(["match_id", "team"], as_index=False)
+        .agg(team_avg_rating=("rating", "mean"), players_rated=("player_display", "nunique"))
+        .round(3)
+    )
+    match_team = match_team.merge(team_match_avg, on=["match_id", "team"], how="left")
+
+    top_by_team_match: dict[tuple[str, str], list[dict]] = {}
+    for (match_id, team), group in ratings[ratings["rating"].notna()].groupby(["match_id", "team"]):
+        top_by_team_match[(match_id, team)] = dataframe_to_records(
+            group.sort_values("rating", ascending=False)
+            [["player_display", "rating"]]
+            .head(3)
+            .rename(columns={"player_display": "player"})
+            .round(2)
+        )
+
+    stars_by_team_match: dict[tuple[str, str], list[dict]] = {}
+    if star_path.exists():
+        stars = pd.read_csv(star_path)
+        if not stars.empty:
+            stars["rating"] = pd.to_numeric(stars["rating"], errors="coerce")
+            for (match, team), group in stars[stars["rating"].notna()].groupby(["match", "team"]):
+                stars_by_team_match[(match, team)] = dataframe_to_records(
+                    group.sort_values("rating", ascending=False)
+                    [["player", "rating"]]
+                    .head(4)
+                    .round(2)
+                )
+
+    summary = (
+        match_team.groupby("team", as_index=False)
+        .agg(
+            matches=("match_id", "nunique"),
+            goals_for=("goals_for", "sum"),
+            goals_against=("goals_against", "sum"),
+            avg_team_rating=("team_avg_rating", "mean"),
+            players_rated=("players_rated", "sum"),
+        )
+        .round(3)
+    )
+    summary["goal_diff"] = summary["goals_for"] - summary["goals_against"]
+
+    if star_path.exists():
+        stars = pd.read_csv(star_path)
+        if not stars.empty:
+            stars["rating"] = pd.to_numeric(stars["rating"], errors="coerce")
+            star_summary = (
+                stars.groupby("team", as_index=False)
+                .agg(star_avg_rating=("rating", "mean"), star_rows=("rating", "count"))
+                .round(3)
+            )
+            summary = summary.merge(star_summary, on="team", how="left")
+    if "star_avg_rating" not in summary.columns:
+        summary["star_avg_rating"] = None
+        summary["star_rows"] = 0
+    summary["shots_on_target_for"] = None
+    summary["shots_on_target_against"] = None
+    summary = summary.sort_values(["avg_team_rating", "goal_diff", "goals_for"], ascending=False)
+
+    matches = []
+    match_team = match_team.sort_values(["date", "match_no_sort", "match_id", "team"])
+    for _, row in match_team.iterrows():
+        goals_for = int(row["goals_for"]) if pd.notna(row["goals_for"]) else None
+        goals_against = int(row["goals_against"]) if pd.notna(row["goals_against"]) else None
+        top_players = top_by_team_match.get((row["match_id"], row["team"]), [])
+        star_players = stars_by_team_match.get((row["match"], row["team"]), [])
+        matches.append({
+            "team": row["team"],
+            "opponent": row["opponent"],
+            "match": row["match"],
+            "match_id": row["match_id"],
+            "match_no": None if pd.isna(row.get("match_no")) else int(row["match_no"]),
+            "stage": row["stage"],
+            "date": row["date"],
+            "goals_for": goals_for,
+            "goals_against": goals_against,
+            "score": f"{goals_for}-{goals_against}" if goals_for is not None and goals_against is not None else "",
+            "team_avg_rating": None if pd.isna(row["team_avg_rating"]) else round(float(row["team_avg_rating"]), 3),
+            "players_rated": None if pd.isna(row["players_rated"]) else int(row["players_rated"]),
+            "shots_on_target_for": None,
+            "shots_on_target_against": None,
+            "top_players": top_players,
+            "star_players": star_players,
+        })
+
+    return {
+        "summary": dataframe_to_records(summary),
+        "matches": matches,
+        "note": "Shots-on-target is not present in the saved local extract yet; this tab uses goals and Google lineup rating rows.",
+    }
 
 
 def render_html(data: dict) -> str:
@@ -310,6 +475,31 @@ def render_html(data: dict) -> str:
       letter-spacing: 0;
     }}
     main {{ padding: 24px clamp(14px, 3vw, 42px) 54px; }}
+    .app-tabs {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 10px;
+    }}
+    .tab-button {{
+      background: transparent;
+      border-color: transparent;
+      color: var(--muted);
+      font-weight: 800;
+    }}
+    .tab-button.active {{
+      color: var(--ink);
+      background: rgba(38,198,184,.12);
+      border-color: rgba(38,198,184,.48);
+    }}
+    .tab-panel {{
+      display: none;
+    }}
+    .tab-panel.active {{
+      display: block;
+    }}
     .toolbar {{
       display: flex;
       align-items: center;
@@ -602,6 +792,68 @@ def render_html(data: dict) -> str:
       line-height: 1.45;
       margin-top: 10px;
     }}
+    .summary-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }}
+    .team-summary-card {{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      border-radius: 8px;
+      padding: 12px;
+    }}
+    .team-summary-card h3 {{
+      margin: 0 0 10px;
+      font-size: 17px;
+    }}
+    .stat-grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }}
+    .stat {{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }}
+    .stat strong {{
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      margin-top: 2px;
+    }}
+    .match-list {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }}
+    .team-match-card {{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+      border-radius: 8px;
+      padding: 12px;
+    }}
+    .team-match-card h3 {{
+      margin: 0 0 8px;
+      font-size: 16px;
+    }}
+    .mini-list {{
+      margin: 9px 0 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }}
+    .mini-list li {{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 6px 0;
+    }}
     footer {{
       color: var(--muted);
       font-size: 12px;
@@ -634,69 +886,99 @@ def render_html(data: dict) -> str:
     </div>
   </header>
   <main>
-    <div class="toolbar">
-      <div class="group">
-        <button class="active" data-dataset="live">Live Model</button>
-        <button data-dataset="market">Market Diagnostic</button>
-      </div>
-      <div class="group">
-        <select id="roundFilter" aria-label="Round filter">
-          <option value="All">All rounds</option>
-        </select>
-        <select id="statusFilter" aria-label="Status filter">
-          <option value="All">Actual + projected</option>
-          <option value="actual">Actual only</option>
-          <option value="projected">Projected only</option>
-        </select>
-      </div>
-      <div class="group">
-        <select id="teamHighlight" aria-label="Highlight country">
-          <option value="">Highlight country</option>
-        </select>
-        <label class="toggle"><input id="focusToggle" type="checkbox"> Focus</label>
-        <button id="clearHighlight" type="button">Clear</button>
-      </div>
-      <div class="group">
-        <button id="bracketZoomOut" type="button">-</button>
-        <span id="bracketZoomLabel" class="zoom-label">100%</span>
-        <button id="bracketZoomIn" type="button">+</button>
-        <button id="bracketZoomReset" type="button">Reset</button>
-      </div>
-      <input id="searchBox" placeholder="Search team, city, stadium, match number" aria-label="Search">
-    </div>
-    <div class="layout">
-      <div class="bracket"><div id="rounds" class="rounds"></div></div>
-      <aside id="details"></aside>
-    </div>
-    <div class="sections">
-      <section>
-        <h2>Games To Watch</h2>
-        <div id="recommendations" class="rec-grid"></div>
-      </section>
-      <section>
-        <h2>Knockout Player Form</h2>
-        <div id="topPlayers"></div>
-      </section>
-    </div>
-    <section style="margin-top:18px">
-      <h2>Knockout Team Rating Averages</h2>
-      <div id="teamForm"></div>
-    </section>
-    <section class="wide-section">
-      <div class="section-head">
-        <h2>Player Value vs Transfermarkt Value</h2>
-        <div class="chart-tools">
-          <button id="valueZoomOut" type="button">Zoom out</button>
-          <span id="valueZoomLabel" class="zoom-label">100%</span>
-          <button id="valueZoomIn" type="button">Zoom in</button>
-          <button id="valueZoomReset" type="button">Reset</button>
+    <nav class="app-tabs" aria-label="Analysis tabs">
+      <button class="tab-button active" data-tab="forecast">Forecast</button>
+      <button class="tab-button" data-tab="value">Player Value</button>
+      <button class="tab-button" data-tab="team">Team Performance</button>
+    </nav>
+
+    <div id="forecastTab" class="tab-panel active">
+      <div class="toolbar">
+        <div class="group">
+          <button class="active" data-dataset="live">Live Model</button>
+          <button data-dataset="market">Market Diagnostic</button>
         </div>
+        <div class="group">
+          <select id="roundFilter" aria-label="Round filter">
+            <option value="All">All rounds</option>
+          </select>
+          <select id="statusFilter" aria-label="Status filter">
+            <option value="All">Actual + projected</option>
+            <option value="actual">Actual only</option>
+            <option value="projected">Projected only</option>
+          </select>
+        </div>
+        <div class="group">
+          <select id="teamHighlight" aria-label="Highlight country">
+            <option value="">Highlight country</option>
+          </select>
+          <label class="toggle"><input id="focusToggle" type="checkbox"> Focus</label>
+          <button id="clearHighlight" type="button">Clear</button>
+        </div>
+        <div class="group">
+          <button id="bracketZoomOut" type="button">-</button>
+          <span id="bracketZoomLabel" class="zoom-label">100%</span>
+          <button id="bracketZoomIn" type="button">+</button>
+          <button id="bracketZoomReset" type="button">Reset</button>
+        </div>
+        <input id="searchBox" placeholder="Search team, city, stadium, match number" aria-label="Search">
       </div>
-      <div id="valueChart" class="chart-wrap"></div>
-      <div id="valueDetails" class="chart-note"></div>
-    </section>
+      <div class="layout">
+        <div class="bracket"><div id="rounds" class="rounds"></div></div>
+        <aside id="details"></aside>
+      </div>
+      <div class="sections">
+        <section>
+          <h2>Games To Watch</h2>
+          <div id="recommendations" class="rec-grid"></div>
+        </section>
+        <section>
+          <h2>Knockout Player Form</h2>
+          <div id="topPlayers"></div>
+        </section>
+      </div>
+    </div>
+
+    <div id="valueTab" class="tab-panel">
+      <section class="wide-section">
+        <div class="section-head">
+          <h2>Player Value vs Transfermarkt Value</h2>
+          <div class="chart-tools">
+            <select id="valueCountryFilter" aria-label="Highlight country in value chart">
+              <option value="">All countries</option>
+            </select>
+            <select id="valueClubFilter" aria-label="Highlight major club in value chart">
+              <option value="">All major clubs</option>
+            </select>
+            <button id="valueClearFilters" type="button">Clear filters</button>
+            <button id="valueZoomOut" type="button">Zoom out</button>
+            <span id="valueZoomLabel" class="zoom-label">100%</span>
+            <button id="valueZoomIn" type="button">Zoom in</button>
+            <button id="valueZoomReset" type="button">Reset</button>
+          </div>
+        </div>
+        <div id="valueChart" class="chart-wrap"></div>
+        <div id="valueDetails" class="chart-note"></div>
+      </section>
+    </div>
+
+    <div id="teamTab" class="tab-panel">
+      <section class="wide-section">
+        <div class="section-head">
+          <h2>Team Performance So Far</h2>
+          <div class="chart-tools">
+            <select id="teamPerformanceSelect" aria-label="Team performance country">
+              <option value="">Top teams</option>
+            </select>
+          </div>
+        </div>
+        <div id="teamPerformanceNote" class="chart-note"></div>
+        <div id="teamSummaryGrid" class="summary-grid"></div>
+        <div id="teamPerformanceDetails"></div>
+      </section>
+    </div>
     <footer>
-      Data note: Google ratings are from rendered match-card lineup panels stored locally after the July 2 sweep. Knockout team averages are used as forward signals where available; group-stage ratings are stored for analysis. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
+      Data note: Google ratings are from rendered match-card lineup panels stored locally. Knockout team averages are used as forward signals where available; group-stage ratings are stored for analysis. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
     </footer>
   </main>
   <script>
@@ -704,6 +986,7 @@ def render_html(data: dict) -> str:
     const roundOrder = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal", "Third-place Match", "Final"];
     const bracketRounds = ["Round of 32", "Round of 16", "Quarterfinal", "Semifinal", "Final"];
     const state = {{
+      activeTab: "forecast",
       dataset: "live",
       round: "All",
       status: "All",
@@ -713,7 +996,10 @@ def render_html(data: dict) -> str:
       focusTeam: false,
       bracketZoom: 1,
       valueZoom: 1,
-      selectedPlayer: null
+      selectedPlayer: null,
+      valueCountry: "",
+      valueClub: "",
+      teamPerformanceTeam: ""
     }};
 
     const pctNumber = value => Number(String(value || "0").replace("%", "")) || 0;
@@ -745,6 +1031,21 @@ def render_html(data: dict) -> str:
       return [...teams].sort((a, b) => a.localeCompare(b));
     }}
 
+    function collectMajorClubs() {{
+      const clubs = new Set();
+      valueRows().forEach(row => {{
+        if (row.club && row.club !== "Other / untagged") clubs.add(String(row.club));
+      }});
+      return [...clubs].sort((a, b) => a.localeCompare(b));
+    }}
+
+    function syncValueControls() {{
+      const country = document.querySelector("#valueCountryFilter");
+      const club = document.querySelector("#valueClubFilter");
+      if (country && country.value !== state.valueCountry) country.value = state.valueCountry;
+      if (club && club.value !== state.valueClub) club.value = state.valueClub;
+    }}
+
     function setHighlight(team) {{
       state.highlightTeam = team || "";
       const select = document.querySelector("#teamHighlight");
@@ -757,6 +1058,15 @@ def render_html(data: dict) -> str:
     }}
 
     function initControls() {{
+      document.querySelectorAll("[data-tab]").forEach(btn => {{
+        btn.addEventListener("click", () => {{
+          state.activeTab = btn.dataset.tab;
+          document.querySelectorAll("[data-tab]").forEach(tab => tab.classList.toggle("active", tab === btn));
+          document.querySelectorAll(".tab-panel").forEach(panel => {{
+            panel.classList.toggle("active", panel.id === `${{state.activeTab}}Tab`);
+          }});
+        }});
+      }});
       const roundFilter = document.querySelector("#roundFilter");
       roundOrder.forEach(round => {{
         const opt = document.createElement("option");
@@ -770,6 +1080,27 @@ def render_html(data: dict) -> str:
         opt.value = team;
         opt.textContent = team;
         teamHighlight.appendChild(opt);
+      }});
+      const valueCountry = document.querySelector("#valueCountryFilter");
+      collectTeams().forEach(team => {{
+        const opt = document.createElement("option");
+        opt.value = team;
+        opt.textContent = team;
+        valueCountry.appendChild(opt);
+      }});
+      const valueClub = document.querySelector("#valueClubFilter");
+      collectMajorClubs().forEach(club => {{
+        const opt = document.createElement("option");
+        opt.value = club;
+        opt.textContent = club;
+        valueClub.appendChild(opt);
+      }});
+      const teamPerformanceSelect = document.querySelector("#teamPerformanceSelect");
+      (DATA.teamPerformance?.summary || []).map(row => row.team).sort((a, b) => a.localeCompare(b)).forEach(team => {{
+        const opt = document.createElement("option");
+        opt.value = team;
+        opt.textContent = team;
+        teamPerformanceSelect.appendChild(opt);
       }});
       document.querySelectorAll("[data-dataset]").forEach(btn => {{
         btn.addEventListener("click", () => {{
@@ -786,15 +1117,39 @@ def render_html(data: dict) -> str:
         state.selectedPlayer = null;
         renderAll(false);
       }});
+      valueCountry.addEventListener("change", e => {{
+        state.valueCountry = e.target.value;
+        setHighlight(e.target.value);
+        state.selectedPlayer = null;
+        renderAll(false);
+      }});
+      valueClub.addEventListener("change", e => {{
+        state.valueClub = e.target.value;
+        state.selectedPlayer = null;
+        renderAll(false);
+      }});
+      document.querySelector("#valueClearFilters").addEventListener("click", () => {{
+        state.valueCountry = "";
+        state.valueClub = "";
+        state.selectedPlayer = null;
+        syncValueControls();
+        renderAll(false);
+      }});
+      teamPerformanceSelect.addEventListener("change", e => {{
+        state.teamPerformanceTeam = e.target.value;
+        renderTeamPerformance();
+      }});
       document.querySelector("#focusToggle").addEventListener("change", e => {{
         state.focusTeam = e.target.checked;
         renderAll(false);
       }});
       document.querySelector("#clearHighlight").addEventListener("click", () => {{
         setHighlight("");
+        state.valueCountry = "";
         state.focusTeam = false;
         state.selectedPlayer = null;
         document.querySelector("#focusToggle").checked = false;
+        syncValueControls();
         renderAll(false);
       }});
       document.querySelector("#bracketZoomOut").addEventListener("click", () => setZoom("bracketZoom", state.bracketZoom - 0.1));
@@ -901,6 +1256,7 @@ def render_html(data: dict) -> str:
 
     function renderTeamForm() {{
       const host = document.querySelector("#teamForm");
+      if (!host) return;
       host.innerHTML = DATA.ratings.r32TeamForm.slice(0, 26).map(r => {{
         const width = Math.max(5, Math.min(100, Number(r.avg_rating) * 10));
         return `<div class="rating-row">
@@ -910,10 +1266,28 @@ def render_html(data: dict) -> str:
       }}).join("");
     }}
 
+    function valueFocusMatches(row) {{
+      const countryHit = state.valueCountry && row.team === state.valueCountry;
+      const clubHit = state.valueClub && row.club === state.valueClub;
+      const globalHit = state.highlightTeam && row.team === state.highlightTeam;
+      return countryHit || clubHit || globalHit;
+    }}
+
+    function formatNullable(value, digits = 1) {{
+      const number = Number(value);
+      return Number.isFinite(number) ? number.toFixed(digits) : "n/a";
+    }}
+
+    function renderPlayerMiniList(players, fallbackLabel) {{
+      if (!players || !players.length) return `<div class="detail-line">${{fallbackLabel}}</div>`;
+      return `<ul class="mini-list">${{players.map(player => `<li><span>${{escapeHtml(player.player)}}</span><strong>${{formatNullable(player.rating, 1)}}</strong></li>`).join("")}}</ul>`;
+    }}
+
     function playerColor(row) {{
       const highValue = Number(row.transfermarkt_value_eur_m) >= 75;
       const highRating = Number(row.world_cup_rating) >= 7;
-      if (state.highlightTeam && row.team === state.highlightTeam) return "#d8b45f";
+      if (state.valueClub && row.club === state.valueClub) return "#d8b45f";
+      if ((state.valueCountry && row.team === state.valueCountry) || (state.highlightTeam && row.team === state.highlightTeam)) return "#26c6b8";
       if (highValue && highRating) return "#26c6b8";
       if (highValue) return "#6da8ff";
       if (highRating) return "#e35d5b";
@@ -952,14 +1326,15 @@ def render_html(data: dict) -> str:
       ].join("");
       const labels = rows.filter(row => {{
         const key = `${{row.team}}|${{row.player}}`;
-        return key === selectedKey || row.team === state.highlightTeam || Number(row.transfermarkt_value_eur_m) >= 120 || Number(row.world_cup_rating) >= 7.55;
+        return key === selectedKey || valueFocusMatches(row) || Number(row.transfermarkt_value_eur_m) >= 120 || Number(row.world_cup_rating) >= 7.55;
       }}).map(row => `<text class="player-label" x="${{x(row.transfermarkt_value_eur_m) + 8}}" y="${{y(row.world_cup_rating) - 8}}">${{escapeHtml(row.player)}}</text>`).join("");
       const points = rows.map((row, index) => {{
         const key = `${{row.team}}|${{row.player}}`;
-        const active = key === selectedKey || row.team === state.highlightTeam;
-        const dimmed = state.highlightTeam && state.focusTeam && row.team !== state.highlightTeam;
+        const active = key === selectedKey || valueFocusMatches(row);
+        const hasFocus = state.valueCountry || state.valueClub || (state.highlightTeam && state.focusTeam);
+        const dimmed = hasFocus && !active;
         const radius = active ? 7 : 5;
-        return `<circle class="player-dot${{dimmed ? " dimmed" : ""}}${{active ? " active" : ""}}" data-index="${{index}}" cx="${{x(row.transfermarkt_value_eur_m)}}" cy="${{y(row.world_cup_rating)}}" r="${{radius}}" fill="${{playerColor(row)}}"><title>${{escapeHtml(row.player)}} &middot; ${{escapeHtml(row.team)}} &middot; EUR ${{Number(row.transfermarkt_value_eur_m).toFixed(0)}}m &middot; ${{Number(row.world_cup_rating).toFixed(2)}}</title></circle>`;
+        return `<circle class="player-dot${{dimmed ? " dimmed" : ""}}${{active ? " active" : ""}}" data-index="${{index}}" cx="${{x(row.transfermarkt_value_eur_m)}}" cy="${{y(row.world_cup_rating)}}" r="${{radius}}" fill="${{playerColor(row)}}"><title>${{escapeHtml(row.player)}} &middot; ${{escapeHtml(row.team)}} &middot; ${{escapeHtml(row.club || "No major-club tag")}} &middot; EUR ${{Number(row.transfermarkt_value_eur_m).toFixed(0)}}m &middot; ${{Number(row.world_cup_rating).toFixed(2)}}</title></circle>`;
       }}).join("");
 
       host.innerHTML = `<svg class="value-svg" style="width:${{Math.round(state.valueZoom * 100)}}%; min-width:100%" viewBox="0 0 ${{width}} ${{height}}" role="img" aria-label="Player rating versus Transfermarkt value scatter plot">
@@ -981,22 +1356,81 @@ def render_html(data: dict) -> str:
         dot.addEventListener("click", () => {{
           const row = rows[Number(dot.dataset.index)];
           state.selectedPlayer = `${{row.team}}|${{row.player}}`;
+          state.valueCountry = row.team;
           setHighlight(row.team);
+          syncValueControls();
           renderAll(false);
         }});
       }});
 
       const selected = rows.find(row => `${{row.team}}|${{row.player}}` === state.selectedPlayer);
       if (selected) {{
-        details.innerHTML = `<strong>${{escapeHtml(selected.player)}}</strong>, ${{escapeHtml(selected.team)}}: EUR ${{Number(selected.transfermarkt_value_eur_m).toFixed(0)}}m, World Cup rating ${{Number(selected.world_cup_rating).toFixed(2)}} across ${{selected.rated_matches}} rated match(es), ${{escapeHtml(selected.rating_method)}}.`;
-      }} else if (state.highlightTeam) {{
-        const teamRows = rows.filter(row => row.team === state.highlightTeam);
+        details.innerHTML = `<strong>${{escapeHtml(selected.player)}}</strong>, ${{escapeHtml(selected.team)}} / ${{escapeHtml(selected.club || "No major-club tag")}}: EUR ${{Number(selected.transfermarkt_value_eur_m).toFixed(0)}}m, World Cup rating ${{Number(selected.world_cup_rating).toFixed(2)}} across ${{selected.rated_matches}} rated match(es), ${{escapeHtml(selected.rating_method)}}.`;
+      }} else if (state.valueClub) {{
+        const clubRows = rows.filter(row => row.club === state.valueClub);
+        const avgRating = clubRows.reduce((sum, row) => sum + Number(row.world_cup_rating), 0) / Math.max(1, clubRows.length);
+        const totalValue = clubRows.reduce((sum, row) => sum + Number(row.transfermarkt_value_eur_m), 0);
+        details.innerHTML = `<strong>${{escapeHtml(state.valueClub)}}</strong>: ${{clubRows.length}} tracked World Cup star player(s), EUR ${{totalValue.toFixed(0)}}m combined snapshot value, ${{avgRating.toFixed(2)}} average World Cup rating.`;
+      }} else if (state.valueCountry || state.highlightTeam) {{
+        const teamName = state.valueCountry || state.highlightTeam;
+        const teamRows = rows.filter(row => row.team === teamName);
         const avgRating = teamRows.reduce((sum, row) => sum + Number(row.world_cup_rating), 0) / Math.max(1, teamRows.length);
         const totalValue = teamRows.reduce((sum, row) => sum + Number(row.transfermarkt_value_eur_m), 0);
-        details.innerHTML = `<strong>${{escapeHtml(state.highlightTeam)}}</strong>: ${{teamRows.length}} tracked star player(s), EUR ${{totalValue.toFixed(0)}}m combined snapshot value, ${{avgRating.toFixed(2)}} average World Cup rating.`;
+        details.innerHTML = `<strong>${{escapeHtml(teamName)}}</strong>: ${{teamRows.length}} tracked star player(s), EUR ${{totalValue.toFixed(0)}}m combined snapshot value, ${{avgRating.toFixed(2)}} average World Cup rating.`;
       }} else {{
-        details.innerHTML = `Thresholds: high market value is EUR 75m or above; high performance is 7.0 or above. Use the country selector or click a dot to link the chart back to the bracket.`;
+        details.innerHTML = `Thresholds: high market value is EUR 75m or above; high performance is 7.0 or above. Use country or major-club selectors, or click a dot to link the chart back to the bracket.`;
       }}
+    }}
+
+    function renderTeamPerformance() {{
+      const perf = DATA.teamPerformance || {{ summary: [], matches: [], note: "" }};
+      const note = document.querySelector("#teamPerformanceNote");
+      const grid = document.querySelector("#teamSummaryGrid");
+      const details = document.querySelector("#teamPerformanceDetails");
+      if (!perf.summary.length) {{
+        note.textContent = perf.note || "No team performance data found.";
+        grid.innerHTML = "";
+        details.innerHTML = "";
+        return;
+      }}
+
+      note.textContent = perf.note || "";
+      const selectedTeam = state.teamPerformanceTeam || perf.summary[0].team;
+      const visibleSummary = state.teamPerformanceTeam
+        ? perf.summary.filter(row => row.team === selectedTeam)
+        : perf.summary.slice(0, 12);
+      grid.innerHTML = visibleSummary.map(row => `
+        <article class="team-summary-card">
+          <h3>${{escapeHtml(row.team)}}</h3>
+          <div class="stat-grid">
+            <div class="stat">Matches<strong>${{row.matches}}</strong></div>
+            <div class="stat">Goals<strong>${{row.goals_for}}-${{row.goals_against}}</strong></div>
+            <div class="stat">Goal diff<strong>${{Number(row.goal_diff) > 0 ? "+" : ""}}${{row.goal_diff}}</strong></div>
+            <div class="stat">Team avg<strong>${{formatNullable(row.avg_team_rating, 2)}}</strong></div>
+            <div class="stat">Star avg<strong>${{formatNullable(row.star_avg_rating, 2)}}</strong></div>
+            <div class="stat">Shots on target<strong>n/a</strong></div>
+          </div>
+        </article>`).join("");
+
+      const teamMatches = perf.matches.filter(row => row.team === selectedTeam);
+      details.innerHTML = `<div class="section-head"><h2>${{escapeHtml(selectedTeam)}} Match Log</h2><span class="pill">${{teamMatches.length}} match(es)</span></div>
+        <div class="match-list">${{teamMatches.map(row => {{
+          const players = row.star_players?.length ? row.star_players : row.top_players;
+          const label = row.star_players?.length ? "Star player ratings" : "Top lineup ratings";
+          return `<article class="team-match-card">
+            <span class="pill">${{escapeHtml(row.stage)}}</span>${{row.match_no ? `<span class="pill">M${{row.match_no}}</span>` : ""}}
+            <h3>${{escapeHtml(row.team)}} ${{escapeHtml(row.score)}} vs ${{escapeHtml(row.opponent)}}</h3>
+            <div class="detail-line">${{escapeHtml(row.date)}} &middot; ${{escapeHtml(row.match)}}</div>
+            <div class="stat-grid">
+              <div class="stat">Team rating<strong>${{formatNullable(row.team_avg_rating, 2)}}</strong></div>
+              <div class="stat">Players rated<strong>${{row.players_rated ?? "n/a"}}</strong></div>
+              <div class="stat">Goals<strong>${{row.goals_for ?? "n/a"}}</strong></div>
+              <div class="stat">Shots on target<strong>n/a</strong></div>
+            </div>
+            <div class="detail-line">${{label}}</div>
+            ${{renderPlayerMiniList(players, "No player rating rows for this match.")}}
+          </article>`;
+        }}).join("")}}</div>`;
     }}
 
     function renderAll(keepSelection = true) {{
@@ -1007,6 +1441,7 @@ def render_html(data: dict) -> str:
       renderTopPlayers();
       renderTeamForm();
       renderValueChart();
+      renderTeamPerformance();
     }}
 
     initControls();
@@ -1027,6 +1462,7 @@ def main():
         "recommendations": dataframe_to_records(recommendations),
         "ratings": load_rating_data(),
         "playerValue": load_player_value_data(),
+        "teamPerformance": load_team_performance_data(),
     }
     OUT.write_text(render_html(data), encoding="utf-8")
     print(OUT)
