@@ -8,6 +8,7 @@ human tactical reads, market priors, ticket planning, and bracket visualization.
 [![Notebook](https://img.shields.io/badge/Jupyter-analysis-F37626?logo=jupyter&logoColor=white)](notebooks/worldcup_2026_prediction_bracket.ipynb)
 [![Interactive bracket](https://img.shields.io/badge/interactive-bracket-26c6b8)](outputs/worldcup_2026_interactive_bracket.html)
 [![Latest tables](https://img.shields.io/badge/latest-tables-6da8ff)](outputs/tables/worldcup_2026_updated_tables_20260707.xlsx)
+[![Data quality](https://img.shields.io/badge/data-quality-d8b45f)](docs/data_quality_investigation.md)
 [![PowerPoint](https://img.shields.io/badge/slides-PowerPoint-b7472a)](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx)
 
 If GitHub Pages is enabled from the repo root, open the app at:
@@ -39,6 +40,7 @@ Last model refresh: **July 7, 2026, about 7:13 p.m. ET**
 | [Projected knockout CSV](outputs/tables/worldcup_2026_projected_knockout_schedule_20260707.csv) | Machine-readable latest live bracket. |
 | [Recommendations CSV](outputs/tables/worldcup_2026_match_recommendations_20260707.csv) | Ticket-focused match shortlist with matchup, price, date, weekday, and weather factors. |
 | [Presentation deck](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx) | A concise visual slide deck for sharing the bracket and story. |
+| [Data quality investigation](docs/data_quality_investigation.md) | Current coverage, missingness causes, SofaScore fetch diagnostics, and next notebook-integration steps. |
 | [Notebook archive](notebooks/archive/worldcup_2026_prediction_bracket.pre_live_update_20260617.ipynb) | Sanitized pre-live-update notebook snapshot available in the current project files. |
 
 ## Projected Last Eight
@@ -155,16 +157,17 @@ Core inputs include:
 
 - Official-style match schedule and bracket structure.
 - Latest locked match results through Switzerland 0-0 Colombia, Switzerland 4-3 on penalties.
-- Saved Google lineup player-rating extracts from the July 2 sweep.
+- Direct SofaScore lineup ratings, minutes, team stats, and shot maps for all 96 completed local matches.
+- Saved Google lineup player-rating extracts kept as a fallback/audit trail.
 - Event and player-performance proxies where rendered ratings were unavailable.
 - Polymarket July 7 outright market snapshot.
 - Kalshi public-market snapshots kept as diagnostics when markets were not clean single-team or W-D-L priors.
 
-Important caveat: the July 7 Google player-rating scrape hit Google's
-"sorry/unusual traffic" page, so new Round of 16 player-rating cards were not
-scraped in that run. The notebook preserves the existing 2,334 saved Google
-player-rating rows and uses result proxies plus human reads for the latest R16
-matches.
+Important caveat: the interactive site now uses the SofaScore CSVs directly, but
+the notebook still needs a dedicated SofaScore ingestion cell before every
+analysis table natively uses xG, shots on target, saves, tackles, shot maps, and
+minutes-weighted player ratings. See the data quality investigation for the
+current coverage and exact follow-up path.
 
 </details>
 
@@ -178,6 +181,8 @@ assets/
 data/
   google/    scraped and normalized lineup ratings
   markets/   Polymarket and Kalshi snapshots
+  sofascore/ direct event mapping, ratings, stats, and shot maps
+docs/        data-quality and methodology notes
 notebooks/   executed analysis notebook
 outputs/
   tables/    CSV/XLSX summaries
