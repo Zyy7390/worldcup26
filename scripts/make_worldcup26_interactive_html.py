@@ -1405,7 +1405,7 @@ def render_html(data: dict) -> str:
       <div class="metric"><span>Projected Champion</span><strong>{champion}</strong></div>
       <div class="metric"><span>Projected Runner-up</span><strong>{runner_up}</strong></div>
       <div class="metric"><span>Direct Rating Rows</span><strong>{data["ratings"]["allRows"]:,}</strong></div>
-      <div class="metric"><span>Rated Matches</span><strong>{data["ratings"]["scrapedMatches"]} / 96</strong></div>
+      <div class="metric"><span>Rated Matches</span><strong>{data["ratings"]["scrapedMatches"]} / {data["completedMatchCount"]}</strong></div>
       <div class="metric"><span>Value Players</span><strong>{len(data["playerValue"])}</strong></div>
     </div>
   </header>
@@ -1467,7 +1467,7 @@ def render_html(data: dict) -> str:
     <div id="valueTab" class="tab-panel">
       <section class="wide-section">
         <div class="section-head">
-          <h2>Player Value vs Transfermarkt Value</h2>
+          <h2>Player Rating vs Transfermarkt Value</h2>
           <div class="chart-tools">
             <select id="valueCountryFilter" aria-label="Highlight country in value chart">
               <option value="">All countries</option>
@@ -1515,7 +1515,7 @@ def render_html(data: dict) -> str:
       </section>
     </div>
     <footer>
-      Data note: direct player ratings, minutes, goals, assists, xG, shots on target, saves, tackles, and shot maps are fetched from SofaScore where mapped. Google lineup extracts remain as a fallback/audit trail. The July 7 Polymarket outright snapshot is blended lightly into the notebook model, while Kalshi rows remain diagnostic.
+      Data note: direct player ratings, minutes, goals, assists, xG, shots on target, saves, tackles, and shot maps are fetched from SofaScore. Google lineup extracts remain an audit/fallback source. July 12 Polymarket and Kalshi outright plus semifinal-advance markets are blended lightly at a 0.10 weight.
     </footer>
   </main>
   <script>
@@ -2112,6 +2112,7 @@ def main():
     player_value, player_details = load_player_value_data(match_backbone)
     data = {
         "summaryMap": summary_map,
+        "completedMatchCount": int(match_backbone["match_id"].nunique()),
         "liveBracket": dataframe_to_records(live_table),
         "marketBracket": dataframe_to_records(market_table),
         "recommendations": dataframe_to_records(recommendations),

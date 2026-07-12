@@ -1595,8 +1595,8 @@ GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Arjan Malić,
 GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Dennis Hadžikadunić,802830,D,True,,,,,,,,,,,
 GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Nihad Mujakić,858004,D,True,,,,,,,,,,,
 GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Stjepan Radeljić,843746,D,True,,,,,,,,,,,
-GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Armin Gigović,988893,M,True,,,,,,,,,,,
 GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Dženis Burnić,844447,M,True,,,,,,,,,,,
+GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Armin Gigović,988893,M,True,,,,,,,,,,,
 GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Haris Tabaković,259803,F,True,,,,,,,,,,,
 GB-31,,15186806,Group Stage,2026-06-18,Bosnia and Herzegovina,away,Samed Baždar,1100965,F,True,,,,,,,,,,,
 GB-32,,15186798,Group Stage,2026-06-18,Canada,home,Maxime Crépeau,155736,G,False,90,6.6,,0,,,0.00226577,,,15,14
@@ -1698,9 +1698,9 @@ GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Marwane Saadane,847714,D,Tru
 GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Redouane Halhal,1143667,D,True,,,,,,,,,,,
 GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Youssef Belammari,919484,D,True,,,,,,,,,,,
 GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Zakaria El Ouahdi,1134470,D,True,,,,,,,,,,,
+GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Sofyan Amrabat,359272,M,True,,,,,,,,,,,
 GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Amine Sbai,1392829,F,True,,,,,,,,,,,
 GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Gessime Yassine,1638338,F,True,,,,,,,,,,,
-GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Sofyan Amrabat,359272,M,True,,,,,,,,,,,
 GC-33,,15186859,Group Stage,2026-06-19,Morocco,away,Ayoub El Kaabi,919793,F,True,,,,,,,,,,,
 GC-34,,15186856,Group Stage,2026-06-19,Brazil,home,Alisson,243609,G,False,90,7.5,,0,3,,0.00461054,,,29,23
 GC-34,,15186856,Group Stage,2026-06-19,Brazil,home,Danilo,124992,D,False,90,6.8,,0,,,0.00873593,1,,54,46
@@ -4707,8 +4707,8 @@ M92,92,12813007,Round of 16,2026-07-05,England,away,Reece James,885908,D,True,,,
 M92,92,12813007,Round of 16,2026-07-05,England,away,Jordan Henderson,42694,M,True,,,,,,,,,,,
 M92,92,12813007,Round of 16,2026-07-05,England,away,Kobbie Mainoo,1142175,M,True,,,,,,,,,,,
 M92,92,12813007,Round of 16,2026-07-05,England,away,Eberechi Eze,864921,M,True,,,,,,,,,,,
-M92,92,12813007,Round of 16,2026-07-05,England,away,Marcus Rashford,814590,F,True,,,,,,,,,,,
 M92,92,12813007,Round of 16,2026-07-05,England,away,Ollie Watkins,555386,F,True,,,,,,,,,,,
+M92,92,12813007,Round of 16,2026-07-05,England,away,Marcus Rashford,814590,F,True,,,,,,,,,,,
 M92,92,12813007,Round of 16,2026-07-05,England,away,Noni Madueke,966547,F,True,,,,,,,,,,,
 M92,92,12813007,Round of 16,2026-07-05,England,away,Ivan Toney,290927,F,True,,,,,,,,,,,
 M93,93,12812990,Round of 16,2026-07-06,Portugal,home,Diogo Costa,843115,G,False,90,7.5,,0,5,,0.00026572,,,28,19
@@ -4913,3 +4913,206 @@ M96,96,12812991,Round of 16,2026-07-07,Colombia,away,Jorge Carrascal,590392,M,Tr
 M96,96,12812991,Round of 16,2026-07-07,Colombia,away,Juan Portilla,980580,M,True,,,,,,,,,,,
 M96,96,12812991,Round of 16,2026-07-07,Colombia,away,Andrés Gómez,1160386,F,True,,,,,,,,,,,
 M96,96,12812991,Round of 16,2026-07-07,Colombia,away,Jhon Córdoba,281253,F,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Mike Maignan,191210,G,False,90,6.8,,0,1,,0.00020325,,,18,13
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Jules Koundé,827212,D,False,87,7,,0,,0.0436,0.0206658,,,31,31
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Dayot Upamecano,798583,D,False,90,7.2,,0,,0.4441,0.0255418,3,1,62,59
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,William Saliba,941168,D,False,90,7,,0,,,0.0227953,,,59,56
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Lucas Digne,96538,D,False,90,7,,0,,0.016,0.0184876,1,,45,43
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Manu Koné,974087,M,False,71,7.3,,0,,0.0417,0.0318686,1,,38,35
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Adrien Rabiot,250737,M,False,90,7.2,,0,,0.0514,0.0657723,1,,49,46
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Ousmane Dembélé,818244,M,False,90,9,1,0,,0.2468,0.731207,,1,37,28
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Michael Olise,978838,M,False,90,7.6,,0,,0.1729,0.125882,2,,50,40
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Désiré Doué,1154605,M,False,77,7.2,,1,,0.3703,0.184885,2,2,40,33
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Kylian Mbappé,826643,F,False,77,7.7,1,1,,1.3385,0.0460873,,2,31,26
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Warren Zaïre-Emery,1142672,M,True,19,6.6,,0,,,0.010216,,,13,11
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Jean-Philippe Mateta,848276,F,True,13,6.6,,0,,0.9115,,,1,1,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Bradley Barcola,996952,F,True,13,6.8,,0,,0.0491,0.0439784,,1,7,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Malo Gusto,996958,D,True,10,6.8,,0,,,0.00043242,1,,5,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Brice Samba,164055,G,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Robin Risser,1387161,G,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Ibrahima Konaté,826215,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Lucas Hernández,352370,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Theo Hernández,788027,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Maxence Lacroix,879674,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Aurélien Tchouaméni,859025,M,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Rayan Cherki,979128,M,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,N'Golo Kanté,234148,M,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Maghnes Akliouche,1130939,M,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,France,home,Marcus Thuram,791702,F,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Yassine Bounou,360938,G,False,90,8,,0,6,,0.00016163,,,34,22
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Achraf Hakimi,814594,D,False,90,6.3,,0,,0.0436,0.0469821,1,,57,49
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Issa Diop,825719,D,False,90,6.4,,0,,,0.00117529,1,,51,45
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Noussair Mazraoui,847030,D,False,90,5.9,,0,,,0.00910283,1,,53,52
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Anass Salah-Eddine,961684,D,False,74,6.4,,0,,,0.00407564,3,,39,34
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Ayyoub Bouaddi,1564180,M,False,62,6.1,,0,,,0.00736535,1,,40,35
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Neil El Aynaoui,1128530,M,False,90,6.6,,0,,0.0301,0.00941174,2,,57,54
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Brahim Díaz,835485,M,False,74,6.4,,0,,0.0351,0.015826,1,,26,18
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Azzedine Ounahi,991421,M,False,90,6.6,,0,,0.0192,0.0802769,2,1,71,61
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Chemsdine Talbi,1142675,M,False,85,6.3,,0,,,0.00649675,,,20,18
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Bilal El Khannouss,1126569,F,False,62,6.7,,0,,,0.0115374,3,,26,20
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Sofyan Amrabat,359272,M,True,28,6.7,,0,,,0.00782775,1,,27,24
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Soufiane Rahimi,953995,F,True,28,6.2,,0,,,0.0101329,,,4,3
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Zakaria El Ouahdi,1134470,D,True,16,6.7,,0,,,0.00152628,,,7,7
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Gessime Yassine,1638338,F,True,16,6.5,,0,,0.0156,0.0051909,,,10,7
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Amine Sbai,1392829,F,True,12,6.3,,0,,,0.00278178,,,4,3
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Munir El Kajoui,141967,G,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Ahmed Reda Tagnaouti,359280,G,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Marwane Saadane,847714,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Chadi Riad,1064218,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Redouane Halhal,1143667,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Youssef Belammari,919484,D,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Samir El Mourabet,1605921,M,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Ismael Saibari,1063767,M,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Ayoub El Kaabi,919793,F,True,,,,,,,,,,,
+M97,97,12813016,Quarterfinal,2026-07-09,Morocco,away,Ayoube Amaimouni Echghouyab,1898148,F,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Unai Simón,797291,G,False,90,6.2,,0,1,,0.00019151,,,33,24
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Pedro Porro,913654,D,False,90,6.8,,0,,0.0349,0.162229,2,,75,66
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Pau Cubarsí,1402913,D,False,90,7.1,,0,,0.0305,0.271933,1,1,91,89
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Aymeric Laporte,149734,D,False,90,6.7,,0,,,0.0198123,1,,67,64
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Marc Cucurella,794939,D,False,90,6.4,,0,,0.0453,0.0356128,1,1,47,43
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Rodri,827606,M,False,90,7.6,,0,,0.1286,0.308231,1,,104,98
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Fabián Ruiz,784655,M,False,55,7.1,1,0,,0.4731,0.107928,1,1,40,35
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Lamine Yamal,1402912,M,False,90,7.5,,0,,0.2527,0.311028,1,2,46,39
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Dani Olmo,789071,M,False,86,7.3,,0,,0.2486,0.109062,,1,42,41
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Alex Baena,910031,M,False,55,6.8,,0,,0.1038,0.0992738,1,,28,22
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Mikel Oyarzabal,823622,F,False,79,6.8,,0,,0.0692,0.0488038,2,1,25,22
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Pedri,992587,M,True,35,6.9,,0,,,0.075563,,,43,37
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Ferran Torres,855833,F,True,35,6.5,,0,,,0.0595256,,,12,8
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Nico Williams,1085400,F,True,11,6.5,,0,,,0.0129656,,,7,6
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Mikel Merino,592010,M,True,12,7.1,1,0,,0.6923,0.00091564,,1,4,4
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,David Raya,581310,G,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Joan García,930267,G,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Marc Pubill,1094106,D,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Eric García,876214,D,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Marcos Llorente,353138,M,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Alejandro Grimaldo,177177,D,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Pablo Gavi,1103693,M,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Martín Zubimendi,966837,M,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Yéremy Pino,984624,M,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Víctor Muñoz,1145642,F,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,home,Borja Iglesias,785989,F,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Thibaut Courtois,70988,G,False,71,8.1,,0,4,,0.00194597,,,29,22
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Timothy Castagne,329417,D,False,90,6.7,,1,,,0.166489,2,,25,17
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Nathan Ngoy,1119487,D,False,90,7,,0,,,0.0017709,2,,40,38
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Brandon Mechele,248331,D,False,90,6.9,,0,,,0.00415922,2,,36,33
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Maxim De Cuyper,997152,D,False,61,6.2,,0,,0.0496,0.00232128,,,21,16
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Hans Vanaken,118085,M,False,60,6.5,,0,,,0.0178244,,,16,12
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Nicolas Raskin,889378,M,False,90,6.6,,0,,,0.00625803,1,,39,31
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Leandro Trossard,135666,M,False,60,6.2,,0,,,0.00755035,,,12,12
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Kevin De Bruyne,70996,M,False,86,6.6,,0,,0.1271,0.0768557,1,1,24,19
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Jérémy Doku,934386,M,False,90,6.8,,0,,,0.0929293,1,,19,15
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Charles De Ketelaere,960441,F,False,90,7.4,1,0,,0.1677,0.00699408,,1,20,10
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Axel Witsel,35612,M,True,30,6.4,,0,,,3.246e-05,,,5,4
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Romelu Lukaku,78893,F,True,30,6.3,,0,,,2.733e-05,,,4,1
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Joaquin Seys,1395881,D,True,29,6.5,,0,,,0.00027094,1,,7,5
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Senne Lammens,964753,G,True,19,6.1,,0,2,,0.00038555,,,13,7
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Alexis Saelemaekers,901891,F,True,12,6.6,,0,,,0.00051132,,,2,1
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Mike Penders,1149148,G,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Arthur Theate,965778,D,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Thomas Meunier,128587,D,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Koni De Winter,1001828,D,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Diego Moreira,1142233,F,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Dodi Lukebakio,823631,F,True,,,,,,,,,,,
+M98,98,12812994,Quarterfinal,2026-07-10,Belgium,away,Matías Fernández-Pardo,1149144,F,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Ørjan Nyland,22209,G,False,120,7.6,,0,6,,0.00439577,,,43,24
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Julian Ryerson,800951,D,False,60,7.1,,0,,,0.418066,4,,12,11
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Kristoffer Ajer,576384,D,False,120,6.2,,0,,0.0873,0.00876427,2,,55,47
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Torbjørn Heggem,933264,D,False,90,6.5,,0,,,0.00323157,2,,42,39
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,David Møller Wolfe,1031283,D,False,89,6.4,,0,,,0.0136568,,,24,18
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Martin Ødegaard,547410,M,False,120,6.8,,1,,0.0285,0.08163,,1,93,80
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Sander Berge,793167,M,False,120,6.8,,0,,,0.0513807,,,107,103
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Patrick Berg,355174,M,False,120,6.5,,0,,0.0274,0.0124778,3,,35,34
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Alexander Sørloth,309078,F,False,68,6.6,,0,,0.2025,0.0637364,,,21,17
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Erling Haaland,839956,F,False,105,6.5,,0,,0.1111,0.00158512,1,1,13,5
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Andreas Schjelderup,1100952,F,False,68,8.1,1,0,,0.0248,0.0261894,6,1,20,14
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Fredrik Aursnes,228364,M,True,60,7.1,,0,,0.0308,0.0264986,2,,45,40
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Oscar Bobb,1065216,M,True,52,6.6,,0,,0.0427,0.0626438,2,,21,21
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Antonio Nusa,1121923,M,True,52,6.2,,0,,0.1254,0.020509,1,1,14,10
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Marcus Pedersen,934409,D,True,31,6.3,,0,,,0.00812038,1,,14,14
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Leo Østigård,879746,D,True,30,6.4,,0,,,0.00327135,,,15,15
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Jørgen Strand Larsen,876599,F,True,15,6.5,,0,,,0.0003188,,,3,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Sander Tangvik,1030355,G,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Egil Selvik,798176,G,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Fredrik André Bjørkan,795154,D,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Sondre Langås,1026541,D,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Henrik Sælebakke Falchener,1022374,D,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Morten Thorsby,280991,M,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Kristian Thorstvedt,924973,M,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Thelo Aasgaard,1065989,M,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,home,Jens Petter Hauge,838805,M,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Jordan Pickford,138530,G,False,120,6.4,,0,3,,0.026345,,,27,18
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Ezri Konsa,827679,D,False,89,7,,0,,,0.0125621,1,,53,52
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,John Stones,152077,D,False,120,7,,0,,,0.0808541,,,84,81
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Marc Guéhi,877994,D,False,120,6.5,,0,,,0.0250332,,,86,79
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Nico O'Reilly,1142703,D,False,86,7.2,,0,,,0.0553394,1,,39,37
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Declan Rice,856714,M,False,45,6.8,,0,,,0.0524937,,,47,45
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Elliot Anderson,994546,M,False,120,7,,0,,,0.221417,2,,93,86
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Noni Madueke,966547,M,False,45,6.5,,0,,,0.117574,1,,16,16
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Jude Bellingham,991011,M,False,111,8.4,2,0,,0.6138,0.0122578,1,2,41,34
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Anthony Gordon,914902,M,False,71,6.7,,1,,,0.0804829,1,,28,23
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Harry Kane,108579,F,False,120,6,,0,,0.1042,0.0121584,1,2,21,15
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Eberechi Eze,864921,M,True,75,6.6,,0,,0.0313,0.0386311,,,16,14
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Bukayo Saka,934235,F,True,75,7.3,,0,,0.1775,0.0471008,3,2,19,15
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Reece James,885908,D,True,49,7,,0,,,0.0534537,2,,30,27
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Djed Spence,945798,D,True,34,7.8,,0,,0.1097,0.00460978,2,1,14,12
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Morgan Rogers,948261,M,True,31,6.5,,0,,0.0201,0.00502016,,1,13,13
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Dan Burn,99090,D,True,9,6.8,,0,,,1.48e-06,,,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Dean Henderson,788134,G,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,James Trafford,980643,G,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Trevoh Chalobah,826134,D,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Jordan Henderson,42694,M,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Kobbie Mainoo,1142175,M,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Marcus Rashford,814590,F,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Ollie Watkins,555386,F,True,,,,,,,,,,,
+M99,99,12813017,Quarterfinal,2026-07-11,England,away,Ivan Toney,290927,F,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Emiliano Martínez,158263,G,False,120,7.2,,0,4,,0.00199608,,,42,27
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Nahuel Molina,831799,D,False,85,6.2,,0,,0.0485,0.00408902,1,,34,29
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Cristian Romero,829932,D,False,105,7,,0,,0.0401,0.0163112,2,,43,41
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Lisandro Martínez,859999,D,False,120,7.4,,0,,0.1193,0.0658815,4,1,77,65
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Nicolás Tagliafico,158243,D,False,78,6.7,,0,,,0.00388199,,,22,18
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Leandro Paredes,255389,M,False,110,7.5,,0,,,0.0976486,1,,119,112
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Rodrigo De Paul,249399,M,False,85,6.6,,0,,,0.0160564,,,36,31
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Enzo Fernández,974505,M,False,90,6.4,,0,,,0.0565475,,,63,61
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Alexis Mac Allister,895324,M,False,120,7.5,1,0,,0.6523,0.0547752,3,1,53,50
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Lionel Messi,12994,F,False,120,9.1,,1,,0.2487,0.706361,3,1,69,60
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Julián Alvarez,944656,F,False,120,7.6,1,0,,0.0987,0.125932,2,1,42,37
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Nicolás González,901325,F,True,42,7.5,,0,,0.1266,0.640557,,,29,28
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Gonzalo Montiel,822933,D,True,35,6.5,,0,,,0.00994605,,,18,14
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Lautaro Martínez,823984,F,True,35,6.9,1,0,,0.3358,0.00937419,,1,7,6
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Thiago Almada,944660,M,True,30,7.3,,0,,0.3406,0.0808697,,2,27,27
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Nicolás Otamendi,74915,D,True,15,7,,0,,,0.00365665,1,,7,6
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,José Manuel López,1094179,F,True,10,6.5,,1,,,0.00264517,,,3,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Juan Musso,263651,G,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Gerónimo Rulli,128383,G,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Marcos Senesi,830659,D,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Facundo Medina,860307,D,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Valentín Barco,1127057,M,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Giovani Lo Celso,798835,M,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Exequiel Palacios,822600,M,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Giuliano Simeone,1099352,F,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,home,Nico Paz,1171451,F,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Gregor Kobel,556866,G,False,120,6.6,,0,4,,0.0006649,,,38,19
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Denis Zakaria,770677,D,False,96,6.1,,0,,0.0185,0.0189762,1,,47,39
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Nico Elvedi,282229,D,False,120,6.6,,0,,,0.0628846,1,,60,55
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Manuel Akanji,383560,D,False,120,5.9,,0,,,0.0101695,1,,58,50
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Ricardo Rodríguez,67769,D,False,89,7.1,,1,,,0.256787,2,,38,37
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Remo Freuler,115516,M,False,115,6.7,,0,,,0.033757,3,,55,51
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Granit Xhaka,117777,M,False,120,7.2,,0,,0.0505,0.0739192,,1,72,66
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Djibril Sow,799054,M,False,86,6.2,,0,,0.0267,0.0401238,,1,29,25
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Fabian Rieder,929620,M,False,86,6.2,,0,,0.0628,0.0854435,1,,23,16
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Dan Ndoye,944327,M,False,86,7.2,1,0,,0.2151,0.0809704,,2,20,13
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Breel Embolo,352296,F,False,72,5.9,,0,,0.0778,0.0677681,,1,10,9
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Miro Muheim,798303,D,True,34,6.3,,0,,,0.00205257,,,2,1
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Silvan Widmer,157377,D,True,34,6.1,,0,,,0.00295113,1,,7,4
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Zeki Amdouni,990550,F,True,34,6.1,,0,,,0.00781425,,,2,2
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Eray Cömert,814023,D,True,31,6.2,,0,,,0.00223722,1,,5,5
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Ardon Jashari,1034082,M,True,24,6.3,,0,,0.0149,0.00558178,,,5,4
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Rubén Vargas,872919,M,True,9,6.4,,0,,,6.922e-05,,,3,2
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Yvon Mvogo,149656,G,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Marvin Keller,1005744,G,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Aurèle Amenda,999276,D,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Luca Jaquez,1127823,D,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Michel Aebischer,850891,M,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Christian Fassnacht,787422,M,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Noah Okafor,865523,F,True,,,,,,,,,,,
+M100,100,12813015,Quarterfinal,2026-07-11,Switzerland,away,Cédric Itten,352290,F,True,,,,,,,,,,,

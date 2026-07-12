@@ -7,6 +7,12 @@ import re
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from make_worldcup26_interactive_html import (
+    build_actual_match_backbone,
+    load_notebook_tables,
+    load_player_value_data,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "assets" / "readme"
@@ -17,13 +23,9 @@ OUT = ASSET_DIR / "player_value_vs_transfermarkt.png"
 
 ACTIVE_TEAMS = {
     "Argentina",
-    "Belgium",
     "England",
     "France",
-    "Morocco",
-    "Norway",
     "Spain",
-    "Switzerland",
 }
 LABEL_PLAYERS = {
     "Kylian Mbappe",
@@ -81,9 +83,10 @@ def load_player_ratings() -> pd.DataFrame:
 
 def make_plot() -> Path:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    values = load_transfermarkt_values()
-    ratings = load_player_ratings()
-    df = values.merge(ratings, on=["team", "player"], how="inner")
+    live_table, _, _, _ = load_notebook_tables()
+    match_backbone = build_actual_match_backbone(live_table)
+    player_rows, _ = load_player_value_data(match_backbone)
+    df = pd.DataFrame(player_rows)
     df = df[df["world_cup_rating"].notna()].copy()
     df["is_active_team"] = df["team"].isin(ACTIVE_TEAMS)
 
@@ -106,7 +109,7 @@ def make_plot() -> Path:
         edgecolor="#0b3538",
         linewidth=0.7,
         alpha=0.95,
-        label="Current QF-team stars",
+        label="Current semifinalist stars",
     )
 
     ax.axvline(75, color="#d8b45f", linestyle="--", linewidth=1.2)
@@ -134,7 +137,7 @@ def make_plot() -> Path:
     fig.text(
         0.01,
         0.01,
-        "Ratings use saved Google lineup extracts where available; values are the model's Transfermarkt snapshot.",
+        "Ratings use direct SofaScore rows with minutes weighting; values are the model's Transfermarkt snapshot.",
         fontsize=7.5,
         color="#59666d",
     )
