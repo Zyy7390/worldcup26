@@ -12583,3 +12583,665 @@ M96,96,12812991,Round of 16,2026-07-07,Switzerland,Colombia,ET2,Defending,ballRe
 M96,96,12812991,Round of 16,2026-07-07,Switzerland,Colombia,ET2,Defending,totalClearance,Clearances,5,4
 M96,96,12812991,Round of 16,2026-07-07,Switzerland,Colombia,ET2,Goalkeeping,goalkeeperSaves,Total saves,0,0
 M96,96,12812991,Round of 16,2026-07-07,Switzerland,Colombia,ET2,Goalkeeping,goalKicks,Goal kicks,3,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,ballPossession,Ball possession,48%,52%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,kilometersCovered,Distance covered,95.6 km,97.5 km
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,expectedGoals,Expected goals,3.69,0.14
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,bigChanceCreated,Big chances,6,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,totalShotsOnGoal,Total shots,22,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,goalkeeperSaves,Goalkeeper saves,1,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,numberOfSprints,Number of sprints,114,99
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,cornerKicks,Corner kicks,5,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,fouls,Fouls,10,13
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,passes,Passes,486,526
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,totalTackle,Tackles,11,16
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,freeKicks,Free kicks,12,10
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Match overview,yellowCards,Yellow cards,0,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,totalShotsOnGoal,Total shots,22,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,shotsOnGoal,Shots on target,8,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,hitWoodwork,Hit woodwork,1,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,shotsOffGoal,Shots off target,9,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,blockedScoringAttempt,Blocked shots,5,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,totalShotsInsideBox,Shots inside box,12,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Shots,totalShotsOutsideBox,Shots outside box,10,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Attack,bigChanceMissed,Big chances missed,6,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Attack,touchesInOppBox,Touches in penalty area,28,8
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Attack,fouledFinalThird,Fouled in final third,3,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Passes,accuratePasses,Accurate passes,432,452
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Passes,throwIns,Throw-ins,17,18
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Passes,finalThirdEntries,Final third entries,64,35
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Passes,finalThirdPhaseStatistic,Final third phase,141/180 (78%),85/111 (77%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Passes,accurateLongBalls,Long balls,14/30 (47%),11/39 (28%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Passes,accurateCross,Crosses,5/12 (42%),2/13 (15%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Duels,duelWonPercent,Duels,54%,46%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Duels,dispossessed,Dispossessed,4,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Duels,groundDuelsPercentage,Ground duels,31/66 (47%),35/66 (53%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Duels,aerialDuelsPercentage,Aerial duels,12/13 (92%),1/13 (8%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Duels,dribblesPercentage,Dribbles,9/21 (43%),11/19 (58%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Defending,wonTacklePercent,Tackles won,73%,31%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Defending,totalTackle,Total tackles,11,16
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Defending,interceptionWon,Interceptions,13,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Defending,ballRecovery,Recoveries,42,41
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Defending,totalClearance,Clearances,20,12
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Defending,errorsLeadToShot,Errors lead to a shot,0,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Goalkeeping,goalkeeperSaves,Total saves,1,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Goalkeeping,goalsPrevented,Goals prevented,0.04,0.88
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Goalkeeping,diveSaves,Big saves,0,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Goalkeeping,highClaims,High claims,1,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Goalkeeping,goalKicks,Goal kicks,7,13
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,ALL,Goalkeeping,penaltySaves,Penalty saves,0,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,ballPossession,Ball possession,49%,51%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,expectedGoals,Expected goals,1.91,0.04
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,bigChanceCreated,Big chances,3,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,totalShotsOnGoal,Total shots,13,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,goalkeeperSaves,Goalkeeper saves,0,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,cornerKicks,Corner kicks,3,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,fouls,Fouls,6,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,passes,Passes,264,275
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,totalTackle,Tackles,5,12
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,freeKicks,Free kicks,5,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Match overview,yellowCards,Yellow cards,0,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,totalShotsOnGoal,Total shots,13,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,shotsOnGoal,Shots on target,3,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,hitWoodwork,Hit woodwork,1,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,shotsOffGoal,Shots off target,5,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,blockedScoringAttempt,Blocked shots,5,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,totalShotsInsideBox,Shots inside box,6,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Shots,totalShotsOutsideBox,Shots outside box,7,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Attack,bigChanceMissed,Big chances missed,3,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Attack,fouledFinalThird,Fouled in final third,3,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Passes,accuratePasses,Accurate passes,236,236
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Passes,throwIns,Throw-ins,9,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Passes,finalThirdEntries,Final third entries,43,11
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Passes,accurateLongBalls,Long balls,6/14 (43%),8/26 (31%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Passes,accurateCross,Crosses,4/6 (67%),0/4 (0%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Duels,duelWonPercent,Duels,49%,51%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Duels,dispossessed,Dispossessed,1,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Duels,groundDuelsPercentage,Ground duels,13/33 (39%),20/33 (61%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Duels,aerialDuelsPercentage,Aerial duels,6/6 (100%),0/6 (0%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Duels,dribblesPercentage,Dribbles,3/14 (21%),3/7 (43%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Defending,wonTacklePercent,Tackles won,100%,42%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Defending,totalTackle,Total tackles,5,12
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Defending,interceptionWon,Interceptions,5,5
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Defending,ballRecovery,Recoveries,24,24
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Defending,totalClearance,Clearances,6,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Goalkeeping,goalkeeperSaves,Total saves,0,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,1ST,Goalkeeping,goalKicks,Goal kicks,3,8
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,ballPossession,Ball possession,47%,53%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,expectedGoals,Expected goals,1.77,0.10
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,bigChanceCreated,Big chances,3,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,totalShotsOnGoal,Total shots,9,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,goalkeeperSaves,Goalkeeper saves,1,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,cornerKicks,Corner kicks,2,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,fouls,Fouls,4,7
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,passes,Passes,222,251
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,totalTackle,Tackles,6,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,freeKicks,Free kicks,7,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Match overview,yellowCards,Yellow cards,0,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,totalShotsOnGoal,Total shots,9,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,shotsOnGoal,Shots on target,5,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,hitWoodwork,Hit woodwork,0,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,shotsOffGoal,Shots off target,4,2
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,blockedScoringAttempt,Blocked shots,0,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,totalShotsInsideBox,Shots inside box,6,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Shots,totalShotsOutsideBox,Shots outside box,3,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Attack,bigChanceMissed,Big chances missed,3,0
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Attack,fouledFinalThird,Fouled in final third,0,2
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Passes,accuratePasses,Accurate passes,196,216
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Passes,throwIns,Throw-ins,8,13
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Passes,finalThirdEntries,Final third entries,21,24
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Passes,accurateLongBalls,Long balls,8/16 (50%),3/13 (23%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Passes,accurateCross,Crosses,1/6 (17%),2/9 (22%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Duels,duelWonPercent,Duels,60%,40%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Duels,dispossessed,Dispossessed,3,2
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Duels,groundDuelsPercentage,Ground duels,18/33 (55%),15/33 (45%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Duels,aerialDuelsPercentage,Aerial duels,6/7 (86%),1/7 (14%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Duels,dribblesPercentage,Dribbles,6/7 (86%),8/12 (67%)
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Defending,wonTacklePercent,Tackles won,50%,0%
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Defending,totalTackle,Total tackles,6,4
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Defending,interceptionWon,Interceptions,8,1
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Defending,ballRecovery,Recoveries,18,17
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Defending,totalClearance,Clearances,14,6
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Goalkeeping,goalkeeperSaves,Total saves,1,3
+M97,97,12813016,Quarterfinal,2026-07-09,France,Morocco,2ND,Goalkeeping,goalKicks,Goal kicks,4,5
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,ballPossession,Ball possession,68%,32%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,kilometersCovered,Distance covered,103.5 km,105.8 km
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,expectedGoals,Expected goals,1.96,0.34
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,bigChanceCreated,Big chances,2,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,totalShotsOnGoal,Total shots,17,5
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,goalkeeperSaves,Goalkeeper saves,1,6
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,numberOfSprints,Number of sprints,85,69
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,cornerKicks,Corner kicks,5,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,fouls,Fouls,13,18
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,passes,Passes,664,312
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,totalTackle,Tackles,11,10
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,freeKicks,Free kicks,18,13
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Match overview,yellowCards,Yellow cards,2,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,totalShotsOnGoal,Total shots,17,5
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,shotsOnGoal,Shots on target,8,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,hitWoodwork,Hit woodwork,0,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,shotsOffGoal,Shots off target,4,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,blockedScoringAttempt,Blocked shots,5,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,totalShotsInsideBox,Shots inside box,10,4
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Shots,totalShotsOutsideBox,Shots outside box,7,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Attack,bigChanceScored,Big chances scored,2,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Attack,accurateThroughBall,Through balls,3,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Attack,touchesInOppBox,Touches in penalty area,41,11
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Attack,fouledFinalThird,Fouled in final third,3,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Attack,offsides,Offsides,3,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Passes,accuratePasses,Accurate passes,598,243
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Passes,throwIns,Throw-ins,22,15
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Passes,finalThirdEntries,Final third entries,64,33
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Passes,finalThirdPhaseStatistic,Final third phase,229/270 (85%),45/71 (63%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Passes,accurateLongBalls,Long balls,19/35 (54%),20/45 (44%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Passes,accurateCross,Crosses,2/20 (10%),2/11 (18%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Duels,duelWonPercent,Duels,51%,49%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Duels,dispossessed,Dispossessed,4,6
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Duels,groundDuelsPercentage,Ground duels,35/64 (55%),29/64 (45%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Duels,aerialDuelsPercentage,Aerial duels,7/19 (37%),12/19 (63%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Duels,dribblesPercentage,Dribbles,8/14 (57%),7/12 (58%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,wonTacklePercent,Tackles won,55%,60%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,totalTackle,Total tackles,11,10
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,interceptionWon,Interceptions,5,9
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,ballRecovery,Recoveries,49,39
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,totalClearance,Clearances,15,34
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,errorsLeadToShot,Errors lead to a shot,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Defending,errorsLeadToGoal,Errors lead to a goal,0,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Goalkeeping,goalkeeperSaves,Total saves,1,6
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Goalkeeping,goalsPrevented,Goals prevented,-0.62,0.90
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Goalkeeping,diveSaves,Big saves,0,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Goalkeeping,punches,Punches,0,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,ALL,Goalkeeping,goalKicks,Goal kicks,4,13
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,ballPossession,Ball possession,62%,38%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,expectedGoals,Expected goals,1.00,0.17
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,bigChanceCreated,Big chances,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,totalShotsOnGoal,Total shots,9,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,goalkeeperSaves,Goalkeeper saves,0,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,cornerKicks,Corner kicks,3,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,fouls,Fouls,6,6
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,passes,Passes,303,183
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,totalTackle,Tackles,8,3
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,freeKicks,Free kicks,6,6
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Match overview,yellowCards,Yellow cards,1,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,totalShotsOnGoal,Total shots,9,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,shotsOnGoal,Shots on target,3,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,hitWoodwork,Hit woodwork,0,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,shotsOffGoal,Shots off target,3,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,blockedScoringAttempt,Blocked shots,3,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,totalShotsInsideBox,Shots inside box,6,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Shots,totalShotsOutsideBox,Shots outside box,3,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Attack,bigChanceScored,Big chances scored,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Attack,accurateThroughBall,Through balls,2,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Attack,fouledFinalThird,Fouled in final third,2,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Attack,offsides,Offsides,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Passes,accuratePasses,Accurate passes,268,149
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Passes,throwIns,Throw-ins,13,7
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Passes,finalThirdEntries,Final third entries,33,17
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Passes,accurateLongBalls,Long balls,8/18 (44%),11/22 (50%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Passes,accurateCross,Crosses,1/8 (13%),2/6 (33%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Duels,duelWonPercent,Duels,51%,49%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Duels,dispossessed,Dispossessed,2,4
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Duels,groundDuelsPercentage,Ground duels,18/30 (60%),12/30 (40%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Duels,aerialDuelsPercentage,Aerial duels,1/7 (14%),6/7 (86%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Duels,dribblesPercentage,Dribbles,4/5 (80%),4/8 (50%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Defending,wonTacklePercent,Tackles won,38%,33%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Defending,totalTackle,Total tackles,8,3
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Defending,interceptionWon,Interceptions,3,5
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Defending,ballRecovery,Recoveries,23,21
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Defending,totalClearance,Clearances,5,14
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Goalkeeping,goalkeeperSaves,Total saves,0,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,1ST,Goalkeeping,goalKicks,Goal kicks,2,7
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,ballPossession,Ball possession,74%,26%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,expectedGoals,Expected goals,0.96,0.18
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,bigChanceCreated,Big chances,1,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,totalShotsOnGoal,Total shots,8,3
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,goalkeeperSaves,Goalkeeper saves,1,4
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,cornerKicks,Corner kicks,2,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,fouls,Fouls,7,12
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,passes,Passes,361,129
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,totalTackle,Tackles,3,7
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,freeKicks,Free kicks,12,7
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Match overview,yellowCards,Yellow cards,1,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,totalShotsOnGoal,Total shots,8,3
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,shotsOnGoal,Shots on target,5,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,hitWoodwork,Hit woodwork,0,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,shotsOffGoal,Shots off target,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,blockedScoringAttempt,Blocked shots,2,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,totalShotsInsideBox,Shots inside box,4,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Shots,totalShotsOutsideBox,Shots outside box,4,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Attack,bigChanceScored,Big chances scored,1,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Attack,accurateThroughBall,Through balls,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Attack,fouledFinalThird,Fouled in final third,1,1
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Attack,offsides,Offsides,2,0
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Passes,accuratePasses,Accurate passes,330,94
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Passes,throwIns,Throw-ins,9,8
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Passes,finalThirdEntries,Final third entries,31,16
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Passes,accurateLongBalls,Long balls,11/17 (65%),9/23 (39%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Passes,accurateCross,Crosses,1/12 (8%),0/5 (0%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Duels,duelWonPercent,Duels,50%,50%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Duels,dispossessed,Dispossessed,2,2
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Duels,groundDuelsPercentage,Ground duels,17/34 (50%),17/34 (50%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Duels,aerialDuelsPercentage,Aerial duels,6/12 (50%),6/12 (50%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Duels,dribblesPercentage,Dribbles,4/9 (44%),3/4 (75%)
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Defending,wonTacklePercent,Tackles won,100%,71%
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Defending,totalTackle,Total tackles,3,7
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Defending,interceptionWon,Interceptions,2,4
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Defending,ballRecovery,Recoveries,26,18
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Defending,totalClearance,Clearances,10,20
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Goalkeeping,goalkeeperSaves,Total saves,1,4
+M98,98,12812994,Quarterfinal,2026-07-10,Spain,Belgium,2ND,Goalkeeping,goalKicks,Goal kicks,2,6
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,ballPossession,Ball possession,48%,52%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,kilometersCovered,Distance covered,137.7 km,130.3 km
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,expectedGoals,Expected goals,0.68,1.04
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,bigChanceCreated,Big chances,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,totalShotsOnGoal,Total shots,13,14
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,goalkeeperSaves,Goalkeeper saves,6,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,numberOfSprints,Number of sprints,106,96
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,cornerKicks,Corner kicks,7,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,fouls,Fouls,10,8
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,passes,Passes,577,628
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,totalTackle,Tackles,24,15
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,freeKicks,Free kicks,8,10
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Match overview,yellowCards,Yellow cards,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,totalShotsOnGoal,Total shots,13,14
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,shotsOnGoal,Shots on target,4,8
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,hitWoodwork,Hit woodwork,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,shotsOffGoal,Shots off target,6,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,blockedScoringAttempt,Blocked shots,3,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,totalShotsInsideBox,Shots inside box,10,8
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Shots,totalShotsOutsideBox,Shots outside box,3,6
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Attack,bigChanceScored,Big chances scored,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Attack,bigChanceMissed,Big chances missed,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Attack,touchesInOppBox,Touches in penalty area,28,31
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Attack,fouledFinalThird,Fouled in final third,1,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Attack,offsides,Offsides,1,5
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Passes,accuratePasses,Accurate passes,494,568
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Passes,throwIns,Throw-ins,16,27
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Passes,finalThirdEntries,Final third entries,62,72
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Passes,finalThirdPhaseStatistic,Final third phase,124/165 (75%),139/166 (84%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Passes,accurateLongBalls,Long balls,18/46 (39%),26/50 (52%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Passes,accurateCross,Crosses,3/19 (16%),9/21 (43%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Duels,duelWonPercent,Duels,48%,52%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Duels,dispossessed,Dispossessed,6,13
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Duels,groundDuelsPercentage,Ground duels,36/77 (47%),41/77 (53%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Duels,aerialDuelsPercentage,Aerial duels,13/25 (52%),12/25 (48%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Duels,dribblesPercentage,Dribbles,6/15 (40%),16/27 (59%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,wonTacklePercent,Tackles won,46%,60%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,totalTackle,Total tackles,24,15
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,interceptionWon,Interceptions,9,6
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,ballRecovery,Recoveries,43,44
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,totalClearance,Clearances,21,35
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,errorsLeadToShot,Errors lead to a shot,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Defending,errorsLeadToGoal,Errors lead to a goal,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Goalkeeping,goalkeeperSaves,Total saves,6,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Goalkeeping,goalsPrevented,Goals prevented,0.64,-0.58
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Goalkeeping,diveSaves,Big saves,0,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Goalkeeping,punches,Punches,0,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ALL,Goalkeeping,goalKicks,Goal kicks,10,7
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,ballPossession,Ball possession,32%,68%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,expectedGoals,Expected goals,0.34,0.18
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,bigChanceCreated,Big chances,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,totalShotsOnGoal,Total shots,5,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,goalkeeperSaves,Goalkeeper saves,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,cornerKicks,Corner kicks,0,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,fouls,Fouls,5,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,passes,Passes,175,357
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,totalTackle,Tackles,11,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,freeKicks,Free kicks,3,5
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Match overview,yellowCards,Yellow cards,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,totalShotsOnGoal,Total shots,5,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,shotsOnGoal,Shots on target,3,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,hitWoodwork,Hit woodwork,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,shotsOffGoal,Shots off target,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,blockedScoringAttempt,Blocked shots,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,totalShotsInsideBox,Shots inside box,4,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Shots,totalShotsOutsideBox,Shots outside box,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Attack,bigChanceScored,Big chances scored,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Attack,bigChanceMissed,Big chances missed,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Attack,fouledFinalThird,Fouled in final third,0,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Attack,offsides,Offsides,0,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Passes,accuratePasses,Accurate passes,146,339
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Passes,throwIns,Throw-ins,2,10
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Passes,finalThirdEntries,Final third entries,13,40
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Passes,accurateLongBalls,Long balls,7/17 (41%),15/19 (79%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Passes,accurateCross,Crosses,1/1 (100%),3/9 (33%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Duels,duelWonPercent,Duels,52%,48%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Duels,dispossessed,Dispossessed,1,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Duels,groundDuelsPercentage,Ground duels,14/27 (52%),13/27 (48%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Duels,aerialDuelsPercentage,Aerial duels,2/4 (50%),2/4 (50%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Duels,dribblesPercentage,Dribbles,2/3 (67%),6/13 (46%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Defending,wonTacklePercent,Tackles won,45%,100%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Defending,totalTackle,Total tackles,11,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Defending,interceptionWon,Interceptions,2,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Defending,ballRecovery,Recoveries,17,21
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Defending,totalClearance,Clearances,10,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Goalkeeping,goalkeeperSaves,Total saves,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,1ST,Goalkeeping,goalKicks,Goal kicks,4,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,ballPossession,Ball possession,56%,44%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,expectedGoals,Expected goals,0.18,0.09
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,bigChanceCreated,Big chances,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,totalShotsOnGoal,Total shots,4,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,goalkeeperSaves,Goalkeeper saves,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,cornerKicks,Corner kicks,5,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,fouls,Fouls,3,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,passes,Passes,212,166
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,totalTackle,Tackles,8,6
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,freeKicks,Free kicks,2,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Match overview,yellowCards,Yellow cards,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,totalShotsOnGoal,Total shots,4,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,shotsOnGoal,Shots on target,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,hitWoodwork,Hit woodwork,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,shotsOffGoal,Shots off target,3,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,blockedScoringAttempt,Blocked shots,0,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,totalShotsInsideBox,Shots inside box,4,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Shots,totalShotsOutsideBox,Shots outside box,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Attack,bigChanceScored,Big chances scored,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Attack,bigChanceMissed,Big chances missed,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Attack,fouledFinalThird,Fouled in final third,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Attack,offsides,Offsides,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Passes,accuratePasses,Accurate passes,183,144
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Passes,throwIns,Throw-ins,9,9
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Passes,finalThirdEntries,Final third entries,23,18
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Passes,accurateLongBalls,Long balls,6/17 (35%),6/14 (43%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Passes,accurateCross,Crosses,2/12 (17%),3/8 (38%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Duels,duelWonPercent,Duels,45%,55%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Duels,dispossessed,Dispossessed,2,5
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Duels,groundDuelsPercentage,Ground duels,12/27 (44%),15/27 (56%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Duels,aerialDuelsPercentage,Aerial duels,5/11 (45%),6/11 (55%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Duels,dribblesPercentage,Dribbles,2/6 (33%),6/9 (67%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Defending,wonTacklePercent,Tackles won,38%,50%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Defending,totalTackle,Total tackles,8,6
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Defending,interceptionWon,Interceptions,3,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Defending,ballRecovery,Recoveries,13,12
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Defending,totalClearance,Clearances,5,19
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Goalkeeping,goalkeeperSaves,Total saves,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,2ND,Goalkeeping,goalKicks,Goal kicks,5,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,ballPossession,Ball possession,57%,43%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,expectedGoals,Expected goals,0.08,0.52
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,bigChanceCreated,Big chances,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,totalShotsOnGoal,Total shots,1,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,goalkeeperSaves,Goalkeeper saves,2,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,cornerKicks,Corner kicks,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,fouls,Fouls,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,passes,Passes,92,67
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,totalTackle,Tackles,3,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,freeKicks,Free kicks,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Match overview,yellowCards,Yellow cards,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,totalShotsOnGoal,Total shots,1,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,shotsOnGoal,Shots on target,0,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,hitWoodwork,Hit woodwork,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,shotsOffGoal,Shots off target,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,blockedScoringAttempt,Blocked shots,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,totalShotsInsideBox,Shots inside box,0,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Shots,totalShotsOutsideBox,Shots outside box,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Attack,bigChanceScored,Big chances scored,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Attack,bigChanceMissed,Big chances missed,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Attack,fouledFinalThird,Fouled in final third,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Attack,offsides,Offsides,0,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Passes,accuratePasses,Accurate passes,80,60
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Passes,throwIns,Throw-ins,2,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Passes,finalThirdEntries,Final third entries,11,7
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Passes,accurateLongBalls,Long balls,0/3 (0%),3/7 (43%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Passes,accurateCross,Crosses,0/3 (0%),3/4 (75%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Duels,duelWonPercent,Duels,36%,64%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Duels,dispossessed,Dispossessed,2,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Duels,groundDuelsPercentage,Ground duels,3/9 (33%),6/9 (67%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Duels,aerialDuelsPercentage,Aerial duels,1/2 (50%),1/2 (50%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Duels,dribblesPercentage,Dribbles,0/1 (0%),2/3 (67%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Defending,wonTacklePercent,Tackles won,33%,67%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Defending,totalTackle,Total tackles,3,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Defending,interceptionWon,Interceptions,2,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Defending,ballRecovery,Recoveries,4,7
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Defending,totalClearance,Clearances,4,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Goalkeeping,goalkeeperSaves,Total saves,2,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET1,Goalkeeping,goalKicks,Goal kicks,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,ballPossession,Ball possession,73%,27%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,expectedGoals,Expected goals,0.08,0.25
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,bigChanceCreated,Big chances,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,totalShotsOnGoal,Total shots,3,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,goalkeeperSaves,Goalkeeper saves,3,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,cornerKicks,Corner kicks,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,fouls,Fouls,1,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,passes,Passes,98,38
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,totalTackle,Tackles,2,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,freeKicks,Free kicks,3,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Match overview,yellowCards,Yellow cards,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,totalShotsOnGoal,Total shots,3,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,shotsOnGoal,Shots on target,0,3
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,hitWoodwork,Hit woodwork,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,shotsOffGoal,Shots off target,2,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,blockedScoringAttempt,Blocked shots,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,totalShotsInsideBox,Shots inside box,2,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Shots,totalShotsOutsideBox,Shots outside box,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Attack,bigChanceScored,Big chances scored,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Attack,bigChanceMissed,Big chances missed,0,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Attack,fouledFinalThird,Fouled in final third,1,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Attack,offsides,Offsides,1,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Passes,accuratePasses,Accurate passes,85,25
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Passes,throwIns,Throw-ins,3,5
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Passes,finalThirdEntries,Final third entries,15,7
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Passes,accurateLongBalls,Long balls,5/9 (56%),2/10 (20%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Passes,accurateCross,Crosses,0/3 (0%),0/0 (0%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Duels,duelWonPercent,Duels,55%,45%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Duels,dispossessed,Dispossessed,1,2
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Duels,groundDuelsPercentage,Ground duels,7/14 (50%),7/14 (50%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Duels,aerialDuelsPercentage,Aerial duels,5/8 (63%),3/8 (38%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Duels,dribblesPercentage,Dribbles,2/5 (40%),2/2 (100%)
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Defending,wonTacklePercent,Tackles won,100%,50%
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Defending,totalTackle,Total tackles,2,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Defending,interceptionWon,Interceptions,2,1
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Defending,ballRecovery,Recoveries,9,4
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Defending,totalClearance,Clearances,2,11
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Goalkeeping,goalkeeperSaves,Total saves,3,0
+M99,99,12813017,Quarterfinal,2026-07-11,Norway,England,ET2,Goalkeeping,goalKicks,Goal kicks,0,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,ballPossession,Ball possession,59%,41%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,expectedGoals,Expected goals,1.94,0.47
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,bigChanceCreated,Big chances,4,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,totalShotsOnGoal,Total shots,22,11
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,goalkeeperSaves,Goalkeeper saves,4,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,cornerKicks,Corner kicks,8,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,fouls,Fouls,14,18
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,passes,Passes,691,474
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,totalTackle,Tackles,17,11
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,freeKicks,Free kicks,18,14
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,yellowCards,Yellow cards,3,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Match overview,redCards,Red cards,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,totalShotsOnGoal,Total shots,22,11
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,shotsOnGoal,Shots on target,7,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,hitWoodwork,Hit woodwork,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,shotsOffGoal,Shots off target,8,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,blockedScoringAttempt,Blocked shots,7,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,totalShotsInsideBox,Shots inside box,12,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Shots,totalShotsOutsideBox,Shots outside box,10,6
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Attack,bigChanceScored,Big chances scored,2,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Attack,bigChanceMissed,Big chances missed,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Attack,accurateThroughBall,Through balls,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Attack,touchesInOppBox,Touches in penalty area,34,20
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Attack,fouledFinalThird,Fouled in final third,2,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Attack,offsides,Offsides,4,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Passes,accuratePasses,Accurate passes,614,398
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Passes,throwIns,Throw-ins,19,16
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Passes,finalThirdEntries,Final third entries,73,69
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Passes,finalThirdPhaseStatistic,Final third phase,221/260 (85%),106/149 (71%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Passes,accurateLongBalls,Long balls,22/51 (43%),22/53 (42%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Passes,accurateCross,Crosses,7/22 (32%),3/19 (16%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Duels,duelWonPercent,Duels,58%,42%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Duels,dispossessed,Dispossessed,7,8
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Duels,groundDuelsPercentage,Ground duels,42/72 (58%),30/72 (42%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Duels,aerialDuelsPercentage,Aerial duels,20/34 (59%),14/34 (41%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Duels,dribblesPercentage,Dribbles,12/16 (75%),5/14 (36%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Defending,wonTacklePercent,Tackles won,47%,45%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Defending,totalTackle,Total tackles,17,11
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Defending,interceptionWon,Interceptions,13,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Defending,ballRecovery,Recoveries,47,50
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Defending,totalClearance,Clearances,31,28
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Defending,errorsLeadToShot,Errors lead to a shot,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Goalkeeping,goalkeeperSaves,Total saves,4,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Goalkeeping,goalsPrevented,Goals prevented,0.02,0.65
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Goalkeeping,diveSaves,Big saves,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Goalkeeping,highClaims,High claims,2,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Goalkeeping,punches,Punches,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ALL,Goalkeeping,goalKicks,Goal kicks,8,11
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,ballPossession,Ball possession,43%,57%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,expectedGoals,Expected goals,0.28,0.06
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,bigChanceCreated,Big chances,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,totalShotsOnGoal,Total shots,3,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,goalkeeperSaves,Goalkeeper saves,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,cornerKicks,Corner kicks,2,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,fouls,Fouls,7,12
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,passes,Passes,192,249
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,totalTackle,Tackles,1,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,freeKicks,Free kicks,12,7
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,yellowCards,Yellow cards,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Match overview,redCards,Red cards,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,totalShotsOnGoal,Total shots,3,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,shotsOnGoal,Shots on target,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,hitWoodwork,Hit woodwork,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,shotsOffGoal,Shots off target,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,blockedScoringAttempt,Blocked shots,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,totalShotsInsideBox,Shots inside box,2,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Shots,totalShotsOutsideBox,Shots outside box,1,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Attack,bigChanceScored,Big chances scored,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Attack,bigChanceMissed,Big chances missed,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Attack,accurateThroughBall,Through balls,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Attack,fouledFinalThird,Fouled in final third,1,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Attack,offsides,Offsides,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Passes,accuratePasses,Accurate passes,159,222
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Passes,throwIns,Throw-ins,7,7
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Passes,finalThirdEntries,Final third entries,19,28
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Passes,accurateLongBalls,Long balls,4/19 (21%),10/17 (59%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Passes,accurateCross,Crosses,2/3 (67%),0/8 (0%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Duels,duelWonPercent,Duels,47%,53%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Duels,dispossessed,Dispossessed,3,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Duels,groundDuelsPercentage,Ground duels,11/25 (44%),14/25 (56%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Duels,aerialDuelsPercentage,Aerial duels,6/11 (55%),5/11 (45%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Duels,dribblesPercentage,Dribbles,1/2 (50%),3/4 (75%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Defending,wonTacklePercent,Tackles won,0%,25%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Defending,totalTackle,Total tackles,1,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Defending,interceptionWon,Interceptions,6,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Defending,ballRecovery,Recoveries,15,23
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Defending,totalClearance,Clearances,10,10
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Goalkeeping,goalkeeperSaves,Total saves,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,1ST,Goalkeeping,goalKicks,Goal kicks,4,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,ballPossession,Ball possession,66%,34%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,expectedGoals,Expected goals,0.60,0.37
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,bigChanceCreated,Big chances,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,totalShotsOnGoal,Total shots,6,6
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,goalkeeperSaves,Goalkeeper saves,3,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,cornerKicks,Corner kicks,3,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,fouls,Fouls,3,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,passes,Passes,311,163
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,totalTackle,Tackles,12,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,freeKicks,Free kicks,3,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,yellowCards,Yellow cards,1,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Match overview,redCards,Red cards,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,totalShotsOnGoal,Total shots,6,6
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,shotsOnGoal,Shots on target,1,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,hitWoodwork,Hit woodwork,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,shotsOffGoal,Shots off target,4,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,blockedScoringAttempt,Blocked shots,1,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,totalShotsInsideBox,Shots inside box,3,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Shots,totalShotsOutsideBox,Shots outside box,3,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Attack,bigChanceScored,Big chances scored,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Attack,bigChanceMissed,Big chances missed,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Attack,accurateThroughBall,Through balls,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Attack,fouledFinalThird,Fouled in final third,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Attack,offsides,Offsides,2,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Passes,accuratePasses,Accurate passes,278,136
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Passes,throwIns,Throw-ins,5,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Passes,finalThirdEntries,Final third entries,36,26
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Passes,accurateLongBalls,Long balls,11/20 (55%),6/17 (35%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Passes,accurateCross,Crosses,3/10 (30%),3/5 (60%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Duels,duelWonPercent,Duels,67%,33%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Duels,dispossessed,Dispossessed,3,7
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Duels,groundDuelsPercentage,Ground duels,22/31 (71%),9/31 (29%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Duels,aerialDuelsPercentage,Aerial duels,2/5 (40%),3/5 (60%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Duels,dribblesPercentage,Dribbles,8/10 (80%),1/6 (17%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Defending,wonTacklePercent,Tackles won,42%,60%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Defending,totalTackle,Total tackles,12,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Defending,interceptionWon,Interceptions,5,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Defending,ballRecovery,Recoveries,25,20
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Defending,totalClearance,Clearances,4,14
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Goalkeeping,goalkeeperSaves,Total saves,3,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,2ND,Goalkeeping,goalKicks,Goal kicks,2,6
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,ballPossession,Ball possession,86%,14%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,expectedGoals,Expected goals,0.38,0.03
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,bigChanceCreated,Big chances,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,totalShotsOnGoal,Total shots,8,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,goalkeeperSaves,Goalkeeper saves,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,cornerKicks,Corner kicks,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,fouls,Fouls,2,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,passes,Passes,119,20
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,totalTackle,Tackles,2,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,freeKicks,Free kicks,2,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,yellowCards,Yellow cards,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Match overview,redCards,Red cards,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,totalShotsOnGoal,Total shots,8,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,shotsOnGoal,Shots on target,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,hitWoodwork,Hit woodwork,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,shotsOffGoal,Shots off target,3,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,blockedScoringAttempt,Blocked shots,4,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,totalShotsInsideBox,Shots inside box,4,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Shots,totalShotsOutsideBox,Shots outside box,4,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Attack,bigChanceScored,Big chances scored,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Attack,bigChanceMissed,Big chances missed,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Attack,accurateThroughBall,Through balls,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Attack,fouledFinalThird,Fouled in final third,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Attack,offsides,Offsides,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Passes,accuratePasses,Accurate passes,115,14
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Passes,throwIns,Throw-ins,4,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Passes,finalThirdEntries,Final third entries,13,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Passes,accurateLongBalls,Long balls,4/5 (80%),4/7 (57%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Passes,accurateCross,Crosses,2/8 (25%),0/1 (0%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Duels,duelWonPercent,Duels,59%,41%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Duels,dispossessed,Dispossessed,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Duels,groundDuelsPercentage,Ground duels,5/9 (56%),4/9 (44%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Duels,aerialDuelsPercentage,Aerial duels,5/8 (63%),3/8 (38%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Duels,dribblesPercentage,Dribbles,2/3 (67%),0/1 (0%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Defending,wonTacklePercent,Tackles won,100%,50%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Defending,totalTackle,Total tackles,2,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Defending,interceptionWon,Interceptions,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Defending,ballRecovery,Recoveries,1,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Defending,totalClearance,Clearances,3,4
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Goalkeeping,goalkeeperSaves,Total saves,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET1,Goalkeeping,goalKicks,Goal kicks,2,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,ballPossession,Ball possession,60%,40%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,expectedGoals,Expected goals,0.68,0.00
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,bigChanceCreated,Big chances,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,totalShotsOnGoal,Total shots,5,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,goalkeeperSaves,Goalkeeper saves,0,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,cornerKicks,Corner kicks,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,fouls,Fouls,2,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,passes,Passes,69,42
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,totalTackle,Tackles,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,freeKicks,Free kicks,1,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,yellowCards,Yellow cards,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Match overview,redCards,Red cards,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,totalShotsOnGoal,Total shots,5,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,shotsOnGoal,Shots on target,4,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,hitWoodwork,Hit woodwork,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,shotsOffGoal,Shots off target,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,blockedScoringAttempt,Blocked shots,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,totalShotsInsideBox,Shots inside box,3,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Shots,totalShotsOutsideBox,Shots outside box,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Attack,bigChanceScored,Big chances scored,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Attack,bigChanceMissed,Big chances missed,1,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Attack,accurateThroughBall,Through balls,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Attack,fouledFinalThird,Fouled in final third,0,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Attack,offsides,Offsides,1,1
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Passes,accuratePasses,Accurate passes,62,26
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Passes,throwIns,Throw-ins,3,3
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Passes,finalThirdEntries,Final third entries,5,10
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Passes,accurateLongBalls,Long balls,3/7 (43%),2/12 (17%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Passes,accurateCross,Crosses,0/1 (0%),0/5 (0%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Duels,duelWonPercent,Duels,65%,35%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Duels,dispossessed,Dispossessed,0,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Duels,groundDuelsPercentage,Ground duels,4/7 (57%),3/7 (43%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Duels,aerialDuelsPercentage,Aerial duels,7/10 (70%),3/10 (30%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Duels,dribblesPercentage,Dribbles,1/1 (100%),1/3 (33%)
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Defending,wonTacklePercent,Tackles won,50%,0%
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Defending,totalTackle,Total tackles,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Defending,interceptionWon,Interceptions,2,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Defending,ballRecovery,Recoveries,6,5
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Defending,totalClearance,Clearances,14,0
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Goalkeeping,goalkeeperSaves,Total saves,0,2
+M100,100,12813015,Quarterfinal,2026-07-11,Argentina,Switzerland,ET2,Goalkeeping,goalKicks,Goal kicks,0,1

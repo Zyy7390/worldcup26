@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from make_worldcup26_interactive_html import load_notebook_tables
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "assets" / "ppt"
@@ -158,7 +160,19 @@ def build_prediction():
         ko[match] = ko_result(match, "Semifinal", a, b, slot)
     ko[103] = ko_result(103, "Third-place Match", ko[101]["loser"], ko[102]["loser"], "L101 vs L102")
     ko[104] = ko_result(104, "Final", W(101), W(102), "W101 vs W102")
-    return teams, standings, best_thirds, pd.DataFrame(ko.values()).sort_values("match"), ko
+    live_table, _, _, _ = load_notebook_tables()
+    live_table = live_table.copy()
+    live_table["winner_probability"] = pd.to_numeric(
+        live_table["winner_probability"].astype(str).str.rstrip("%"), errors="coerce"
+    ) / 100
+    live_table["loser"] = np.where(
+        live_table["winner"].eq(live_table["team_a"]),
+        live_table["team_b"],
+        live_table["team_a"],
+    )
+    ko_table = live_table.sort_values("match").reset_index(drop=True)
+    ko = ko_table.set_index("match").to_dict("index")
+    return teams, standings, best_thirds, ko_table, ko
 
 
 def make_charts(teams, standings, best_thirds, ko_table, ko):
@@ -166,15 +180,25 @@ def make_charts(teams, standings, best_thirds, ko_table, ko):
     plt.rcParams["figure.dpi"] = 170
     paths = {}
 
-    contenders = teams.sort_values("rating", ascending=False).head(12).sort_values("rating")
+    market_path = ROOT / "data" / "markets" / "prediction_market_snapshot_20260712.csv"
+    market = pd.read_csv(market_path)
+    market["normalized_probability"] = pd.to_numeric(
+        market["normalized_probability"], errors="coerce"
+    )
+    contenders = (
+        market[market["market_type"].eq("winner")]
+        .groupby("team", as_index=False)
+        .agg(rating=("normalized_probability", "mean"))
+        .sort_values("rating")
+    )
     fig, ax = plt.subplots(figsize=(9, 4.4))
-    ax.barh(contenders.team, contenders.rating, color=["#d8a23a" if t == "France" else "#245b7a" for t in contenders.team])
-    ax.set_xlabel("Model rating")
-    ax.set_title("Top Title Contenders By Model Rating")
+    ax.barh(contenders.team, contenders.rating, color=["#d8a23a" if t == ko[104]["winner"] else "#245b7a" for t in contenders.team])
+    ax.set_xlabel("Cross-venue normalized title probability")
+    ax.set_title("Semifinalist Title Market Prior")
     ax.grid(axis="x", alpha=0.22)
-    ax.set_xlim(88, 108)
+    ax.set_xlim(0, max(0.45, contenders.rating.max() + 0.05))
     for i, v in enumerate(contenders.rating):
-        ax.text(v + 0.4, i, f"{v:.1f}", va="center", fontsize=8)
+        ax.text(v + 0.008, i, f"{v:.1%}", va="center", fontsize=8)
     plt.tight_layout()
     paths["contenders"] = ASSET_DIR / "title_contenders.png"
     fig.savefig(paths["contenders"], facecolor="white")
@@ -251,7 +275,10 @@ def make_charts(teams, standings, best_thirds, ko_table, ko):
     fig, ax = plt.subplots(figsize=(13.8, 8.4))
     for _, r in ko_table[ko_table["round"].isin(round_order)].iterrows():
         x, y = round_x[r["round"]], y_pos[r["match"]]
-        label = f"M{int(r.match)}  {r.team_a} vs {r.team_b}\n{r.winner} ({r.winner_probability * 100:.0f}%)"
+        if str(r.get("status", "")) == "actual":
+            label = f"M{int(r.match)}  {r.team_a} vs {r.team_b}\nActual: {r.winner} ({r.get('result_note', '')})"
+        else:
+            label = f"M{int(r.match)}  {r.team_a} vs {r.team_b}\nPick: {r.winner} ({r.winner_probability * 100:.0f}%)"
         ax.text(x, y, label, ha="center", va="center", fontsize=7.3, bbox=dict(boxstyle="round,pad=0.25", fc="#fde7a1" if r["round"] == "Final" else "#f7f7f7", ec="#777777", lw=0.8))
     for child, parent_matches in parents.items():
         cx, cy = round_x[ko[child]["round"]], y_pos[child]
@@ -265,7 +292,7 @@ def make_charts(teams, standings, best_thirds, ko_table, ko):
     ax.set_yticks([])
     ax.set_xticks(list(round_x.values()) + [5])
     ax.set_xticklabels(round_order + ["Champion"], fontsize=10)
-    ax.set_title("Predicted Knockout Bracket", fontsize=18, fontweight="bold", color="#17384d")
+    ax.set_title("Live-Updated Knockout Bracket", fontsize=18, fontweight="bold", color="#17384d")
     for spine in ax.spines.values():
         spine.set_visible(False)
     plt.tight_layout()
@@ -348,6 +375,19 @@ def slide_rels(image_targets):
 def build_ppt(paths, ko):
     media = []
     slides = []
+    champion = ko[104]["winner"]
+    runner_up = ko[104]["loser"]
+    third_place = ko[103]["winner"]
+    semifinal_note = (
+        f"Semifinals: {ko[101]['winner']} over {ko[101]['loser']} "
+        f"({ko[101]['winner_probability']:.1%}); {ko[102]['winner']} over "
+        f"{ko[102]['loser']} ({ko[102]['winner_probability']:.1%})."
+    )
+    route_note = (
+        f"Projected route: {ko[101]['winner']} beats {ko[101]['loser']}, "
+        f"{ko[102]['winner']} beats {ko[102]['loser']}, then {champion} beats "
+        f"{runner_up} in the final. {third_place} takes third place."
+    )
 
     def media_target(path):
         target = f"image{len(media) + 1}.png"
@@ -361,29 +401,29 @@ def build_ppt(paths, ko):
         rect(2, 0, 0, 13.333, 0.18, "D8A23A", "D8A23A"),
         textbox(3, 0.65, 0.65, 10.5, 0.8, "2026 FIFA World Cup Prediction", 34, "17384D", True),
         textbox(4, 0.68, 1.52, 9.5, 0.45, "Bracket visualization and things to watch", 18, "5C6B73"),
-        textbox(5, 0.72, 2.45, 4.1, 1.6, "Champion Pick\nFrance", 34, "FFFFFF", True, "17384D", "17384D"),
-        textbox(6, 5.15, 2.45, 3.2, 1.6, "Runner-up\nArgentina", 26, "17384D", True, "F7F7F7", "D1D8DD"),
-        textbox(7, 8.65, 2.45, 3.2, 1.6, "Third Place\nSpain", 26, "17384D", True, "F7F7F7", "D1D8DD"),
-        textbox(8, 0.72, 4.65, 11.7, 0.95, "Built from the current notebook model: FIFA rank, host bonus, squad-depth bucket, and player-form modifier. No new API fetches were used.", 16, "17384D"),
-        textbox(9, 0.72, 6.6, 5.8, 0.3, "Generated 2026-04-30", 10, "7A858B"),
+        textbox(5, 0.72, 2.45, 4.1, 1.6, f"Champion Pick\n{champion}", 34, "FFFFFF", True, "17384D", "17384D"),
+        textbox(6, 5.15, 2.45, 3.2, 1.6, f"Runner-up\n{runner_up}", 26, "17384D", True, "F7F7F7", "D1D8DD"),
+        textbox(7, 8.65, 2.45, 3.2, 1.6, f"Third Place\n{third_place}", 26, "17384D", True, "F7F7F7", "D1D8DD"),
+        textbox(8, 0.72, 4.65, 11.7, 0.95, "Live model through M100: direct SofaScore form and match stats, human tactical reads, plus July 12 Polymarket/Kalshi priors at 0.10 weight.", 16, "17384D"),
+        textbox(9, 0.72, 6.6, 5.8, 0.3, "Generated 2026-07-12", 10, "7A858B"),
     ])
 
     img = media_target(paths["contenders"])
     add([
         rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"),
         textbox(3, 0.55, 0.32, 6.6, 0.45, "Model Snapshot", 24, "17384D", True),
-        textbox(4, 0.58, 0.92, 4.25, 4.6, "Rating formula\n100 - 0.8 x FIFA rank\n+ host bonus\n+ player-form modifier\n+ squad-depth modifier\n\nKnockout probability\nlogistic((rating A - rating B) / 8)\n\nTransparent scenario model, not a betting market.", 14, "17384D"),
+        textbox(4, 0.58, 0.92, 4.25, 4.6, "Live rating stack\nFIFA-rank base\n+ squad depth\n+ direct SofaScore form\n+ result signal\n+ human tactical delta\n+ 0.10 market prior\n\nSemifinal probabilities also blend complete match-advance markets at 0.10 on the log-odds scale.", 14, "17384D"),
         picture(5, "rId2", 5.0, 1.0, 7.45, 4.15, "Title contenders"),
-        textbox(6, 0.58, 6.25, 11.5, 0.45, "Top-tier calls are close: France over Spain and Argentina over England are both narrow semifinal picks.", 14, "5C6B73"),
+        textbox(6, 0.58, 6.25, 11.5, 0.45, semifinal_note, 14, "5C6B73"),
     ], [img])
 
     img = media_target(paths["groups"])
-    add([rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"), textbox(3, 0.55, 0.28, 6.8, 0.45, "Group Stage Projection", 24, "17384D", True), picture(4, "rId2", 0.43, 0.82, 12.45, 6.18, "Projected groups")], [img])
+    add([rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"), textbox(3, 0.55, 0.28, 8.0, 0.45, "Original Group Projection (Historical)", 24, "17384D", True), picture(4, "rId2", 0.43, 0.82, 12.45, 6.18, "Projected groups")], [img])
 
     img = media_target(paths["thirds"])
     add([
         rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"),
-        textbox(3, 0.55, 0.32, 7.4, 0.45, "Best Third-Place Qualifiers", 24, "17384D", True),
+        textbox(3, 0.55, 0.32, 9.0, 0.45, "Original Best Third Projection (Historical)", 24, "17384D", True),
         picture(4, "rId2", 0.7, 1.02, 7.25, 3.6, "Best thirds"),
         textbox(5, 8.35, 1.08, 4.05, 3.6, "Why this matters\n- Eight of twelve third-place teams advance.\n- The exact groups that advance change the official Annex C bracket mapping.\n- This model's third-place set is A, C, D, E, G, I, J, L.\n- Egypt, Algeria, Cote d'Ivoire, Australia, Norway, and Panama are the hinge teams.", 14, "17384D"),
         textbox(6, 0.72, 5.3, 11.8, 0.9, "The third-place pool is the biggest bracket uncertainty: one extra group-stage goal can redraw an entire route.", 16, "5C6B73", True),
@@ -400,27 +440,27 @@ def build_ppt(paths, ko):
         rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"),
         textbox(3, 0.55, 0.32, 6.5, 0.45, "Final Four", 24, "17384D", True),
         picture(4, "rId2", 1.2, 1.08, 10.6, 3.7, "Final four"),
-        textbox(5, 0.85, 5.35, 11.7, 0.8, "Projected route: France beats Spain, Argentina beats England, then France beats Argentina in the final. Spain edges England for third place.", 17, "17384D", True),
+        textbox(5, 0.85, 5.35, 11.7, 0.8, route_note, 17, "17384D", True),
     ], [img])
 
     add([
         rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"),
         textbox(3, 0.6, 0.35, 7.4, 0.45, "Things To Watch", 24, "17384D", True),
-        textbox(4, 0.8, 1.18, 5.65, 4.9, "Tournament variables\n- Final squads and injuries\n- June 10 FIFA ranking update\n- Host-continent travel and climate\n- Third-place mapping volatility\n- Penalty shootout variance\n- Refereeing and game-state effects", 17, "17384D", False, "F7F7F7", "D1D8DD"),
-        textbox(5, 6.9, 1.18, 5.65, 4.9, "Player-form variables\n- Rodri/Spain availability and minutes\n- Messi/Argentina workload\n- Mbappe and France attacking form\n- Kane/Bellingham/Saka finishing output\n- Haaland/Odegaard effect on Norway's upset risk\n- Goalkeeper form in knockout games", 17, "17384D", False, "F7F7F7", "D1D8DD"),
+        textbox(4, 0.8, 1.18, 5.65, 4.9, "Semifinal variables\n- France pace versus Spain control\n- Spain finishing without a classic No. 9\n- England's adversity management\n- Argentina's defensive vulnerability\n- Extra-time fatigue and recovery\n- Penalty and refereeing variance", 17, "17384D", False, "F7F7F7", "D1D8DD"),
+        textbox(5, 6.9, 1.18, 5.65, 4.9, "Player-form variables\n- Messi workload after long matches\n- Mbappe/Dembele chance creation\n- Bellingham's four knockout goals\n- Kane's clutch finishing\n- Almada and Lopez bench options\n- Goalkeeper form under pressure", 17, "17384D", False, "F7F7F7", "D1D8DD"),
     ])
 
     add([
         rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"),
         textbox(3, 0.6, 0.35, 8.4, 0.45, "How To Refresh The Scenario", 24, "17384D", True),
-        textbox(4, 0.8, 1.15, 11.7, 3.0, "1. Update FIFA rankings when the June 2026 list is published.\n2. Refresh the player-form modifier after final squads, injuries, and late club matches.\n3. Re-run the notebook cells from top to bottom.\n4. Rebuild this deck from the current notebook outputs if the bracket path changes.", 18, "17384D"),
-        textbox(5, 0.8, 4.55, 11.65, 1.1, "Best next enhancement: add a player-form input table for recent ratings, minutes, goals/assists, defensive actions, goalkeeper saves, and injury status.", 17, "FFFFFF", True, "17384D", "17384D"),
+        textbox(4, 0.8, 1.15, 11.7, 3.0, "1. Lock newly completed matches in the model source.\n2. Run the SofaScore and prediction-market collectors.\n3. Regenerate and execute the notebook.\n4. Rebuild tables, site, README assets, and this deck from the executed outputs.", 18, "17384D"),
+        textbox(5, 0.8, 4.55, 11.65, 1.1, "Current coverage: 100 completed matches with direct player ratings, minutes, team statistics, and shot maps.", 17, "FFFFFF", True, "17384D", "17384D"),
     ])
 
     add([
         rect(2, 0, 0, 13.333, 0.14, "D8A23A", "D8A23A"),
         textbox(3, 0.6, 0.35, 5.0, 0.45, "Sources And Caveats", 24, "17384D", True),
-        textbox(4, 0.8, 1.05, 11.9, 4.8, "Sources used in the notebook\n- FIFA men's ranking page, April 2026 update\n- ESPN April 2026 FIFA ranking table\n- FIFA qualified-teams article and official schedule article\n- Official bracket template summarized via the 2026 knockout-stage reference\n- DR Congo playoff placement reporting\n\nCaveats\n- Player-form modifiers are transparent subjective inputs.\n- Exact FIFA points were not used for every team.\n- Third-place qualification and mapping are highly sensitive.\n- Final squads and injuries may materially change the bracket.", 15, "17384D"),
+        textbox(4, 0.8, 1.05, 11.9, 4.8, "Sources used in the notebook\n- FIFA schedule and bracket structure\n- AP, FIFA, Guardian, and Opta match reporting\n- Direct SofaScore lineups, ratings, team stats, and shot maps\n- July 12 Polymarket and Kalshi public APIs\n- Transfermarkt value snapshot\n\nCaveats\n- Human tactical reads are explicit and lightly weighted.\n- Market prices are snapshots, not truth.\n- Transfer values and ticket prices can move.\n- Semifinal calls remain close and sensitive to availability.", 15, "17384D"),
     ])
 
     overrides = [

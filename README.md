@@ -7,7 +7,7 @@ human tactical reads, market priors, ticket planning, and bracket visualization.
 
 [![Notebook](https://img.shields.io/badge/Jupyter-analysis-F37626?logo=jupyter&logoColor=white)](notebooks/worldcup_2026_prediction_bracket.ipynb)
 [![Interactive bracket](https://img.shields.io/badge/interactive-bracket-26c6b8)](outputs/worldcup_2026_interactive_bracket.html)
-[![Latest tables](https://img.shields.io/badge/latest-tables-6da8ff)](outputs/tables/worldcup_2026_updated_tables_20260707.xlsx)
+[![Latest tables](https://img.shields.io/badge/latest-tables-6da8ff)](outputs/tables/worldcup_2026_updated_tables_20260712.xlsx)
 [![Data quality](https://img.shields.io/badge/data-quality-d8b45f)](docs/data_quality_investigation.md)
 [![PowerPoint](https://img.shields.io/badge/slides-PowerPoint-b7472a)](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx)
 
@@ -19,12 +19,12 @@ If GitHub Pages is enabled from the repo root, open the app at:
 
 ## Current Snapshot
 
-Last model refresh: **July 7, 2026, about 7:13 p.m. ET**
+Last model refresh: **July 12, 2026, about 3:20 p.m. ET**
 
 | Result | Team |
 |---|---|
-| Champion | France |
-| Runner-up | Argentina |
+| Champion | Argentina |
+| Runner-up | France |
 | Third place | Spain |
 | Fourth place | England |
 
@@ -36,44 +36,43 @@ Last model refresh: **July 7, 2026, about 7:13 p.m. ET**
 |---|---|
 | [Prediction notebook](notebooks/worldcup_2026_prediction_bracket.ipynb) | Full analysis, formulas, model assumptions, plots, and executed results. |
 | [Interactive bracket](outputs/worldcup_2026_interactive_bracket.html) | Filterable bracket view with match details, country highlighting, zoom controls, recommendations, ratings, and market diagnostic views. |
-| [Updated tables workbook](outputs/tables/worldcup_2026_updated_tables_20260707.xlsx) | Shareable Excel workbook with live bracket, market-integrated bracket, recommendations, and summary. |
-| [Projected knockout CSV](outputs/tables/worldcup_2026_projected_knockout_schedule_20260707.csv) | Machine-readable latest live bracket. |
-| [Recommendations CSV](outputs/tables/worldcup_2026_match_recommendations_20260707.csv) | Ticket-focused match shortlist with matchup, price, date, weekday, and weather factors. |
+| [Updated tables workbook](outputs/tables/worldcup_2026_updated_tables_20260712.xlsx) | Shareable Excel workbook with live bracket, market-integrated bracket, recommendations, market snapshot, and source coverage. |
+| [Projected knockout CSV](outputs/tables/worldcup_2026_projected_knockout_schedule_20260712.csv) | Machine-readable latest live bracket. |
+| [Recommendations CSV](outputs/tables/worldcup_2026_match_recommendations_20260712.csv) | Ticket-focused shortlist for the four remaining matches. |
 | [Presentation deck](outputs/presentations/worldcup_2026_prediction_bracket_deck.pptx) | A concise visual slide deck for sharing the bracket and story. |
-| [Data quality investigation](docs/data_quality_investigation.md) | Current coverage, missingness causes, SofaScore fetch diagnostics, and next notebook-integration steps. |
+| [Data quality investigation](docs/data_quality_investigation.md) | Current coverage, pipeline diagnostics, missingness causes, and notebook integration status. |
 | [Notebook archive](notebooks/archive/worldcup_2026_prediction_bracket.pre_live_update_20260617.ipynb) | Sanitized pre-live-update notebook snapshot available in the current project files. |
 
-## Projected Last Eight
+## Last Eight: Actuals + Forecast
 
 | Round | Match | Date | Weekday | Matchup | Pick |
 |---|---:|---|---|---|---|
-| Quarterfinal | 97 | 2026-07-09 | Thursday | France vs Morocco | France, 72.3% |
-| Quarterfinal | 98 | 2026-07-10 | Friday | Spain vs Belgium | Spain, 75.8% |
-| Quarterfinal | 99 | 2026-07-11 | Saturday | Norway vs England | England, 94.6% |
-| Quarterfinal | 100 | 2026-07-11 | Saturday | Argentina vs Switzerland | Argentina, 90.4% |
-| Semifinal | 101 | 2026-07-14 | Tuesday | France vs Spain | France, 53.5% |
-| Semifinal | 102 | 2026-07-15 | Wednesday | England vs Argentina | Argentina, 56.7% |
-| Third-place Match | 103 | 2026-07-18 | Saturday | Spain vs England | Spain, 54.4% |
-| Final | 104 | 2026-07-19 | Sunday | France vs Argentina | France, 51.2% |
+| Quarterfinal | 97 | 2026-07-09 | Thursday | France vs Morocco | Actual: France 2-0 |
+| Quarterfinal | 98 | 2026-07-10 | Friday | Spain vs Belgium | Actual: Spain 2-1 |
+| Quarterfinal | 99 | 2026-07-11 | Saturday | Norway vs England | Actual: England 2-1 (aet) |
+| Quarterfinal | 100 | 2026-07-11 | Saturday | Argentina vs Switzerland | Actual: Argentina 3-1 (aet) |
+| Semifinal | 101 | 2026-07-14 | Tuesday | France vs Spain | France, 52.8% |
+| Semifinal | 102 | 2026-07-15 | Wednesday | England vs Argentina | Argentina, 55.6% |
+| Third-place Match | 103 | 2026-07-18 | Saturday | Spain vs England | Spain, 54.0% |
+| Final | 104 | 2026-07-19 | Sunday | France vs Argentina | Argentina, 50.7% |
 
 ```mermaid
 flowchart LR
-  QF97["M97 Quarterfinal<br/>France 72.3% over Morocco"] --> SF101["M101 Semifinal<br/>France 53.5% over Spain"]
-  QF98["M98 Quarterfinal<br/>Spain 75.8% over Belgium"] --> SF101
-  QF99["M99 Quarterfinal<br/>England 94.6% over Norway"] --> SF102["M102 Semifinal<br/>Argentina 56.7% over England"]
-  QF100["M100 Quarterfinal<br/>Argentina 90.4% over Switzerland"] --> SF102
-  SF101 --> Final["M104 Final<br/>France 51.2% over Argentina"]
+  QF97["M97 Actual<br/>France 2-0 Morocco"] --> SF101["M101 Semifinal<br/>France 52.8% over Spain"]
+  QF98["M98 Actual<br/>Spain 2-1 Belgium"] --> SF101
+  QF99["M99 Actual<br/>England 2-1 Norway, aet"] --> SF102["M102 Semifinal<br/>Argentina 55.6% over England"]
+  QF100["M100 Actual<br/>Argentina 3-1 Switzerland, aet"] --> SF102
+  SF101 --> Final["M104 Final<br/>Argentina 50.7% over France"]
   SF102 --> Final
-  SF101 --> Third["M103 Third Place<br/>Spain 54.4% over England"]
+  SF101 --> Third["M103 Third Place<br/>Spain 54.0% over England"]
   SF102 --> Third
 ```
 
 ## Player Value vs Performance
 
 The notebook compares World Cup post-match ratings against Transfermarkt market
-value. The chart below uses the saved Google lineup rating extract where
-available and highlights star players from teams still alive in the quarterfinal
-field.
+value. The chart below uses direct SofaScore ratings with minutes weighting and
+highlights star players from the four semifinalists.
 
 ![Player rating vs Transfermarkt value](assets/readme/player_value_vs_transfermarkt.png)
 
@@ -89,11 +88,10 @@ price fit, then date and weather convenience.
 
 | Rank | Match | Round | Weekday | Possible matchup | Score |
 |---:|---:|---|---|---|---:|
-| 1 | 100 | Quarterfinal | Saturday | Argentina vs Switzerland | 4.56 |
-| 2 | 102 | Semifinal | Wednesday | England vs Argentina | 4.44 |
-| 3 | 99 | Quarterfinal | Saturday | Norway vs England | 4.43 |
-| 4 | 104 | Final | Sunday | France vs Argentina | 4.31 |
-| 5 | 101 | Semifinal | Tuesday | France vs Spain | 4.16 |
+| 1 | 102 | Semifinal | Wednesday | England vs Argentina | 4.44 |
+| 2 | 104 | Final | Sunday | France vs Argentina | 4.31 |
+| 3 | 101 | Semifinal | Tuesday | France vs Spain | 4.16 |
+| 4 | 103 | Third-place Match | Saturday | Spain vs England | 3.75 |
 
 <details>
 <summary><strong>How the model works</strong></summary>
@@ -147,6 +145,7 @@ priors.
 | Spain latest form | Spain remained structurally good, but Lamine Yamal and midfield chance creation were muted; Oyarzabal was not a traditional No. 9 finisher. | Spain kept control credit but received a finishing/chance-creation caution. |
 | Switzerland vs Colombia | Switzerland's defense looked excellent, but open-play offense remained limited. | Switzerland received defensive credit and attacking ceiling caution. |
 | Norway vs Brazil | Norway could catch elite opponents off guard; if Odegaard/Nusa can find Haaland, the chances are extremely dangerous. | Norway received a transition-threat upgrade, offset by possession/build-up limitations. |
+| Argentina vs Switzerland | Argentina's defense and Emiliano Martinez look less dominant than in 2022, and Messi appeared fatigued after repeated long matches. Lisandro Martinez's interventions, Almada's width, Jose Manuel Lopez's movement/link play, and the squad's tenacity supplied valuable alternatives. | Defense and Messi-workload penalties are balanced against a depth/tenacity upgrade; direct SofaScore ratings remain separate from this human layer. |
 
 </details>
 
@@ -156,18 +155,16 @@ priors.
 Core inputs include:
 
 - Official-style match schedule and bracket structure.
-- Latest locked match results through Switzerland 0-0 Colombia, Switzerland 4-3 on penalties.
-- Direct SofaScore lineup ratings, minutes, team stats, and shot maps for all 96 completed local matches.
+- Latest locked match results through Argentina 3-1 Switzerland after extra time in M100.
+- Direct SofaScore lineup ratings, minutes, team stats, and shot maps for all 100 completed matches.
 - Saved Google lineup player-rating extracts kept as a fallback/audit trail.
-- Event and player-performance proxies where rendered ratings were unavailable.
-- Polymarket July 7 outright market snapshot.
-- Kalshi public-market snapshots kept as diagnostics when markets were not clean single-team or W-D-L priors.
+- Transparent event and human observations kept separate from direct ratings.
+- July 12 Polymarket and Kalshi outright and final-qualifier snapshots.
+- Complete Kalshi match-advance markets for France-Spain and England-Argentina.
 
-Important caveat: the interactive site now uses the SofaScore CSVs directly, but
-the notebook still needs a dedicated SofaScore ingestion cell before every
-analysis table natively uses xG, shots on target, saves, tackles, shot maps, and
-minutes-weighted player ratings. See the data quality investigation for the
-current coverage and exact follow-up path.
+The notebook and interactive site now share the same SofaScore CSVs. R32-and-later
+player form is minutes-weighted and stage-weighted; Google is used only when a
+match lacks SofaScore rows. Prediction markets remain a light `0.10` input.
 
 </details>
 
@@ -199,6 +196,8 @@ Use the same Python environment that has `pandas`, `matplotlib`, `nbformat`, and
 `jupyter` installed. From the repository root:
 
 ```powershell
+python scripts/sofascore_worldcup_data_fetcher.py --fetch
+python scripts/fetch_prediction_market_data.py --as-of 20260712
 python scripts/update_worldcup26_notebook_live.py
 
 $env:USERPROFILE = Join-Path (Get-Location) ".home"
@@ -215,6 +214,8 @@ python -m jupyter nbconvert `
 
 python scripts/make_worldcup26_interactive_html.py
 python scripts/make_readme_assets.py
+python scripts/export_worldcup26_tables.py --as-of 20260712
+python scripts/make_worldcup26_ppt.py
 ```
 
 </details>
@@ -235,7 +236,7 @@ For comparison over time:
 
 ```powershell
 git log --oneline
-git diff HEAD~1 -- outputs/tables/worldcup_2026_projected_knockout_schedule_20260707.csv
+git diff HEAD~1 -- outputs/tables/worldcup_2026_projected_knockout_schedule_20260712.csv
 ```
 
 </details>

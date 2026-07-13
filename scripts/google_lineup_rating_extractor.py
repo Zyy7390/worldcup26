@@ -25,6 +25,7 @@ canonical CSVs with the normal import/normalization workflow.
 
 from pathlib import Path
 import argparse
+import ast
 import csv
 import json
 import re
@@ -41,6 +42,7 @@ ALL_PLAYER_CANONICAL = GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv
 SUMMARY_CANONICAL = GOOGLE_DATA_DIR / "google_lineup_rating_extraction_summary.csv"
 RAW_REFRESH_OUT = GOOGLE_DATA_DIR / "google_lineup_player_ratings_raw_refresh.csv"
 SUMMARY_REFRESH_OUT = GOOGLE_DATA_DIR / "google_lineup_rating_extraction_summary_refresh.csv"
+MODEL_SOURCE = ROOT / "scripts" / "update_worldcup26_notebook_live.py"
 
 RAW_FIELDNAMES = [
     "match_id",
@@ -156,33 +158,78 @@ def load_group_matches():
 
 def load_knockout_matches():
     path = latest_knockout_schedule_path()
-    if path is None:
-        return []
+    schedule_rows = {}
+    if path is not None:
+        with path.open(newline="", encoding="utf-8-sig") as handle:
+            schedule_rows = {
+                int(float(row["match"])): row
+                for row in csv.DictReader(handle)
+                if str(row.get("match") or "").strip()
+            }
+
+    locked_rows = {}
+    for match_no, row in schedule_rows.items():
+        if str(row.get("status", "")).strip().lower() == "actual":
+            locked_rows[match_no] = row
+
+    if MODEL_SOURCE.exists():
+        source = MODEL_SOURCE.read_text(encoding="utf-8")
+        block = re.search(
+            r"completed_knockout_results_data\s*=\s*\[(.*?)\]\s*completed_knockout_results\s*=",
+            source,
+            flags=re.S,
+        )
+        if block:
+            for item in ast.literal_eval("[" + block.group(1) + "]"):
+                match_no, team_a, team_b, goals_a, goals_b, _, result_note, _ = item
+                schedule = schedule_rows.get(int(match_no), {})
+                locked_rows[int(match_no)] = {
+                    **schedule,
+                    "match": match_no,
+                    "team_a": team_a,
+                    "team_b": team_b,
+                    "result_note": result_note,
+                    "status": "actual",
+                    "_goals_a": goals_a,
+                    "_goals_b": goals_b,
+                }
+
     matches = []
-    with path.open(newline="", encoding="utf-8-sig") as handle:
-        for row in csv.DictReader(handle):
-            if str(row.get("status", "")).strip().lower() != "actual":
-                continue
-            goals_a, goals_b = parse_goals_from_note(row)
-            match_no = row.get("match")
-            label = (
-                f"{row.get('team_a')} {goals_a}-{goals_b} {row.get('team_b')}"
-                if goals_a is not None and goals_b is not None
-                else row.get("result_note") or f"{row.get('team_a')} vs {row.get('team_b')}"
+    for match_no in sorted(locked_rows):
+        row = locked_rows[match_no]
+        goals_a, goals_b = parse_goals_from_note(row)
+        if goals_a is None or goals_b is None:
+            goals_a = row.get("_goals_a")
+            goals_b = row.get("_goals_b")
+        stage = row.get("round")
+        if not stage:
+            numeric_match = int(match_no)
+            stage = (
+                "Round of 32" if numeric_match <= 88
+                else "Round of 16" if numeric_match <= 96
+                else "Quarterfinal" if numeric_match <= 100
+                else "Semifinal" if numeric_match <= 102
+                else "Third-place Match" if numeric_match == 103
+                else "Final"
             )
-            matches.append({
-                "match_id": normalize_match_id(match_no),
-                "match_no": match_no,
-                "stage": row.get("round") or "Knockout",
-                "group": "",
-                "date": row.get("date") or "",
-                "team_a": row.get("team_a"),
-                "team_b": row.get("team_b"),
-                "goals_a": goals_a,
-                "goals_b": goals_b,
-                "label": label,
-                "direct_url": row.get("direct_url", ""),
-            })
+        label = (
+            f"{row.get('team_a')} {goals_a}-{goals_b} {row.get('team_b')}"
+            if goals_a is not None and goals_b is not None
+            else row.get("result_note") or f"{row.get('team_a')} vs {row.get('team_b')}"
+        )
+        matches.append({
+            "match_id": normalize_match_id(match_no),
+            "match_no": match_no,
+            "stage": stage,
+            "group": "",
+            "date": row.get("date") or "",
+            "team_a": row.get("team_a"),
+            "team_b": row.get("team_b"),
+            "goals_a": goals_a,
+            "goals_b": goals_b,
+            "label": label,
+            "direct_url": row.get("direct_url", ""),
+        })
     return matches
 
 

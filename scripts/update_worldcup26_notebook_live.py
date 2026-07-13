@@ -41,15 +41,15 @@ live_cells = [
     md(f"""
 {START_MARKER}
 
-## Live Update - July 7, 2026
+## Live Update - July 12, 2026
 
-This section reruns the projection using match results available to me on **July 7, 2026 at about 7:00 p.m. ET**. It preserves the original preseason model above, then applies five live inputs:
+This section reruns the projection using match results available to me on **July 12, 2026 at about 3:20 p.m. ET**. It preserves the original preseason model above, then applies five live inputs:
 
 1. **June 2026 FIFA rankings** from the current group pages.
 2. **Played World Cup matches** locked in as actual results.
-3. **Player/match form signals** from available match reports and player ratings.
+3. **Player/match form signals** led by direct SofaScore ratings, minutes, and match statistics.
 4. **Human-read tactical notes** supplied by the analyst, blended separately from the raw rating model.
-5. **Current prediction-market diagnostics**, including a July 7 Polymarket outright snapshot.
+5. **Current prediction-market diagnostics** from July 12 Polymarket and Kalshi outright, final-qualifier, and match-advance markets.
 
 Sources checked for this update:
 
@@ -58,7 +58,9 @@ Sources checked for this update:
 - Guardian and other match reports/live blogs for Canada-South Africa, Germany-Paraguay, Netherlands-Morocco, Brazil-Japan, France-Sweden, Cote d'Ivoire-Norway, Mexico-Ecuador, England-DR Congo, England-Panama, Colombia-Portugal, DR Congo-Uzbekistan, Argentina-Jordan, Algeria-Austria, and Croatia-Ghana.
 - Guardian player ratings for England 4-2 Croatia and England 0-0 Ghana.
 - SB Nation/Guardian/other live reports for the completed Round of 16: Morocco-Canada, France-Paraguay, Norway-Brazil, England-Mexico, Spain-Portugal, Belgium-USA, Argentina-Egypt, and Switzerland-Colombia.
-- Polymarket public Gamma API snapshot fetched on July 7 for current World Cup outright markets. Kalshi public markets were fetched too, but the clean rows were mostly multileg/parlay-style diagnostics rather than simple team outrights.
+- AP, FIFA, Guardian, Opta, and other match reports for the completed quarterfinals: France 2-0 Morocco, Spain 2-1 Belgium, England 2-1 Norway after extra time, and Argentina 3-1 Switzerland after extra time.
+- Direct SofaScore event endpoints for all 100 completed matches: lineups/player ratings, minutes, goals, assists, team statistics, and shot maps.
+- Polymarket public Gamma API and Kalshi public market snapshots fetched on July 12 for the four semifinalists. Both venues expose complete current outright and final-qualifier rows; Kalshi also exposes complete two-team advance markets for both semifinals.
 - The 2026 third-place mapping table; the updated model's actual third-place set is **B, D, E, F, I, J, K, L**, which maps as:
 
 ```text
@@ -75,17 +77,18 @@ Human-read notes incorporated in this run:
 - USA: the team is upgraded for tenacity, physicality, technique, and on-field coordination, with a specific note that its collective quality looks better than player market values imply.
 - France: Paraguay showed France's next-level ceiling: tenacity plus attacking talent, even in a low-score knockout.
 - Argentina: Cape Verde and Egypt showed real tenacity, but the Messi-dependence and reduced running/creativity from supporting players remain worrying.
+- Argentina vs Switzerland: the defense remains vulnerable and Emiliano Martinez no longer looks as dominant as in 2022, while Messi looked fatigued after repeated long matches. Offsetting that, Lisandro Martinez supplied high-value interventions, Thiago Almada added useful width, Jose Manuel Lopez created separation and linked the extra-time winner, and the full squad again showed elite tenacity and tactical depth.
 - England: Mexico showed collaboration, attacking talent, and impressive 10-man defensive resilience.
 - Spain: still high-performing structurally, but chance creation and finishing are not ruthless; Lamine Yamal and the midfield did not generate enough, and Oyarzabal is not a traditional No. 9.
 - Switzerland: Colombia showed excellent defensive quality, while open-play attacking output remains a concern.
 - Norway: Brazil showed a scary transition path: not elite in passing/dribbling overall, but Odegaard/Nusa/Haaland can punish the thinnest window.
 
-Important caveat: Google lineup ratings were gathered from rendered Google match cards for **74 of the first 82** played matches in the July 2 sweep, including every completed Round of 32 match at that time. On July 7, the Google route returned a "sorry/unusual traffic" interstitial, so new Round of 16 player-rating cards were not scraped. For the new matches, this run uses verified result/event proxies and human tactical priors; the older Google R32-and-later team-average ratings remain in the model where available.
+Player-rating policy: direct SofaScore rows are the primary quantitative form source. For R32 and later, the model computes each team's match rating as a minutes-weighted average of rated players, then applies a stage-recency weight. Google lineup ratings are retained only as a per-match fallback when a SofaScore match is unavailable. Human observations remain a separate, visible layer and never masquerade as scraped ratings.
 
-July 7 note: this update locks all group-stage results, all Round of 32 results, and all Round of 16 results through **Switzerland 0-0 Colombia; Switzerland 4-3 pens**. One older score conflict was found: SB Nation's schedule snippet listed Egypt-Iran as 0-0, while the Guardian match report and goal roundup described Egypt 1-1 Iran with scoring detail; this notebook uses **Egypt 1-1 Iran**.
+July 12 note: this update locks all results through **Argentina 3-1 Switzerland after extra time in Match 100**. The semifinal pairings are now France-Spain (M101) and England-Argentina (M102).
 """),
     code(r'''
-# Live data and modelling utilities for the July 7 update.
+# Live data and modelling utilities for the July 12 update.
 import math
 import itertools
 import json
@@ -104,6 +107,7 @@ if not (PROJECT_ROOT / "data").exists() and (PROJECT_ROOT.parent / "data").exist
     PROJECT_ROOT = PROJECT_ROOT.parent
 DATA_DIR = PROJECT_ROOT / "data"
 GOOGLE_DATA_DIR = DATA_DIR / "google"
+SOFASCORE_DATA_DIR = DATA_DIR / "sofascore"
 MARKET_DATA_DIR = DATA_DIR / "markets"
 
 def logistic(x):
@@ -236,7 +240,7 @@ played_results = pd.DataFrame(played_results_data, columns=["group", "team_a", "
 
 # Market snapshot initially fetched from public Kalshi markets on 2026-06-23.
 # The old group-stage Kalshi rows are now historical diagnostics because all group-stage matches are locked.
-# The July 7 Polymarket outright snapshot is parsed later and lightly applied to surviving knockout teams.
+# The July 12 cross-venue snapshot is parsed later and lightly applied to the four semifinalists.
 market_weight_default = 0.10
 market_group_priors_data = [
     # team_a, team_b, market_outcome, market_prob, market_weight, source, ticker, quality_note
@@ -352,8 +356,8 @@ else:
 market_group_priors = market_group_priors_applied.copy()
 
 market_fetch_summary = pd.DataFrame([
-    {"source": "Polymarket July 7 outright", "fetched_rows": 100, "raw_rows_loaded": 0, "applied_rows": 0, "excluded_rows": 0, "note": "Current single-team trophy markets are parsed below and applied as a light survivor-team rating prior."},
-    {"source": "Kalshi July 7 public search", "fetched_rows": 200, "raw_rows_loaded": 0, "applied_rows": 0, "excluded_rows": 200, "note": "Fetched rows were mostly multileg/parlay-style or otherwise not clean single-match/team priors, so they are kept as diagnostics only."},
+    {"source": "Polymarket July 12", "fetched_rows": 8, "raw_rows_loaded": 8, "applied_rows": 8, "excluded_rows": 0, "note": "Four complete outright rows feed the team-rating prior; four complete final-qualifier rows feed semifinal matchup priors."},
+    {"source": "Kalshi July 12", "fetched_rows": 12, "raw_rows_loaded": 12, "applied_rows": 12, "excluded_rows": 0, "note": "Four complete outright rows plus complete final-qualifier and direct match-advance rows for both semifinals."},
     {"source": "Kalshi June 23 group-stage snapshot", "fetched_rows": 35, "raw_rows_loaded": len(market_group_priors_raw), "applied_rows": len(market_group_priors), "excluded_rows": len(market_group_priors_excluded), "note": "These historical group-stage rows are not applied now because all group-stage results are locked."},
 ])
 
@@ -391,11 +395,23 @@ display(market_group_prior_coverage.sort_values(["is_forecast_applied", "match_k
 display(market_group_priors)
 played_results
 '''),
+    md(r'''
+## Direct Player Form And Match Data
+
+The quantitative player-form layer uses direct post-match ratings for **Round of 32 and later**. SofaScore is primary; Google is used only when a completed match has no SofaScore rating rows.
+
+For team `t` in knockout match `m`:
+
+```text
+team_match_rating(t, m) = sum(player_rating * minutes_played) / sum(minutes_played)
+```
+
+If minutes are unavailable for every rated player in a fallback match, the code uses a simple player average. Team-match signals then receive stage weights of `0.55` (R32), `0.75` (R16), `1.00` (quarterfinal), `1.15` (semifinal), and `1.25` (final). When both direct data and human/event observations exist, the player-form component is **80% direct and 20% human/event**. Human tactical priors remain separately labeled and auditable.
+'''),
     code(r'''
 # Player/match form signals.
 # The hand-entered rating_proxy values are transparent event and tactical estimates.
-# Rendered Google lineup ratings are imported separately below, with R32-and-later team averages
-# used as quantitative form signals for future knockout prediction.
+# Direct SofaScore lineup ratings are imported below; Google is a per-match fallback only.
 player_form_signals_data = [
     # match, team, player, rating_proxy, importance_weight, source_type, note
     ("England 4-2 Croatia", "England", "Harry Kane", 9.0, 1.00, "Guardian player rating", "Guardian rated Kane 9 after goal and excellent all-round performance."),
@@ -611,111 +627,308 @@ player_form_signals_data = [
     ("Argentina 3-2 Egypt", "Argentina", "Argentina Messi overreliance", 5.0, 0.90, "human tactical read", "Worrying dependence on Messi; several supporting players look less dynamic and creative than past Argentina peaks."),
     ("Switzerland 0-0 Colombia", "Switzerland", "Swiss defensive wall", 8.7, 0.85, "human tactical read + event proxy", "Advanced on penalties after a 0-0 through extra time, with excellent defensive concentration."),
     ("Switzerland 0-0 Colombia", "Switzerland", "Swiss open-play attack concern", 5.6, 0.70, "human tactical read", "Limited open-play offense and chance creation remain the main concern despite advancing."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Argentina knockout tenacity", 8.7, 0.85, "human tactical read", "The whole squad again showed elite resolve and found multiple tactical routes through a difficult extra-time match."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Argentina defensive vulnerability", 5.4, 0.75, "human tactical read", "Switzerland created several strong chances; Argentina's defensive control remains below its 2022 title level."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Emiliano Martinez", 5.8, 0.65, "human tactical read", "Still made important saves, but no longer looks as consistently dominant as at the 2022 World Cup."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Lisandro Martinez", 8.0, 0.55, "human tactical read", "High-value interventions helped keep Switzerland from converting more of its best openings."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Thiago Almada", 7.8, 0.45, "human tactical read", "Provided valuable strategic width and another route around the Swiss block from the wing."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Jose Manuel Lopez", 7.6, 0.45, "human tactical read + event", "Created separation, linked the left-side move, and laid the ball off for Alvarez's extra-time winner."),
+    ("Argentina 3-1 Switzerland", "Argentina", "Lionel Messi fatigue", 5.6, 0.70, "human tactical read", "Messi looked tired after repeated long knockout matches, reducing confidence in sustained off-ball and late-game output."),
 ]
 player_form_signals = pd.DataFrame(
     player_form_signals_data,
     columns=["match", "team", "player", "rating_proxy", "importance_weight", "source_type", "note"],
 )
 
+knockout_rating_stages = {
+    "Round of 32",
+    "Round of 16",
+    "Quarterfinal",
+    "Semifinal",
+    "Third-place Match",
+    "Final",
+}
+stage_recency_weight = {
+    "Round of 32": 0.55,
+    "Round of 16": 0.75,
+    "Quarterfinal": 1.00,
+    "Semifinal": 1.15,
+    "Third-place Match": 1.15,
+    "Final": 1.25,
+}
+
+# Direct rating policy:
+# 1. Use SofaScore for a match when it has any rated rows.
+# 2. Use Google only for a match without SofaScore ratings.
+# 3. For each team/match, weight player ratings by minutes when minutes are available.
+# 4. Weight later knockout rounds more heavily when creating the current-form signal.
+direct_rating_frames = []
+sofascore_rating_path = SOFASCORE_DATA_DIR / "sofascore_player_ratings.csv"
+sofascore_map_path = SOFASCORE_DATA_DIR / "sofascore_match_map.csv"
+sofascore_match_ids = set()
+if sofascore_rating_path.exists():
+    sofascore_ratings_for_model = pd.read_csv(sofascore_rating_path)
+    sofascore_ratings_for_model["rating"] = pd.to_numeric(
+        sofascore_ratings_for_model["rating"], errors="coerce"
+    )
+    sofascore_ratings_for_model["minutes_played"] = pd.to_numeric(
+        sofascore_ratings_for_model["minutes_played"], errors="coerce"
+    )
+    sofascore_ratings_for_model = sofascore_ratings_for_model[
+        sofascore_ratings_for_model["rating"].notna()
+    ].copy()
+    if sofascore_map_path.exists():
+        sofa_labels = pd.read_csv(sofascore_map_path)[["match_id", "label"]].drop_duplicates("match_id")
+        sofascore_ratings_for_model = sofascore_ratings_for_model.merge(
+            sofa_labels, on="match_id", how="left"
+        )
+    sofascore_ratings_for_model["match"] = sofascore_ratings_for_model.get(
+        "label", sofascore_ratings_for_model["match_id"]
+    ).fillna(sofascore_ratings_for_model["match_id"])
+    sofascore_ratings_for_model["player_display"] = sofascore_ratings_for_model["player"]
+    sofascore_ratings_for_model["rating_source"] = "SofaScore"
+    sofascore_match_ids = set(sofascore_ratings_for_model["match_id"].astype(str))
+    direct_rating_frames.append(sofascore_ratings_for_model)
+
 google_all_rating_path = GOOGLE_DATA_DIR / "google_worldcup_all_player_ratings.csv"
 google_all_ratings_for_model = pd.DataFrame()
-google_knockout_team_signals = pd.DataFrame()
 if google_all_rating_path.exists():
     google_all_ratings_for_model = pd.read_csv(google_all_rating_path)
-    required_google_cols = {"stage", "match", "team", "player_display", "rating"}
+    required_google_cols = {"stage", "match", "team", "player_display", "rating", "match_id"}
     missing_google_cols = sorted(required_google_cols - set(google_all_ratings_for_model.columns))
     if missing_google_cols:
-        print(f"Google all-player rating import skipped; missing columns: {missing_google_cols}")
+        print(f"Google all-player rating fallback skipped; missing columns: {missing_google_cols}")
         google_all_ratings_for_model = pd.DataFrame()
     else:
         google_all_ratings_for_model["rating"] = pd.to_numeric(
-            google_all_ratings_for_model["rating"],
-            errors="coerce",
+            google_all_ratings_for_model["rating"], errors="coerce"
+        )
+        google_all_ratings_for_model["minutes_played"] = pd.to_numeric(
+            google_all_ratings_for_model.get("minutes_played"), errors="coerce"
         )
         google_all_ratings_for_model = google_all_ratings_for_model[
             google_all_ratings_for_model["rating"].notna()
+            & ~google_all_ratings_for_model["match_id"].astype(str).isin(sofascore_match_ids)
         ].copy()
-        google_rating_coverage = (
-            google_all_ratings_for_model
-            .groupby("stage", dropna=False)
-            .agg(
-                scraped_matches=("match", "nunique"),
-                player_rating_rows=("rating", "size"),
-                mean_rating=("rating", "mean"),
+        google_all_ratings_for_model["rating_source"] = "Google fallback"
+        direct_rating_frames.append(google_all_ratings_for_model)
+
+direct_knockout_player_ratings = pd.DataFrame()
+direct_knockout_team_signals = pd.DataFrame()
+if direct_rating_frames:
+    direct_player_ratings = pd.concat(direct_rating_frames, ignore_index=True, sort=False)
+    direct_player_ratings = direct_player_ratings[
+        direct_player_ratings["stage"].isin(knockout_rating_stages)
+    ].copy()
+
+    def summarize_direct_team_match(group):
+        ratings = pd.to_numeric(group["rating"], errors="coerce")
+        minutes = pd.to_numeric(group["minutes_played"], errors="coerce")
+        valid_minutes = ratings.notna() & minutes.notna() & minutes.gt(0)
+        if valid_minutes.any():
+            rating_proxy = np.average(ratings[valid_minutes], weights=minutes[valid_minutes])
+            method = "minutes-weighted"
+        else:
+            rating_proxy = ratings.mean()
+            method = "simple average"
+        return pd.Series({
+            "rating_proxy": rating_proxy,
+            "players_rated": group["player_display"].nunique(),
+            "rated_minutes": minutes[valid_minutes].sum(),
+            "rating_method": method,
+            "rating_source": "+".join(sorted(group["rating_source"].dropna().unique())),
+        })
+
+    direct_knockout_player_ratings = direct_player_ratings.copy()
+    direct_knockout_team_signals = (
+        direct_player_ratings
+        .groupby(["stage", "match_id", "match", "team"], as_index=False)
+        .apply(summarize_direct_team_match)
+        .reset_index(drop=True)
+    )
+    coverage_factor = np.clip(direct_knockout_team_signals["players_rated"] / 16, 0.55, 1.00)
+    direct_knockout_team_signals["importance_weight"] = (
+        direct_knockout_team_signals["stage"].map(stage_recency_weight).fillna(0.50)
+        * coverage_factor
+    )
+    direct_model_signals = direct_knockout_team_signals.assign(
+        player=lambda d: d["rating_source"] + " team average",
+        source_type=lambda d: d["rating_source"] + " direct lineup rating (R32+)",
+        note=lambda d: (
+            d["stage"].astype(str)
+            + "; "
+            + d["rating_method"].astype(str)
+            + " average from "
+            + d["players_rated"].astype(int).astype(str)
+            + " rated players; recency weight="
+            + d["stage"].map(stage_recency_weight).fillna(0.50).round(2).astype(str)
+        ),
+    )[["match", "team", "player", "rating_proxy", "importance_weight", "source_type", "note"]]
+    print(
+        f"Loaded {len(direct_knockout_player_ratings)} direct R32+ player-rating rows "
+        f"across {direct_knockout_player_ratings['match_id'].nunique()} matches."
+    )
+    display(
+        direct_knockout_team_signals
+        .sort_values(["stage", "match_id", "rating_proxy"], ascending=[True, True, False])
+        .round(3)
+    )
+else:
+    direct_model_signals = pd.DataFrame(columns=player_form_signals.columns)
+    print("No direct player-rating source was available for prediction-side form updates.")
+
+def aggregate_form_adjustments(signals, prefix):
+    if signals.empty:
+        return pd.DataFrame(columns=[
+            "team", f"{prefix}_weighted_rating", f"{prefix}_delta", f"{prefix}_signals"
+        ])
+    working = signals.copy()
+    working["weighted_component"] = (
+        (working["rating_proxy"] - 6.5) / 2.5
+    ) * working["importance_weight"]
+    return (
+        working.groupby("team")
+        .apply(lambda d: pd.Series({
+            f"{prefix}_weighted_rating": np.average(
+                d["rating_proxy"], weights=d["importance_weight"]
+            ),
+            f"{prefix}_delta": float(np.clip(
+                0.75 * d["weighted_component"].sum() / d["importance_weight"].sum(),
+                -0.9,
+                0.9,
+            )),
+            f"{prefix}_signals": "; ".join(d["player"].astype(str).tolist()),
+        }))
+        .reset_index()
+    )
+
+human_player_adjustments = aggregate_form_adjustments(player_form_signals, "human")
+direct_player_adjustments = aggregate_form_adjustments(direct_model_signals, "direct")
+player_adjustments = human_player_adjustments.merge(
+    direct_player_adjustments, on="team", how="outer"
+)
+has_human = player_adjustments["human_delta"].notna()
+has_direct = player_adjustments["direct_delta"].notna()
+player_adjustments["player_rating_delta"] = np.select(
+    [has_human & has_direct, has_direct],
+    [
+        0.20 * player_adjustments["human_delta"] + 0.80 * player_adjustments["direct_delta"],
+        player_adjustments["direct_delta"],
+    ],
+    default=player_adjustments["human_delta"].fillna(0.0),
+)
+player_adjustments["weighted_rating_proxy"] = np.select(
+    [has_human & has_direct, has_direct],
+    [
+        0.20 * player_adjustments["human_weighted_rating"]
+        + 0.80 * player_adjustments["direct_weighted_rating"],
+        player_adjustments["direct_weighted_rating"],
+    ],
+    default=player_adjustments["human_weighted_rating"].fillna(6.5),
+)
+player_adjustments["signals_used"] = (
+    "Direct: " + player_adjustments["direct_signals"].fillna("none")
+    + " | Human: " + player_adjustments["human_signals"].fillna("none")
+)
+print("Player-form blend: 80% direct R32+ ratings, 20% transparent human/event signals when both exist.")
+display(player_adjustments.sort_values("player_rating_delta", ascending=False).round(3))
+'''),
+    md(r'''
+### Latest Quarterfinal Ratings And Team Statistics
+
+This audit table shows the direct inputs behind the semifinal update. Player rows include minutes, ratings, goals, assists, xG, and xA. Team rows use SofaScore's full-match values for xG, shots on target, goalkeeper saves, tackles, and possession. No proxy values are inserted when a direct field is absent.
+'''),
+    code(r'''
+latest_completed_match_numbers = {97, 98, 99, 100}
+
+if not direct_knockout_player_ratings.empty:
+    latest_player_rows = direct_knockout_player_ratings[
+        pd.to_numeric(direct_knockout_player_ratings["match_no"], errors="coerce")
+        .isin(latest_completed_match_numbers)
+    ].copy()
+    latest_player_rows["rating"] = pd.to_numeric(latest_player_rows["rating"], errors="coerce")
+    latest_player_rows = (
+        latest_player_rows
+        .sort_values(["match_no", "team", "rating"], ascending=[True, True, False])
+        .groupby(["match_no", "team"], as_index=False)
+        .head(5)
+    )
+    latest_player_columns = [
+        "match_no", "match", "team", "player_display", "minutes_played", "rating",
+        "goals", "assists", "expected_goals", "expected_assists", "rating_source",
+    ]
+    display(latest_player_rows.reindex(columns=latest_player_columns).round(3))
+
+sofascore_stats_path = SOFASCORE_DATA_DIR / "sofascore_team_match_stats.csv"
+latest_team_stats = pd.DataFrame()
+if sofascore_stats_path.exists() and sofascore_map_path.exists():
+    raw_team_stats = pd.read_csv(sofascore_stats_path)
+    match_orientation = pd.read_csv(sofascore_map_path)[
+        ["match_id", "match_no", "team_a", "team_b", "orientation", "label"]
+    ].drop_duplicates("match_id")
+    raw_team_stats = raw_team_stats.merge(
+        match_orientation,
+        on="match_id",
+        how="left",
+        suffixes=("", "_map"),
+    )
+    metric_labels = {
+        "expectedGoals": "xg",
+        "shotsOnGoal": "shots_on_target",
+        "goalkeeperSaves": "saves",
+        "totalTackle": "tackles",
+        "ballPossession": "possession_pct",
+    }
+    stat_records = []
+    for _, stat in raw_team_stats[
+        raw_team_stats["period"].eq("ALL")
+        & raw_team_stats["stat_key"].isin(metric_labels)
+        & pd.to_numeric(raw_team_stats["match_no_map"], errors="coerce").isin(latest_completed_match_numbers)
+    ].iterrows():
+        team_a = stat.get("team_a_map") or stat.get("team_a")
+        team_b = stat.get("team_b_map") or stat.get("team_b")
+        values = [stat.get("home_value"), stat.get("away_value")]
+        if stat.get("orientation") == "reversed":
+            values = values[::-1]
+        for team, value in zip([team_a, team_b], values):
+            stat_records.append({
+                "match_no": int(stat["match_no_map"]),
+                "match": stat["label"],
+                "team": team,
+                "metric": metric_labels[stat["stat_key"]],
+                "value": pd.to_numeric(value, errors="coerce"),
+            })
+    if stat_records:
+        latest_team_stats = (
+            pd.DataFrame(stat_records)
+            .pivot_table(
+                index=["match_no", "match", "team"],
+                columns="metric",
+                values="value",
+                aggfunc="first",
             )
             .reset_index()
+            .sort_values(["match_no", "team"])
         )
-        print(
-            f"Loaded {len(google_all_ratings_for_model)} all-player Google rating rows "
-            f"from {google_all_ratings_for_model['match'].nunique()} scraped matches."
-        )
-        display(google_rating_coverage.round(3))
+        latest_team_stats.columns.name = None
+        display(latest_team_stats.round(3))
 
-        knockout_rating_stages = {
-            "Round of 32",
-            "Round of 16",
-            "Quarterfinal",
-            "Semifinal",
-            "Third-place Match",
-            "Final",
-        }
-        google_knockout_ratings = google_all_ratings_for_model[
-            google_all_ratings_for_model["stage"].isin(knockout_rating_stages)
-        ].copy()
-        if google_knockout_ratings.empty:
-            print("No R32-or-later Google lineup ratings found; no Google team-average model signal applied.")
-        else:
-            google_knockout_team_signals = (
-                google_knockout_ratings
-                .groupby(["stage", "match", "team"], as_index=False)
-                .agg(
-                    rating_proxy=("rating", "mean"),
-                    players_rated=("player_display", "nunique"),
-                )
-            )
-            # Formula:
-            #   team rating proxy = simple average of all Google lineup ratings for the team in that knockout match
-            #   importance weight = 0.80 * clip(players_rated / 16, 0.55, 1.00)
-            # This keeps a nearly complete lineup card influential without letting one source dominate the model.
-            google_knockout_team_signals["importance_weight"] = (
-                0.80 * np.clip(google_knockout_team_signals["players_rated"] / 16, 0.55, 1.00)
-            )
-            google_model_signals = google_knockout_team_signals.assign(
-                player="Google lineup team average",
-                source_type="Google rendered lineup team average (R32+ only)",
-                note=lambda d: (
-                    d["stage"].astype(str)
-                    + " average from "
-                    + d["players_rated"].astype(int).astype(str)
-                    + " rated players; group-stage Google ratings are stored but not used as direct future-knockout form signals."
-                ),
-            )[["match", "team", "player", "rating_proxy", "importance_weight", "source_type", "note"]]
-            player_form_signals = pd.concat([player_form_signals, google_model_signals], ignore_index=True)
-            print(f"Imported {len(google_model_signals)} Google knockout team-average signals into player form signals.")
-            display(
-                google_knockout_team_signals
-                .sort_values(["stage", "match", "rating_proxy"], ascending=[True, True, False])
-                .round(3)
-            )
-else:
-    print("No google_worldcup_all_player_ratings.csv found for prediction-side all-player import.")
-
-# Convert player/match ratings into a team-level form adjustment.
-# Formula:
-#   rating_component = weighted average of (rating_proxy - 6.5) / 2.5
-#   live_player_delta = clipped 0.75 * rating_component, between -0.9 and +0.9
-player_adjustments = (
-    player_form_signals
-    .assign(weighted_component=lambda d: ((d["rating_proxy"] - 6.5) / 2.5) * d["importance_weight"])
-    .groupby("team")
-    .apply(lambda d: pd.Series({
-        "weighted_rating_proxy": np.average(d["rating_proxy"], weights=d["importance_weight"]),
-        "player_rating_delta": float(np.clip(0.75 * d["weighted_component"].sum() / d["importance_weight"].sum(), -0.9, 0.9)),
-        "signals_used": "; ".join(d["player"].astype(str).tolist()),
-    }))
-    .reset_index()
-)
-player_adjustments.sort_values("player_rating_delta", ascending=False).round(3)
+sofa_summary_path = SOFASCORE_DATA_DIR / "sofascore_fetch_summary.csv"
+sofa_shotmap_path = SOFASCORE_DATA_DIR / "sofascore_shotmap.csv"
+if sofa_summary_path.exists():
+    sofa_fetch_summary = pd.read_csv(sofa_summary_path)
+    rated_matches = direct_knockout_player_ratings["match_id"].nunique() if not direct_knockout_player_ratings.empty else 0
+    shot_matches = pd.read_csv(sofa_shotmap_path)["match_id"].nunique() if sofa_shotmap_path.exists() else 0
+    data_quality_summary = pd.DataFrame([{
+        "completed_matches": sofa_fetch_summary["match_id"].nunique(),
+        "successful_fetches": int(sofa_fetch_summary["fetch_status"].eq("ok").sum()),
+        "all_player_rows": int(sofa_fetch_summary["lineups_rows"].sum()),
+        "rated_knockout_matches": int(rated_matches),
+        "team_stat_rows": int(sofa_fetch_summary["stat_rows"].sum()),
+        "shotmap_rows": int(sofa_fetch_summary["shot_rows"].sum()),
+        "shotmap_matches": int(shot_matches),
+    }])
+    display(data_quality_summary)
 '''),
     code(r'''
 def expected_actual_delta(teams_df, results_df):
@@ -776,7 +989,7 @@ team_tactical_penalties = {
     "France": 0.35,    # Paraguay R16 reinforced title-level tenacity and attacking ceiling.
     "Norway": 0.30,    # Brazil R16 showed a real transition-upset path through Odegaard/Nusa/Haaland.
     "Switzerland": 0.15, # Colombia R16 reinforced defensive reliability, offset by limited open-play attack.
-    "Argentina": -0.25, # Tenacity remains high, but Messi overreliance and lower supporting dynamism are concerns.
+    "Argentina": -0.05, # Depth/tenacity and Almada/Lopez options offset most, but not all, defense and Messi-fatigue concern.
     "Spain": -0.15,    # Structure is elite, but chance creation/finishing concerns cap the attacking bump.
     "Belgium": 0.05,   # USA R16 conversion partly offsets earlier title-ferocity and Lukaku-role concerns.
     "Portugal": -0.60, # Human read: Ronaldo/Portugal scoreline versus Uzbekistan was flattering; chance creation remains structurally poor.
@@ -797,67 +1010,61 @@ teams_live_adjusted["updated_rating"] = (
 )
 
 teams_live_adjusted["pre_market_updated_rating"] = teams_live_adjusted["updated_rating"]
-teams_live_adjusted["outright_market_rating_delta"] = 0.0
-teams_live_adjusted["polymarket_title_prob"] = np.nan
-teams_live_adjusted["polymarket_normalized_survivor_prob"] = np.nan
-
 outright_market_weight = 0.10
-current_knockout_survivors = {
-    "France", "Morocco", "Norway", "England",
-    "Spain", "Belgium", "Argentina", "Switzerland",
-}
-polymarket_outright_path = MARKET_DATA_DIR / "market_fetch_polymarket_fifa_worldcup_20260707.json"
+current_knockout_survivors = {"France", "Spain", "England", "Argentina"}
+prediction_market_path = MARKET_DATA_DIR / "prediction_market_snapshot_20260712.csv"
+if not prediction_market_path.exists():
+    raise FileNotFoundError(
+        f"Missing current market snapshot: {prediction_market_path}. "
+        "Run scripts/fetch_prediction_market_data.py --as-of 20260712 first."
+    )
+
+market_snapshot = pd.read_csv(prediction_market_path)
+for column in [
+    "probability", "normalized_probability", "yes_bid", "yes_ask", "last_price",
+    "liquidity", "volume",
+]:
+    market_snapshot[column] = pd.to_numeric(market_snapshot[column], errors="coerce")
+market_snapshot["is_complete_distribution"] = (
+    market_snapshot["is_complete_distribution"].astype(str).str.lower().eq("true")
+)
+
+outright_market_rows = market_snapshot[
+    market_snapshot["market_type"].eq("winner")
+    & market_snapshot["team"].isin(current_knockout_survivors)
+    & market_snapshot["is_complete_distribution"]
+].copy()
 outright_market_priors = pd.DataFrame(columns=[
     "team", "market_title_prob", "normalized_survivor_prob",
-    "liquidity", "volume", "question", "source",
+    "source_count", "sources",
 ])
-
-def _jsonish_list(value):
-    if isinstance(value, list):
-        return value
-    if isinstance(value, str):
-        return json.loads(value)
-    return []
-
-if polymarket_outright_path.exists():
-    raw_polymarket = json.loads(polymarket_outright_path.read_text(encoding="utf-8"))
-    raw_polymarket_rows = raw_polymarket if isinstance(raw_polymarket, list) else raw_polymarket.get("data", [])
-    parsed_outrights = []
-    for row in raw_polymarket_rows:
-        question = str(row.get("question") or row.get("title") or "")
-        marker = " win the 2026 FIFA World Cup?"
-        if not (question.startswith("Will ") and marker in question):
-            continue
-        team = question.replace("Will ", "", 1).split(marker)[0].strip()
-        try:
-            outcomes = _jsonish_list(row.get("outcomes"))
-            prices = [float(x) for x in _jsonish_list(row.get("outcomePrices"))]
-        except Exception:
-            continue
-        if "Yes" not in outcomes or len(outcomes) != len(prices):
-            continue
-        yes_price = prices[outcomes.index("Yes")]
-        parsed_outrights.append({
-            "team": team,
-            "market_title_prob": yes_price,
-            "liquidity": pd.to_numeric(row.get("liquidity"), errors="coerce"),
-            "volume": pd.to_numeric(row.get("volume"), errors="coerce"),
-            "question": question,
-            "source": "Polymarket Gamma API snapshot, 2026-07-07",
-        })
-    if parsed_outrights:
-        outright_market_priors = pd.DataFrame(parsed_outrights)
-        outright_market_priors = (
-            outright_market_priors[outright_market_priors["team"].isin(current_knockout_survivors)]
-            .sort_values("market_title_prob", ascending=False)
-            .drop_duplicates("team", keep="first")
-            .copy()
+if not outright_market_rows.empty:
+    outright_market_priors = (
+        outright_market_rows.groupby("team", as_index=False)
+        .agg(
+            market_title_prob=("probability", "mean"),
+            normalized_survivor_prob=("normalized_probability", "mean"),
+            source_count=("source", "nunique"),
+            sources=("source", lambda values: "+".join(sorted(set(values)))),
         )
-        total_market_prob = outright_market_priors["market_title_prob"].clip(lower=0.001).sum()
-        if total_market_prob > 0:
-            outright_market_priors["normalized_survivor_prob"] = (
-                outright_market_priors["market_title_prob"].clip(lower=0.001) / total_market_prob
-            )
+        .sort_values("normalized_survivor_prob", ascending=False)
+    )
+
+semifinal_market_rows = market_snapshot[
+    market_snapshot["market_type"].isin(["final_qualifier", "match_advance"])
+    & market_snapshot["team"].isin(current_knockout_survivors)
+    & market_snapshot["is_complete_distribution"]
+].copy()
+semifinal_market_priors = (
+    semifinal_market_rows.groupby(["matchup", "team"], as_index=False)
+    .agg(
+        market_advance_prob=("normalized_probability", "mean"),
+        source_count=("source", "nunique"),
+        sources=("source", lambda values: "+".join(sorted(set(values)))),
+        min_bid=("yes_bid", "min"),
+        max_ask=("yes_ask", "max"),
+    )
+)
 
 if not outright_market_priors.empty:
     survivor_model = teams_live_adjusted[
@@ -893,36 +1100,29 @@ if not outright_market_priors.empty:
             "team", "market_title_prob", "normalized_survivor_prob",
             "outright_market_rating_delta",
         ]].rename(columns={
-            "market_title_prob": "polymarket_title_prob",
-            "normalized_survivor_prob": "polymarket_normalized_survivor_prob",
-            "outright_market_rating_delta": "market_delta_from_blend",
+            "normalized_survivor_prob": "market_normalized_survivor_prob",
         }),
         on="team",
         how="left",
     )
-    teams_live_adjusted["outright_market_rating_delta"] = (
-        teams_live_adjusted["market_delta_from_blend"].fillna(0.0)
-    )
-    teams_live_adjusted["polymarket_title_prob"] = teams_live_adjusted["polymarket_title_prob_y"].combine_first(
-        teams_live_adjusted["polymarket_title_prob_x"]
-    )
-    teams_live_adjusted["polymarket_normalized_survivor_prob"] = teams_live_adjusted[
-        "polymarket_normalized_survivor_prob_y"
-    ].combine_first(teams_live_adjusted["polymarket_normalized_survivor_prob_x"])
-    teams_live_adjusted = teams_live_adjusted.drop(columns=[
-        "polymarket_title_prob_x", "polymarket_title_prob_y",
-        "polymarket_normalized_survivor_prob_x", "polymarket_normalized_survivor_prob_y",
-        "market_delta_from_blend",
-    ])
+    teams_live_adjusted["outright_market_rating_delta"] = teams_live_adjusted[
+        "outright_market_rating_delta"
+    ].fillna(0.0)
     teams_live_adjusted["updated_rating"] = (
         teams_live_adjusted["updated_rating"] + teams_live_adjusted["outright_market_rating_delta"]
     )
+else:
+    teams_live_adjusted["market_title_prob"] = np.nan
+    teams_live_adjusted["market_normalized_survivor_prob"] = np.nan
+    teams_live_adjusted["outright_market_rating_delta"] = 0.0
 
-print("Current Polymarket outright survivor priors, applied with market_weight =", outright_market_weight)
+print("Current cross-venue outright priors, applied with market_weight =", outright_market_weight)
 display(outright_market_priors.round(4))
+print("Current semifinal advance priors (Polymarket final qualifier + Kalshi final qualifier/advance):")
+display(semifinal_market_priors.round(4))
 
 form_update_view = teams_live_adjusted.sort_values("live_form_delta", ascending=False)[
-    ["group", "team", "base_form_modifier", "result_delta", "player_rating_delta", "tactical_delta", "live_form_delta", "updated_form_modifier", "base_rating_june", "pre_market_updated_rating", "outright_market_rating_delta", "updated_rating", "signals_used"]
+    ["group", "team", "base_form_modifier", "result_delta", "player_rating_delta", "tactical_delta", "live_form_delta", "updated_form_modifier", "base_rating_june", "pre_market_updated_rating", "market_title_prob", "market_normalized_survivor_prob", "outright_market_rating_delta", "updated_rating", "signals_used"]
 ].copy()
 form_update_view.round(3)
 '''),
@@ -1094,6 +1294,10 @@ completed_knockout_results_data = [
     (94, "USA", "Belgium", 1, 4, "Belgium", "Belgium 4-1 USA", "Locked actual Round of 16 result."),
     (95, "Argentina", "Egypt", 3, 2, "Argentina", "Argentina 3-2 Egypt", "Locked actual Round of 16 result."),
     (96, "Switzerland", "Colombia", 0, 0, "Switzerland", "0-0; Switzerland 4-3 pens", "Locked actual Round of 16 result."),
+    (97, "France", "Morocco", 2, 0, "France", "France 2-0 Morocco", "Locked actual quarterfinal result."),
+    (98, "Spain", "Belgium", 2, 1, "Spain", "Spain 2-1 Belgium", "Locked actual quarterfinal result."),
+    (99, "Norway", "England", 1, 2, "England", "Norway 1-2 England (aet)", "Locked actual quarterfinal result."),
+    (100, "Argentina", "Switzerland", 3, 1, "Argentina", "Argentina 3-1 Switzerland (aet)", "Locked actual quarterfinal result."),
 ]
 completed_knockout_results = pd.DataFrame(
     completed_knockout_results_data,
@@ -1207,12 +1411,41 @@ def blended_with_analyst_prior(team_a, team_b, model_prob_team_a):
         "analyst_notes": prior["notes"],
     }
 
+match_market_weight = 0.10
+
+def blended_with_match_market(team_a, team_b, prior_prob_team_a):
+    if semifinal_market_priors.empty:
+        return prior_prob_team_a, None
+    matchup_name = ""
+    for candidate, candidate_rows in semifinal_market_priors.groupby("matchup"):
+        if set(candidate_rows["team"]) == {team_a, team_b}:
+            matchup_name = candidate
+            break
+    if not matchup_name:
+        return prior_prob_team_a, None
+    rows = semifinal_market_priors[semifinal_market_priors["matchup"].eq(matchup_name)]
+    team_row = rows[rows["team"].eq(team_a)]
+    if team_row.empty:
+        return prior_prob_team_a, None
+    market_prob_team_a = float(team_row.iloc[0]["market_advance_prob"])
+    blended = logistic(
+        (1 - match_market_weight) * _safe_logit(prior_prob_team_a)
+        + match_market_weight * _safe_logit(market_prob_team_a)
+    )
+    return blended, {
+        "market_prob_team_a": market_prob_team_a,
+        "match_market_weight": match_market_weight,
+        "match_market_sources": team_row.iloc[0]["sources"],
+        "market_matchup": matchup_name,
+    }
+
 def knockout_win_probability_live(team_a, team_b):
     return logistic((ratings_live[team_a] - ratings_live[team_b]) / 8)
 
 def knockout_result_live(match, round_name, team_a, team_b, slot):
     model_p_a = knockout_win_probability_live(team_a, team_b)
-    p_a, analyst_meta = blended_with_analyst_prior(team_a, team_b, model_p_a)
+    analyst_p_a, analyst_meta = blended_with_analyst_prior(team_a, team_b, model_p_a)
+    p_a, market_meta = blended_with_match_market(team_a, team_b, analyst_p_a)
     actual = completed_knockout_by_match.get(match)
     status = "projected"
     result_note = ""
@@ -1250,6 +1483,15 @@ def knockout_result_live(match, round_name, team_a, team_b, slot):
             "analyst_weight": 0.0,
             "rationale_tags": "",
             "analyst_notes": "",
+        })
+    if market_meta:
+        out.update(market_meta)
+    else:
+        out.update({
+            "market_prob_team_a": np.nan,
+            "match_market_weight": 0.0,
+            "match_market_sources": "",
+            "market_matchup": "",
         })
     return out
 
@@ -1364,10 +1606,20 @@ analyst_prior_effects = live_knockout_table[live_knockout_table["analyst_weight"
 for col in ["model_win_prob_team_a", "analyst_prob_team_a", "win_prob_team_a", "winner_probability"]:
     analyst_prior_effects[col] = (100 * analyst_prior_effects[col]).round(1).astype(str) + "%"
 
+market_prior_effects = live_knockout_table[live_knockout_table["match_market_weight"] > 0][[
+    "round", "match", "team_a", "team_b", "model_win_prob_team_a",
+    "market_prob_team_a", "match_market_weight", "win_prob_team_a", "winner",
+    "winner_probability", "match_market_sources",
+]].copy()
+for col in ["model_win_prob_team_a", "market_prob_team_a", "win_prob_team_a", "winner_probability"]:
+    market_prior_effects[col] = (100 * market_prior_effects[col]).round(1).astype(str) + "%"
+
 print("Analyst tactical priors applied with weight", analyst_prior_weight_default)
 display(analyst_priors)
 print("Knockout probabilities after analyst-prior blending:")
 display(analyst_prior_effects)
+print("Semifinal probabilities after the 0.10 matchup-market blend:")
+display(market_prior_effects)
 
 print(f"Projected third-place group set: {live_third_groups}")
 print(f"Live-updated champion: {live_knockout[104]['winner']}")
@@ -1472,9 +1724,8 @@ Data structure:
 Source caveats:
 
 - Transfermarkt profile pages expose current player market values, but values move over time. The table below is a seeded snapshot in EUR millions and includes update URLs.
-- Sofascore public pages expose World Cup match pages, match timelines, and the rating system, but the raw rating endpoint returned `403 Forbidden` in this environment. The optional scraper below can pull ratings that are visibly present in public Sofascore pages/news, but it is off by default so reruns do not break when Sofascore blocks or changes markup.
-- Google Search's World Cup match cards can show lineup player ratings in the rendered UI, but those panels are dynamic, personalized, and not exposed as a stable static HTML/API table. The July 2 rendered-browser sweep stores the gathered output in `google_worldcup_all_player_ratings.csv` and `google_lineup_player_ratings_raw.csv` so the notebook can be rerun without scraping Google again.
-- July 2 Google rendered-browser update: the reliable route is **direct match search -> More about this game -> Lineups -> rendered DOM text**. This produced **2,334 all-player rating rows** for **74 of 82** played matches in the sweep, including every completed Round of 32 match so far. A conservative star-player matched import now produces `google_lineup_player_ratings.csv` (**231 matched star-player rows**). The 8 misses are older group-stage pages where the Google match card was not exposed through the current search route.
+- SofaScore is the primary rating source. The project stores direct ratings and minutes for all 100 completed matches through M100, fetched with the reproducible browser-like curl collector.
+- Google lineup extracts remain an audit/fallback source only. A tracked player with any direct SofaScore rows is plotted exclusively from those direct rows, so proxy or Google values do not contaminate that player's tournament average.
 - Rows marked `team_proxy` are included only to keep all selected star players visible. The default chart now uses `include_team_proxy=False`, so players without exact ratings are omitted unless you explicitly include proxy rows.
 
 References:
@@ -1484,6 +1735,7 @@ References:
 """),
     code(r'''
 import re
+import unicodedata
 import urllib.parse
 from pathlib import Path
 
@@ -1602,6 +1854,50 @@ star_player_match_ratings = pd.DataFrame(
     columns=["player", "team", "match", "rating", "minutes_played", "rating_source", "note"],
 )
 
+def normalize_player_name(value):
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    text = "".join(char for char in text if not unicodedata.combining(char))
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+# Direct SofaScore import for every tracked star player. Direct rows supersede
+# seeded event proxies and Google rows for the same player.
+sofascore_star_rows = pd.DataFrame()
+if sofascore_rating_path.exists():
+    sofa_all_players = pd.read_csv(sofascore_rating_path)
+    sofa_all_players["rating"] = pd.to_numeric(sofa_all_players["rating"], errors="coerce")
+    sofa_all_players["minutes_played"] = pd.to_numeric(
+        sofa_all_players["minutes_played"], errors="coerce"
+    )
+    sofa_all_players = sofa_all_players[sofa_all_players["rating"].notna()].copy()
+    sofa_all_players["player_key"] = sofa_all_players["player"].map(normalize_player_name)
+    tracked_players = star_player_values.copy()
+    tracked_players["player_key"] = tracked_players["player"].map(normalize_player_name)
+    sofascore_star_rows = sofa_all_players.merge(
+        tracked_players[["team", "player", "player_key"]],
+        on=["team", "player_key"],
+        how="inner",
+        suffixes=("_sofa", ""),
+    )
+    if sofascore_map_path.exists():
+        sofa_star_labels = pd.read_csv(sofascore_map_path)[
+            ["match_id", "label"]
+        ].drop_duplicates("match_id")
+        sofascore_star_rows = sofascore_star_rows.merge(
+            sofa_star_labels, on="match_id", how="left"
+        )
+    sofascore_star_rows = sofascore_star_rows.assign(
+        match=lambda d: d.get("label", d["match_id"]).fillna(d["match_id"]),
+        rating_source="SofaScore direct",
+        note="Direct post-match rating and minutes from the saved SofaScore lineup payload.",
+    )[["player", "team", "match", "rating", "minutes_played", "rating_source", "note"]]
+    star_player_match_ratings = pd.concat(
+        [star_player_match_ratings, sofascore_star_rows], ignore_index=True
+    )
+    print(
+        f"Imported {len(sofascore_star_rows)} direct SofaScore rows for "
+        f"{sofascore_star_rows[['team', 'player']].drop_duplicates().shape[0]} tracked players."
+    )
+
 # Optional Google lineup rating import.
 # Direct scraping of Google Search sports panels is not stable enough for reproducible notebook execution.
 # If you can copy/export ratings from Google's lineup cards, save them as google_lineup_player_ratings.csv
@@ -1718,6 +2014,23 @@ if RUN_SOFASCORE_SCRAPER:
         )
         display(scraped_sofascore_ratings)
 
+star_player_match_ratings["player_source_key"] = (
+    star_player_match_ratings["team"].astype(str)
+    + "|"
+    + star_player_match_ratings["player"].map(normalize_player_name)
+)
+direct_star_keys = set(
+    star_player_match_ratings.loc[
+        star_player_match_ratings["rating_source"].eq("SofaScore direct"),
+        "player_source_key",
+    ]
+)
+if direct_star_keys:
+    star_player_match_ratings = star_player_match_ratings[
+        star_player_match_ratings["rating_source"].eq("SofaScore direct")
+        | ~star_player_match_ratings["player_source_key"].isin(direct_star_keys)
+    ].copy()
+
 def weighted_or_simple_rating(group):
     ratings = group["rating"].astype(float)
     minutes = pd.to_numeric(group["minutes_played"], errors="coerce")
@@ -1771,7 +2084,7 @@ coverage_summary = pd.DataFrame([{
     "team_proxy_ratings": int((star_value_performance["plot_rating_basis"] == "team_proxy").sum()),
     "missing_rating": int((star_value_performance["plot_rating_basis"] == "missing").sum()),
     "value_source": "Transfermarkt public profile/search pages, EUR millions",
-    "rating_source": "Sofascore where visible; otherwise notebook rating/proxy rows",
+    "rating_source": "Direct SofaScore; Google/event rows only for tracked players without direct rows",
 }])
 display(coverage_summary)
 
@@ -1991,7 +2304,7 @@ else:
         print(f"Widget setup note: {exc}")
 '''),
     md(r"""
-## Optional Market-Prior Integration
+## Prediction-Market Integration
 
 Yes, Polymarket/Kalshi-style market prices can be used as another prediction input for both group-stage and knockout forecasts, but they should be handled as **market-implied priors**, not as raw truth.
 
@@ -2004,9 +2317,11 @@ final_logit =
 + market_weight  * market_logit
 ```
 
-For this run, the notebook uses `market_weight = 0.10`. The old Kalshi **group-stage Winner?** rows are now historical diagnostics because every group match has been played. The current applied market layer is the July 7 **Polymarket outright/trophy** snapshot, normalized across the surviving teams and blended into team ratings before the quarterfinal bracket is simulated.
+For this run, the notebook keeps `market_weight = 0.10`. The old Kalshi **group-stage Winner?** rows are historical diagnostics because every group match has been played. The current July 12 layer uses complete markets from both venues:
 
-The current market layer affects the **knockout bracket** through a small rating delta. Kalshi's July 7 public search fetch is kept as diagnostics only because the clean rows were mostly multileg/parlay-style markets rather than direct single-team or W-D-L probabilities.
+- Polymarket and Kalshi trophy probabilities are normalized within the four-team semifinal field and averaged by team before creating a small team-rating delta.
+- Polymarket and Kalshi final-qualifier probabilities, plus Kalshi's direct match-advance contracts, are normalized within each semifinal and averaged into a matchup prior.
+- The direct matchup prior is blended on the log-odds scale at `0.10`; it does not overwrite the model.
 
 Market-data cautions:
 
@@ -2014,7 +2329,7 @@ Market-data cautions:
 - Normalize multi-outcome markets so all outcomes sum to 1.
 - Avoid stale or thin markets.
 - Remove or account for fees/spread/vig where possible.
-- Match the exact resolution rule: “to advance,” “win in regulation,” “qualify from group,” and “lift trophy” are different markets.
+- Match the exact resolution rule: "to advance," "win in regulation," "qualify from group," and "lift trophy" are different markets.
 - For U.S. users, regulatory access and account availability can differ between venues.
 
 Implementation sources:
@@ -2028,18 +2343,28 @@ print("Market-prior weight:", market_weight_default)
 print("Market fetch summary:")
 display(market_fetch_summary)
 
-print("Current Polymarket outright survivor priors applied to live ratings:")
+print("Current normalized prediction-market snapshot:")
+display(market_snapshot[[
+    "source", "market_type", "matchup", "team", "probability",
+    "normalized_probability", "yes_bid", "yes_ask", "volume",
+    "is_complete_distribution",
+]].sort_values(["market_type", "matchup", "source", "team"]).round(4))
+
+print("Cross-venue outright survivor priors applied to live ratings:")
 display(outright_market_priors.round(4))
+
+print("Cross-venue semifinal advance priors:")
+display(semifinal_market_priors.round(4))
 
 print("Rating deltas from current outright markets:")
 display(
     teams_live_adjusted[
         teams_live_adjusted["team"].isin(current_knockout_survivors)
     ][[
-        "team", "pre_market_updated_rating", "polymarket_title_prob",
-        "polymarket_normalized_survivor_prob", "outright_market_rating_delta",
+        "team", "pre_market_updated_rating", "market_title_prob",
+        "market_normalized_survivor_prob", "outright_market_rating_delta",
         "updated_rating"
-    ]].sort_values("polymarket_normalized_survivor_prob", ascending=False).round(4)
+    ]].sort_values("market_normalized_survivor_prob", ascending=False).round(4)
 )
 
 print("Outcome coverage by fetched match:")
@@ -2340,7 +2665,7 @@ Public ticket benchmarks used:
 - Later reporting said final tickets rose to approximately **$10,990** for top tier, with Category 2 around **$7,380** and Category 3 around **$5,785**.
 - FIFA's 2026 category structure reportedly maps lower levels generally to Category 1, suite levels to Category 2, and upper tiers to Categories 3/4. That means a “near-midfield lower bowl” seat may price above the preferred range for the final, while Category 2/3 may fit the range but may not be true lower-midfield.
 
-Weather note: dates beyond the short-range forecast window are shown as **seasonal climate expectations**, not day-specific forecasts. Retractable-roof venues reduce the weather risk substantially if the roof is closed.
+Weather note: the remaining-match rows use public forecasts checked on **July 12**. Forecasts can still change, especially for thunderstorms; retractable-roof venues reduce the spectator risk substantially if the roof is closed.
 """),
     code(r'''
 recommendation_data = [
@@ -2367,24 +2692,24 @@ recommendation_data = [
      "Hot/humid summer evening, roughly low 80s F at kickoff with thunderstorm risk.",
      "Best upcoming Argentina value if they remain alive: quarterfinal stakes, weekend date, and still more reachable than semifinal/final."),
     (101, "Semifinal", "2026-07-14", "14:00", "AT&T Stadium / Dallas Stadium", "Arlington, TX",
-     "France/Spain path", "France, Spain",
+     "France vs Spain", "France, Spain",
      "$6,000-$8,000 target range for good seats; premium lower-midfield may exceed budget",
-     "Very hot outside, often mid-to-upper 90s F in July; retractable roof/indoor environment is a major plus.",
-     "Best non-Argentina elite match if the model path holds: France/Spain-level quality in a climate-controlled venue."),
+     "July 12 forecast: roughly 86-90 F with a material thunderstorm chance outside; the enclosed, air-conditioned venue sharply reduces spectator risk.",
+     "Elite semifinal quality and the clearest France/Spain priority matchup, with a climate-controlled venue."),
     (102, "Semifinal", "2026-07-15", "15:00", "Mercedes-Benz Stadium / Atlanta Stadium", "Atlanta, GA",
-     "Argentina/Norway path", "Argentina, Norway",
+     "England vs Argentina", "Argentina",
      "$6,000-$8,000 target for good seats; true lower-midfield could exceed budget",
-     "Hot/humid outside; retractable roof helps. Afternoon kickoff makes roof/indoor comfort valuable.",
-     "Highest-priority semifinal because it can include Argentina and possibly Norway/England from the other quarterfinal."),
+     "July 12 forecast: around 94 F with broken clouds and low rain risk outside; the retractable-roof venue is a major comfort advantage.",
+     "Highest-priority remaining match: Argentina against an England side with Bellingham and Kane-level clutch threats."),
     (103, "Third-place Match", "2026-07-18", "17:00", "Hard Rock Stadium", "Miami Gardens, FL",
      "Semifinal losers", "Other",
      "$3,000-$6,000 target range; usually more attainable than the final",
-     "Hot, humid, thunderstorm/rainy-season risk; evening kickoff helps somewhat.",
+     "Current extended forecast: mainly sunny and very hot, roughly upper 80s to mid-90s F; open-air heat remains the main concern.",
      "Often the best value for seeing two elite teams with less final-level price pressure, especially on a Saturday."),
     (104, "Final", "2026-07-19", "15:00", "MetLife Stadium / New York New Jersey Stadium", "East Rutherford, NJ",
      "Projected final", "Argentina, France",
      "$5,785-$7,380 public Cat. 3/Cat. 2 benchmark; true prime midfield reported near/above $10,990",
-     "Warm/humid July afternoon, around mid-80s F; open-air stadium, possible thunderstorm risk.",
+     "July 12 extended forecast: about 84/73 F, humid with a feels-like near 95 F and roughly 50% risk of late thunderstorms; open-air venue.",
      "The best football event if budget is flexible. Within $3k-$8k is plausible only away from the very best midfield/lower seats."),
 ]
 
@@ -2395,6 +2720,7 @@ recommendations = pd.DataFrame(
         "priority_team", "good_seat_price_estimate_usd", "projected_weather", "reason",
     ],
 )
+recommendations = recommendations[recommendations["match"] >= 101].copy()
 
 ko_matchup_map = {
     int(row["match"]): f"{row['team_a']} vs {row['team_b']}"
